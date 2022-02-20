@@ -4,6 +4,8 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useState, useEffect } from 'react';
+import {http_get, http_post} from './utils';
+
 
 export default function RegisterForm(props) {
 
@@ -23,8 +25,8 @@ export default function RegisterForm(props) {
     window.crypto.subtle.generateKey(
       {
         name: "RSA-OAEP",
-        modulusLength: 2048,
-        publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+        modulusLength: 3072,
+        publicExponent: new Uint8Array([0x00, 0x00, 0x03]), //长度为3的数组，每个数字有8位，共24位
         hash: "SHA-256"
       },
       true,
@@ -38,31 +40,29 @@ export default function RegisterForm(props) {
     })
   }
 
+  function exchangeKey() {
+    http_get("/exchange_key/" + localPubK, (text) => {
+      setRemotePubK(text);
+    });
+  }
+
   function seal() {
     if (localPubK === "") {
       alert("Local Key is not ready, please refresh the page!");
       return;
     }
-    console.log(email, mobile, password, privateKey);
-    let socket = new WebSocket('wss://10.244.1.18:12346/register');
-    socket.onopen = function (event) {
-      console.log("connected");
-      console.log(localPubK);
-      socket.send(localPubK);
-    };
-    socket.onmessage = function (event) {
-      // when get enclave public key, encrypt 3 times and send 3 messages
-      // when get error, alert error.
-      console.log(event.data);
-    }
-    socket.onclose = function (event) {
-      console.log("disconnected.")
-      alert('Submit Completed!');
+    if (privateKey === "") {
+      alert("Please set private key to store.");
+      return;
     }
   }
 
   useEffect(() => {
     generateKey();
+    var key = window.secrets.random(512);
+    var shares = window.secrets.share(key, 3, 2); 
+    var comb = window.secrets.combine( shares.slice(0,2) );
+    console.log(comb === key); // => false
   }, []);
 
   useEffect(() => {
