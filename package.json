@@ -15,12 +15,12 @@
     "crypto-js": "^4.1.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-scripts": "4.0.3",
+    "react-scripts": "^4.0.3",
     "secrets.js-grempe": "^2.0.0",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "HTTPS=true react-scripts start",
+    "start": "HTTPS=true PORT=30000 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

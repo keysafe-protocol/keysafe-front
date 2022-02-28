@@ -89,12 +89,6 @@ export default function RegisterForm(props) {
     console.log(comb === key); // => false
   }, []);
 
-  useEffect(() => {
-    if (sealStep1 + sealStep2 + sealStep3 === 3) {
-      alert("seal completed!");
-    }
-  }, [sealStep1, sealStep2, sealStep3])
-
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
