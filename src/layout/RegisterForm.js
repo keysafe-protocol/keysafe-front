@@ -4,7 +4,9 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useState, useEffect } from 'react';
-import {http_get, http_post} from './utils';
+import { http_get, http_post } from './utils';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
 
 
 export default function RegisterForm(props) {
@@ -52,10 +54,26 @@ export default function RegisterForm(props) {
     });
   }
 
-  function localEncrypt(pubk, cond, secret) {
-    // encrypt secret with remotePubK
-    // hash cond 
-    return "";
+  function hashCond(cond) {
+    const encoder = new TextEncoder();
+    const to_hash = encoder.encode(cond);
+    return crypto.subtle.digest("SHA-384", to_hash);
+  }
+
+  function encryptSecret(pubk, secret) {
+    const encoder = new TextEncoder();
+    const to_encrypt = encoder.encode(secret);
+    return window.crypto.subtle.encrypt(
+      { name: "RSA-OAEP" },
+      pubk,
+      to_encrypt
+    );
+  }
+
+  function localSeal(pubk, cond, secret) {
+    hashCond(cond).then(h => {
+      encryptSecret(pubk, secret)
+    })
   }
 
   function seal() {
@@ -70,9 +88,9 @@ export default function RegisterForm(props) {
 
     exchangeKey.then(() => {
       var shares = window.secrets.share(privateKey, 3, 2);
-      setSeal1(localEncrypt(remotePubK, email, shares[0]));
-      setSeal2(localEncrypt(remotePubK, mobile, shares[1]));
-      setSeal3(localEncrypt(remotePubK, password, shares[3]));
+      setSeal1(localSeal(remotePubK, email, shares[0]));
+      setSeal2(localSeal(remotePubK, mobile, shares[1]));
+      setSeal3(localSeal(remotePubK, password, shares[3]));
       remoteSeal(seal1);
     }).then(() => {
       remoteSeal(seal2);
@@ -84,69 +102,73 @@ export default function RegisterForm(props) {
   useEffect(() => {
     generateKey();
     var key = window.secrets.random(512);
-    var shares = window.secrets.share(key, 3, 2); 
-    var comb = window.secrets.combine( shares.slice(0,2) );
+    var shares = window.secrets.share(key, 3, 2);
+    var comb = window.secrets.combine(shares.slice(0, 2));
     console.log(comb === key); // => false
   }, []);
 
   return (
-    <React.Fragment>
-      <Typography variant="h6" gutterBottom>
-        Register your private key to KeySafe
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <TextField
-            required
-            id="email"
-            name="email"
-            label="Email Account"
-            fullWidth
-            autoComplete=""
-            variant="standard"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            required
-            id="cell"
-            name="cell"
-            label="Mobile N.O."
-            fullWidth
-            autoComplete=""
-            variant="standard"
-            onChange={(e) => setMobile(e.target.value)}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            required
-            id="password"
-            name="password"
-            label="Password"
-            fullWidth
-            autoComplete=""
-            variant="standard"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            id="privatekey"
-            name="privatekey"
-            label="Private Key"
-            fullWidth
-            autoComplete=""
-            variant="standard"
-            onChange={(e) => setPrivateKey(e.target.value)}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Button variant="outlined" onClick={seal}>Submit</Button>
-        </Grid>
-      </Grid>
-    </React.Fragment>
+    <Container component="main" maxWidth="lg" sx={{ mb: 4 }}>
+      <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
+        <React.Fragment>
+          <Typography variant="h6" gutterBottom>
+            Register your private key to KeySafe
+          </Typography>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <TextField
+                required
+                id="email"
+                name="email"
+                label="Email Account"
+                fullWidth
+                autoComplete=""
+                variant="standard"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                id="cell"
+                name="cell"
+                label="Mobile N.O."
+                fullWidth
+                autoComplete=""
+                variant="standard"
+                onChange={(e) => setMobile(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                required
+                id="password"
+                name="password"
+                label="Password"
+                fullWidth
+                autoComplete=""
+                variant="standard"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                id="privatekey"
+                name="privatekey"
+                label="Private Key"
+                fullWidth
+                autoComplete=""
+                variant="standard"
+                onChange={(e) => setPrivateKey(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button variant="outlined" onClick={seal}>Submit</Button>
+            </Grid>
+          </Grid>
+        </React.Fragment>
+      </Paper>
+    </Container>
   );
 }
 

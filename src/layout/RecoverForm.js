@@ -5,111 +5,146 @@ import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
 
 
 export default function RecoverForm() {
-  
+
   return (
-    <React.Fragment>
-      <Typography variant="h6" gutterBottom>
-        Shipping address
-      </Typography>
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="firstName"
-            name="firstName"
-            label="First name"
-            fullWidth
-            autoComplete="given-name"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="lastName"
-            name="lastName"
-            label="Last name"
-            fullWidth
-            autoComplete="family-name"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            required
-            id="address1"
-            name="address1"
-            label="Address line 1"
-            fullWidth
-            autoComplete="shipping address-line1"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            id="address2"
-            name="address2"
-            label="Address line 2"
-            fullWidth
-            autoComplete="shipping address-line2"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="city"
-            name="city"
-            label="City"
-            fullWidth
-            autoComplete="shipping address-level2"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            id="state"
-            name="state"
-            label="State/Province/Region"
-            fullWidth
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="zip"
-            name="zip"
-            label="Zip / Postal code"
-            fullWidth
-            autoComplete="shipping postal-code"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            required
-            id="country"
-            name="country"
-            label="Country"
-            fullWidth
-            autoComplete="shipping country"
-            variant="standard"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <FormControlLabel
-            control={<Checkbox color="secondary" name="saveAddress" value="yes" />}
-            label="Use this address for payment details"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Button variant="outlined">Submit</Button>
-        </Grid>
-      </Grid>
-    </React.Fragment>
+    <Container component="main" maxWidth="lg" sx={{ mb: 4 }}>
+      <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
+
+        <React.Fragment>
+          <Typography variant="h6" gutterBottom>
+            Recover your private key from KeySafe
+          </Typography>
+          <Grid container spacing={3}>
+            <Grid item xs={12} sm={2}>
+              <TextField
+                required
+                id="email"
+                name="email"
+                label="Email Account"
+                fullWidth
+                autoComplete=""
+                variant="standard"
+                onChange={(e) => (e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              <Button variant="outlined">Alert me</Button>
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              <TextField
+                required
+                id="emailAuthCode"
+                name="emailAuthCode"
+                label="Email Confirmation Code"
+                fullWidth
+                autoComplete=""
+                variant="standard"
+                onChange={(e) => (e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              <Button variant="outlined">Prove me</Button>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                required
+                id="piece1"
+                name="piece1"
+                label="Private Key Piece1"
+                fullWidth
+                autoComplete=""
+                variant="standard"
+                onChange={(e) => (e.target.value)}
+              />
+            </Grid>
+
+
+            <Grid item xs={12} sm={2}>
+              <TextField
+                required
+                id="mobile"
+                name="mobile"
+                label="Mobile N.O."
+                fullWidth
+                autoComplete=""
+                variant="standard"
+                onChange={(e) => (e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              <Button variant="outlined">Alert me</Button>
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              <TextField
+                required
+                id="mobileConfirmCode"
+                name="mobileConfirmCode"
+                label="Mobile Confirmation Code"
+                fullWidth
+                autoComplete=""
+                variant="standard"
+                onChange={(e) => (e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              <Button variant="outlined">Prove me</Button>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                required
+                id="piece2"
+                name="piece2"
+                label="Private Key Piece2"
+                fullWidth
+                autoComplete=""
+                variant="standard"
+                onChange={(e) => (e.target.value)}
+              />
+            </Grid>
+            
+            <Grid item xs={12} sm={2}>
+              <TextField
+                required
+                id="password"
+                name="password"
+                label="Password"
+                fullWidth
+                autoComplete=""
+                variant="standard"
+                onChange={(e) => (e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              <Button variant="outlined">Prove me</Button>
+            </Grid>
+            <Grid item xs={12} sm={2}>
+            </Grid>
+            <Grid item xs={12} sm={2}>
+              </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                required
+                id="piece1"
+                name="piece1"
+                label="Private Key Piece3"
+                fullWidth
+                autoComplete=""
+                variant="standard"
+                onChange={(e) => (e.target.value)}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <Button variant="outlined">Recover</Button>
+            </Grid>
+          </Grid>
+        </React.Fragment>
+      </Paper>
+    </Container>
   );
 }

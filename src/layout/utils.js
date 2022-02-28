@@ -14,7 +14,6 @@ export function http_post(url, data) {
     }).then(response => response.json())
 }
 
-
 export function http_get(url, func) {
     fetch(url)
         .then(response => {
