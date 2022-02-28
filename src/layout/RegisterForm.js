@@ -16,10 +16,9 @@ export default function RegisterForm(props) {
   const [localPubK, setLocalPubK] = useState("");
   const [localPriK, setLocalPriK] = useState("");
   const [remotePubK, setRemotePubK] = useState("");
-  const [sealStep1, setSealStep1] = useState(0);
-  const [sealStep2, setSealStep2] = useState(0);
-  const [sealStep3, setSealStep3] = useState(0);
-
+  const [seal1, setSeal1] = useState("");
+  const [seal2, setSeal2] = useState("");
+  const [seal3, setSeal3] = useState("");
 
   function generateKey() {
     window.crypto.subtle.generateKey(
@@ -41,9 +40,22 @@ export default function RegisterForm(props) {
   }
 
   function exchangeKey() {
-    http_get("/exchange_key/" + localPubK, (text) => {
+    http_get("http://127.0.0.1:12345/exchange_key/" + localPubK, (text) => {
+      console.log(text);
       setRemotePubK(text);
     });
+  }
+
+  function remoteSeal(safeMessage) {
+    http_post("http://127.0.0.1:12345/seal", {
+      'safeMessage': safeMessage
+    });
+  }
+
+  function localEncrypt(pubk, cond, secret) {
+    // encrypt secret with remotePubK
+    // hash cond 
+    return "";
   }
 
   function seal() {
@@ -55,6 +67,18 @@ export default function RegisterForm(props) {
       alert("Please set private key to store.");
       return;
     }
+
+    exchangeKey.then(() => {
+      var shares = window.secrets.share(privateKey, 3, 2);
+      setSeal1(localEncrypt(remotePubK, email, shares[0]));
+      setSeal2(localEncrypt(remotePubK, mobile, shares[1]));
+      setSeal3(localEncrypt(remotePubK, password, shares[3]));
+      remoteSeal(seal1);
+    }).then(() => {
+      remoteSeal(seal2);
+    }).then(() => {
+      remoteSeal(seal3);
+    })
   }
 
   useEffect(() => {
