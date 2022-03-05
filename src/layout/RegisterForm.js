@@ -42,14 +42,15 @@ export default function RegisterForm(props) {
   }
 
   function exchangeKey() {
-    http_get("http://127.0.0.1:12345/exchange_key/" + localPubK, (text) => {
+    return http_post("https://47.93.85.187:30001/exchange_key", {'data': localPubK}, (text) => {
       console.log(text);
-      setRemotePubK(text);
+      const remotepk = importRsaKey(text);
+      setRemotePubK(remotepk);
     });
   }
 
   function remoteSeal(safeMessage) {
-    http_post("http://127.0.0.1:12345/seal", {
+    http_post("https://47.93.85.187:30001/seal", {
       'safeMessage': safeMessage
     });
   }
@@ -72,6 +73,8 @@ export default function RegisterForm(props) {
 
   function localSeal(pubk, cond, secret) {
     hashCond(cond).then(h => {
+      console.log("hash ", cond, " to ", h);
+      console.log("pub key type is ", typeof(pubk));
       encryptSecret(pubk, secret)
     })
   }
@@ -86,11 +89,15 @@ export default function RegisterForm(props) {
       return;
     }
 
-    exchangeKey.then(() => {
-      var shares = window.secrets.share(privateKey, 3, 2);
+    exchangeKey().then(() => {
+      console.log(privateKey);
+      console.log(remotePubK);
+      const prik = window.secrets.str2hex(privateKey);
+      var shares = window.secrets.share(prik, 3, 2);
       setSeal1(localSeal(remotePubK, email, shares[0]));
       setSeal2(localSeal(remotePubK, mobile, shares[1]));
       setSeal3(localSeal(remotePubK, password, shares[3]));
+      console.log("seal1", seal1);
       remoteSeal(seal1);
     }).then(() => {
       remoteSeal(seal2);
@@ -193,4 +200,27 @@ async function exportCryptoKey(key) {
   const exportedAsBase64 = window.btoa(exportedAsString);
   const pemExported = `-----BEGIN PUBLIC KEY-----\n${exportedAsBase64}\n-----END PUBLIC KEY-----`;
   return pemExported;
+}
+
+function str2ab(str) {
+  const buf = new ArrayBuffer(str.length);
+  const bufView = new Uint8Array(buf);
+  for (let i = 0, strLen = str.length; i < strLen; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
+}
+
+function importRsaKey(pem) {
+  const binaryDer = str2ab(pem);
+  return window.crypto.subtle.importKey(
+    "spki",
+    binaryDer,
+    {
+      name: "RSA-OAEP",
+      hash: "SHA-256"
+    },
+    true,
+    ["encrypt"]
+  );
 }
