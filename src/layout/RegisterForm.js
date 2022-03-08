@@ -14,104 +14,97 @@ export default function RegisterForm(props) {
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
-  const [privateKey, setPrivateKey] = useState("");
-  const [localPubK, setLocalPubK] = useState("");
-  const [localPriK, setLocalPriK] = useState("");
-  const [remotePubK, setRemotePubK] = useState("");
+  const [secretKey, setSecretKey] = useState("");
+  const [localPubPem, setLocalPubPem] = useState("");
+  const [localPriKey, setLocalPriKey] = useState("");
+  const [remotePubKey, setRemotePubKey] = useState("");
   const [seal1, setSeal1] = useState("");
   const [seal2, setSeal2] = useState("");
   const [seal3, setSeal3] = useState("");
 
-  function generateKey() {
-    window.crypto.subtle.generateKey(
-      {
-        name: "RSA-OAEP",
-        modulusLength: 3072,
-        publicExponent: new Uint8Array([0x00, 0x00, 0x03]), //长度为3的数组，每个数字有8位，共24位
-        hash: "SHA-256"
-      },
-      true,
-      ["encrypt", "decrypt"]
-    ).then((keyPair) => {
-      setLocalPriK(keyPair.privateKey);
-      return exportCryptoKey(keyPair.publicKey);
-    }).then((pubKey) => {
-      setLocalPubK(pubKey);
-      console.log(pubKey);
-    })
-  }
-
-  function exchangeKey() {
-    return http_post("https://47.93.85.187:30001/exchange_key", {'data': localPubK}, (text) => {
-      console.log(text);
-      const remotepk = importRsaKey(text);
-      setRemotePubK(remotepk);
-    });
-  }
-
-  function remoteSeal(safeMessage) {
-    http_post("https://47.93.85.187:30001/seal", {
-      'safeMessage': safeMessage
-    });
-  }
-
   function hashCond(cond) {
-    const encoder = new TextEncoder();
-    const to_hash = encoder.encode(cond);
-    return crypto.subtle.digest("SHA-384", to_hash);
+    var md = window.forge.md.sha256.create();
+    md.update(cond);
+    return md.digest().toHex();
   }
 
-  function encryptSecret(pubk, secret) {
-    const encoder = new TextEncoder();
-    const to_encrypt = encoder.encode(secret);
-    return window.crypto.subtle.encrypt(
-      { name: "RSA-OAEP" },
-      pubk,
-      to_encrypt
-    );
-  }
-
-  function localSeal(pubk, cond, secret) {
-    hashCond(cond).then(h => {
-      console.log("hash ", cond, " to ", h);
-      console.log("pub key type is ", typeof(pubk));
-      encryptSecret(pubk, secret)
-    })
+  function sealPiece(cond, share, n) {
+    var data = {
+      'pubkey': localPubPem,
+      'cond': hashCond(cond),
+      'secret': remotePubKey.encrypt(share)
+    }
+    const axios = require('axios').default;
+    axios.post('/seal', data)
+      .then((result)=> {
+        if(n === 1) {
+          setSeal1(1);
+        } else if (n === 2) {
+          setSeal2(1);
+        } else {
+          setSeal3(1);
+        }
+      });
   }
 
   function seal() {
-    if (localPubK === "") {
+    if (localPubPem === "") {
       alert("Local Key is not ready, please refresh the page!");
       return;
     }
-    if (privateKey === "") {
+    if (secretKey === "") {
       alert("Please set private key to store.");
       return;
     }
-
-    exchangeKey().then(() => {
-      console.log(privateKey);
-      console.log(remotePubK);
-      const prik = window.secrets.str2hex(privateKey);
-      var shares = window.secrets.share(prik, 3, 2);
-      setSeal1(localSeal(remotePubK, email, shares[0]));
-      setSeal2(localSeal(remotePubK, mobile, shares[1]));
-      setSeal3(localSeal(remotePubK, password, shares[3]));
-      console.log("seal1", seal1);
-      remoteSeal(seal1);
-    }).then(() => {
-      remoteSeal(seal2);
-    }).then(() => {
-      remoteSeal(seal3);
-    })
+    const secretHex = window.secrets.str2hex(secretKey);
+    var shares = window.secrets.share(secretHex, 3, 2);
+    sealPiece(email, shares[0], 1);
+    sealPiece(mobile, shares[1], 2);
+    sealPiece(password, shares[2], 3);
   }
+  
+  // after local pub key generated, exchange for remote pub key
+  function exchangeKey() {
+    if (localPubPem !== "") {
+      const axios = require('axios').default;
+      axios.post('/exchange_key', {'data': localPubPem})
+        .then((remotePem)=> {
+          console.log("remote pub pem ", remotePem.data);
+          const remotePub = window.forge.pki.publicKeyFromPem(remotePem.data);
+          console.log("remote pub", remotePub);
+          setRemotePubKey(remotePub);  
+        });
+    }
+  }
+  useEffect(() => {
+    exchangeKey();
+  }, [localPubPem]);
 
   useEffect(() => {
-    generateKey();
-    var key = window.secrets.random(512);
-    var shares = window.secrets.share(key, 3, 2);
-    var comb = window.secrets.combine(shares.slice(0, 2));
-    console.log(comb === key); // => false
+    if(seal1 + seal2 + seal3 === 3) {
+      alert("Seal Completed.");
+    }
+  }, [seal1, seal2, seal3]);
+
+  // init local rsa key pair when page loaded
+  useEffect(() => {
+    var rsa = window.forge.pki.rsa;
+    console.log("rsa is ", rsa);
+    rsa.generateKeyPair({bits: 2048, e: 0x10001, workers: 2}, (error, keypair)=> {
+      console.log(keypair);
+      var pubKey = keypair.publicKey;
+      var priKey = keypair.privateKey;
+      console.log("forge pub key is ", pubKey);
+      console.log("forge private key is ", priKey);
+      setLocalPriKey(priKey);
+      var pubKeyPem = window.forge.pki.publicKeyToPem(pubKey);
+      console.log("forge pub key in PEM ", pubKeyPem);
+      setLocalPubPem(pubKeyPem);  
+    });
+    // var key = window.secrets.random(512);
+    // var shares = window.secrets.share(key, 3, 2);
+    // var comb = window.secrets.combine(shares.slice(0, 2));
+    // console.log(comb === key); // => false
   }, []);
 
   return (
@@ -166,7 +159,7 @@ export default function RegisterForm(props) {
                 fullWidth
                 autoComplete=""
                 variant="standard"
-                onChange={(e) => setPrivateKey(e.target.value)}
+                onChange={(e) => setSecretKey(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
@@ -180,47 +173,3 @@ export default function RegisterForm(props) {
 }
 
 
-/*
-Convert  an ArrayBuffer into a string
-from https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
-*/
-function ab2str(buf) {
-  return String.fromCharCode.apply(null, new Uint8Array(buf));
-}
-
-/*
-Export the given key and write it into the "exported-key" space.
-*/
-async function exportCryptoKey(key) {
-  const exported = await window.crypto.subtle.exportKey(
-    "spki",
-    key
-  );
-  const exportedAsString = ab2str(exported);
-  const exportedAsBase64 = window.btoa(exportedAsString);
-  const pemExported = `-----BEGIN PUBLIC KEY-----\n${exportedAsBase64}\n-----END PUBLIC KEY-----`;
-  return pemExported;
-}
-
-function str2ab(str) {
-  const buf = new ArrayBuffer(str.length);
-  const bufView = new Uint8Array(buf);
-  for (let i = 0, strLen = str.length; i < strLen; i++) {
-    bufView[i] = str.charCodeAt(i);
-  }
-  return buf;
-}
-
-function importRsaKey(pem) {
-  const binaryDer = str2ab(pem);
-  return window.crypto.subtle.importKey(
-    "spki",
-    binaryDer,
-    {
-      name: "RSA-OAEP",
-      hash: "SHA-256"
-    },
-    true,
-    ["encrypt"]
-  );
-}
