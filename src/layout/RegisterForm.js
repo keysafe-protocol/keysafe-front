@@ -22,7 +22,7 @@ export default function RegisterForm(props) {
   const [seal2, setSeal2] = useState("");
   const [seal3, setSeal3] = useState("");
 
-  function hashCond(cond) {
+function hashCond(cond) {
     var md = window.forge.md.sha256.create();
     md.update(cond);
     return md.digest().toHex();
@@ -157,6 +157,7 @@ export default function RegisterForm(props) {
                 name="privatekey"
                 label="Private Key"
                 fullWidth
+                multiline
                 autoComplete=""
                 variant="standard"
                 onChange={(e) => setSecretKey(e.target.value)}
