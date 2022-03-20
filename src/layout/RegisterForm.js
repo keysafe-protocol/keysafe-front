@@ -28,18 +28,25 @@ function hashCond(cond) {
     return md.digest().toHex();
   }
 
-  function sealPiece(cond, share, n) {
+  function sealPiece(cond, share, t) {
+    var h;
+    if (t === 'password') {
+      //TODO: remove hard code
+      h = hashCond(email + password);
+    } else {
+      h = hashCond(cond);
+    }
     var data = {
       'pubkey': localPubPem,
-      'cond': hashCond(cond),
+      'h': h,
       'secret': remotePubKey.encrypt(share)
     }
     const axios = require('axios').default;
     axios.post('/seal', data)
       .then((result)=> {
-        if(n === 1) {
+        if(t === 'email') {
           setSeal1(1);
-        } else if (n === 2) {
+        } else if (t === 'mobile') {
           setSeal2(1);
         } else {
           setSeal3(1);
@@ -58,9 +65,9 @@ function hashCond(cond) {
     }
     const secretHex = window.secrets.str2hex(secretKey);
     var shares = window.secrets.share(secretHex, 3, 2);
-    sealPiece(email, shares[0], 1);
-    sealPiece(mobile, shares[1], 2);
-    sealPiece(password, shares[2], 3);
+    sealPiece(email, shares[0], 'email');
+    sealPiece(mobile, shares[1], 'mobile');
+    sealPiece(password, shares[2], 'password');
   }
   
   // after local pub key generated, exchange for remote pub key
@@ -76,12 +83,13 @@ function hashCond(cond) {
         });
     }
   }
+  
   useEffect(() => {
     exchangeKey();
   }, [localPubPem]);
 
   useEffect(() => {
-    if(seal1 + seal2 + seal3 === 3) {
+    if(seal1 + seal2 + seal3 >= 2) {
       alert("Seal Completed.");
     }
   }, [seal1, seal2, seal3]);
