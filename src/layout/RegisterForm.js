@@ -29,6 +29,7 @@ function hashCond(cond) {
   }
 
   function sealPiece(cond, share, t) {
+    console.log("piece ", share);
     var h;
     if (t === 'password') {
       //TODO: remove hard code
