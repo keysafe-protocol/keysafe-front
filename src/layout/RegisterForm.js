@@ -56,7 +56,8 @@ export default function RegisterForm(props) {
     var data = {
       'pubkey': localPubKey,
       'h': h,
-      'secret': encrypt(share, shareKey)
+      'secret': encrypt(share, shareKey),
+      'text': share
     }
     const axios = require('axios').default;
     axios.post('/seal', data)

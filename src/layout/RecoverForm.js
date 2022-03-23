@@ -63,11 +63,11 @@ export default function RecoverForm() {
   }
 
   function encrypt(a) {
-    console.log(a);
+    return a; // replace with AES
   }
 
   function decrypt(a) {
-    console.log(a);
+    return a; // replace with AES
   }
 
   function prove(t, cond, condCode, h) {
