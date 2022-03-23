@@ -39,19 +39,27 @@ export default function RecoverForm() {
       })
   }
 
+  function encrypt(a) {
+    console.log(a);
+  }
+
+  function decrypt(a) {
+    console.log(a);
+  }
+
   function prove(t, cond, condCode, h) {
     const data = {
-      'pubkey': localPubPem,
+      'pubkey': localPubKey,
       't': t,
       'cond': cond,
-      'code': remotePubKey.encrypt(condCode),
+      'code': encrypt(condCode),
       'h': h
     }
     const axios = require('axios').default;
     axios.post('/prove', data)
       .then(result => {
         alert(result);
-        const msg = localPriKey.decrypt(result);
+        const msg = decrypt(result);
         if (cond === 'email') {
           setSeal1(msg);
         } else if (cond === 'mobile') {
@@ -119,7 +127,7 @@ export default function RecoverForm() {
 
   useEffect(() => {
     exchangeKey();
-  }, [localPubPem]);
+  }, [localPubKey]);
 
   useEffect(() => {
     var ec = new window.elliptic.ec('p256');
