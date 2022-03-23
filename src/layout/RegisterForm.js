@@ -91,7 +91,7 @@ export default function RegisterForm(props) {
   function exchangeKey() {
     if (localPubKey !== "") {
       const axios = require('axios').default;
-      axios.post('/exchange_key', { 'data': localPubKey })
+      axios.post('/exchange_key', { 'pubkey': localPubKey })
         .then((remoteKey) => {
           console.log("remote pub hex ", remoteKey.data);
           var ec = new window.elliptic.ec('p256');
