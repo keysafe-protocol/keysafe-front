@@ -19,9 +19,9 @@ export default function RecoverForm() {
   const [mobileConfirm, setMobileConfirm] = useState("");
   const [password, setPassword] = useState("");
   const [secretKey, setSecretKey] = useState("");
-  const [localPubPem, setLocalPubPem] = useState("");
-  const [localPriKey, setLocalPriKey] = useState("");
-  const [remotePubKey, setRemotePubKey] = useState("");
+  const [localPubKey, setLocalPubKey] = useState("");
+  const [localKeyPair, setLocalKeyPair] = useState("");
+  const [shareKey, setShareKey] = useState("");
   const [seal1, setSeal1] = useState("");
   const [seal2, setSeal2] = useState("");
   const [seal3, setSeal3] = useState("");
@@ -29,7 +29,7 @@ export default function RecoverForm() {
   function notify(t, cond) {
     const axios = require('axios').default;
     const data = {
-      'pubkey': localPubPem,
+      'pubkey': localPubKey,
       't': t,
       'cond': cond
     }
@@ -37,15 +37,6 @@ export default function RecoverForm() {
       .then(result => {
         alert(result);
       })
-  }
-
-  function notify_me(t, cond) {
-    if (t === 'email') {
-      notify('email', cond);
-    } else if (t === 'mobile') {
-      notify('mobile', cond);
-    } else {
-    }
   }
 
   function prove(t, cond, condCode, h) {
@@ -69,19 +60,6 @@ export default function RecoverForm() {
           setSeal3(msg);
         }
       })
-  }
-
-  function exchangeKey() {
-    if (localPubPem !== "") {
-      const axios = require('axios').default;
-      axios.post('/exchange_key', { 'data': localPubPem })
-        .then((remotePem) => {
-          console.log("remote pub pem ", remotePem.data);
-          const remotePub = window.forge.pki.publicKeyFromPem(remotePem.data);
-          console.log("remote pub", remotePub);
-          setRemotePubKey(remotePub);
-        });
-    }
   }
 
   function hashCond(cond) {
@@ -123,26 +101,33 @@ export default function RecoverForm() {
     setSecretKey(comb);
   }
 
+  // after local pub key generated, exchange for remote pub key
+  function exchangeKey() {
+    if (localPubKey !== "") {
+      const axios = require('axios').default;
+      axios.post('/exchange_key', { 'pubkey': localPubKey })
+        .then((remoteKey) => {
+          console.log("remote pub hex ", remoteKey.data);
+          var ec = new window.elliptic.ec('p256');
+          var remoteKeyObj = ec.keyFromPublic(remoteKey.data, 'hex');
+          var bn = localKeyPair.derive(remoteKeyObj.getPublic());
+          console.log(bn.toString(16));
+          setShareKey(bn.toString(16));
+        });
+    }
+  }
+
   useEffect(() => {
     exchangeKey();
   }, [localPubPem]);
 
   useEffect(() => {
-    var rsa = window.forge.pki.rsa;
-    console.log("rsa is ", rsa);
-    rsa.generateKeyPair({ bits: 2048, e: 0x10001, workers: 2 }, (error, keypair) => {
-      console.log(keypair);
-      var pubKey = keypair.publicKey;
-      var priKey = keypair.privateKey;
-      console.log("forge pub key is ", pubKey);
-      console.log("forge private key is ", priKey);
-      setLocalPriKey(priKey);
-      var pubKeyPem = window.forge.pki.publicKeyToPem(pubKey);
-      console.log("forge pub key in PEM ", pubKeyPem);
-      setLocalPubPem(pubKeyPem);
-    });
+    var ec = new window.elliptic.ec('p256');
+    var keypair = ec.genKeyPair();
+    setLocalPubKey(keypair.getPublic().encode('hex'));
+    setLocalKeyPair(keypair);
+    console.log(keypair.getPublic().encode('hex'));
   }, []);
-
 
   return (
     <Container component="main" maxWidth="lg" sx={{ mb: 4 }}>
@@ -185,7 +170,11 @@ export default function RecoverForm() {
                         />
                       </Grid>
                       <Grid container={true} xs={2}>
-                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} variant="text">Send Verification</Button>
+                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} variant="text"
+                                onClick={()=>notify("email", email)}
+                        >
+                          Send Verification
+                        </Button>
                       </Grid>
                     </Grid>
                     <Grid container>

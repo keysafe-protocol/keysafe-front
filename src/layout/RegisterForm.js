@@ -33,10 +33,10 @@ export default function RegisterForm(props) {
   function encrypt(share, shareKey) {
     console.log(shareKey);
     var aesKey = window.forge.util.hexToBytes(shareKey);
-    var cipher = window.forge.cipher.createCipher('AES-GCM', aesKey);
+    var cipher = window.forge.cipher.createCipher('AES-ECB', aesKey);
     var iv = window.forge.random.getBytesSync(16);
     cipher.start({
-      iv: iv, // should be a 12-byte binary-encoded string or byte buffer
+      tagLength: 256
     });
     cipher.update(window.forge.util.createBuffer(share));
     cipher.finish();
