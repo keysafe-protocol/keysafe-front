@@ -329,19 +329,19 @@ export default function RecoverForm() {
                     </Button>
                   </Grid>
                   <Grid item >
-                    <Button variant="contained" disabled={seal1!==""} 
+                    <Button variant="contained" disabled={seal1===""} 
                       onClick={()=>setTextOutput(seal1)}>
                         Shard1
                     </Button>
                   </Grid>
                   <Grid item>
-                    <Button variant="contained" disabled={seal2!==""} 
+                    <Button variant="contained" disabled={seal2===""} 
                       onClick={()=>setTextOutput(seal1)}>
                       Shard2
                     </Button>
                   </Grid>
                   <Grid item >
-                    <Button variant="contained"  disabled={seal3!==""}
+                    <Button variant="contained"  disabled={seal3===""}
                       onClick={()=>setTextOutput(seal1)}>
                       Shard3
                     </Button>
