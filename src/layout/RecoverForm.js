@@ -26,6 +26,7 @@ export default function RecoverForm() {
   const [seal2, setSeal2] = useState("");
   const [seal3, setSeal3] = useState("");
   const [textOutput, setTextOutput] = useState("");
+  const [recoverReady, setRecoverReady] = useState(false);
 
   function notify(t, cond) {
     const axios = require('axios').default;
@@ -40,7 +41,7 @@ export default function RecoverForm() {
       })
   }
 
-  function recoverReady() {
+  useEffect(() => {
     var a1 = 0;
     var a2 = 0;
     var a3 = 0;
@@ -59,8 +60,9 @@ export default function RecoverForm() {
     } else {
       a3 = 1;
     }
-    return (a1 + a2 + a3 < 2);
-  }
+    setRecoverReady(a1 + a2 + a3 < 2);
+  }, [seal1, seal2, seal3]);
+
 
   function encrypt(a) {
     return a; // replace with AES
@@ -81,8 +83,8 @@ export default function RecoverForm() {
     const axios = require('axios').default;
     axios.post('/prove', data)
       .then(result => {
-        alert(result);
-        const msg = decrypt(result);
+        alert(result.data);
+        const msg = decrypt(result.data);
         if (t === 'email') {
           setSeal1(msg);
         } else if (t === 'password') {
@@ -116,17 +118,17 @@ export default function RecoverForm() {
     }
   }
 
-  function recover(share1, share2, share3) {
+  function recover() {
     var s1, s2;
-    if (share1 === "") {
-      s1 = share2;
-      s2 = share3;
-    } else if (share2 === "") {
-      s1 = share1;
-      s2 = share3;
+    if (seal1 === "") {
+      s1 = seal2;
+      s2 = seal3;
+    } else if (seal2 === "") {
+      s1 = seal1;
+      s2 = seal3;
     } else {
-      s1 = share1;
-      s2 = share2;
+      s1 = seal1;
+      s2 = seal2;
     }
     const comb = window.secrets.combine(s1, s2);
     setSecretKey(comb);
