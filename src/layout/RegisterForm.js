@@ -31,7 +31,14 @@ export default function RegisterForm(props) {
   }
 
   function encrypt(share, shareKey) {
-    //window.forge.
+    var cipher = window.forge.cipher.createCipher('AES-GCM', shareKey);
+    var iv = window.forge.random.getBytesSync(16);
+    cipher.start({
+      iv: iv, // should be a 12-byte binary-encoded string or byte buffer
+    });
+    cipher.update(window.forge.util.createBuffer(share));
+    cipher.finish();
+    return cipher.output;
   }
 
   function sealPiece(cond, share, t) {
@@ -159,13 +166,13 @@ export default function RegisterForm(props) {
                   <Box sx={{ px: 2, py: 0.5 }}>
                     <TextField
                       required
-                      id="cell"
-                      name="cell"
-                      label="Please input your Mobile Phone Number here"
+                      id="password"
+                      name="password"
+                      label="Please input your Passphrase here"
                       fullWidth
                       autoComplete=""
                       variant="standard"
-                      onChange={(e) => setMobile(e.target.value)}
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                   </Box>
                 </Paper>
@@ -180,13 +187,13 @@ export default function RegisterForm(props) {
                   <Box sx={{ px: 2, py: 0.5 }}>
                     <TextField
                       required
-                      id="password"
-                      name="password"
-                      label="Please input your Passphrase here"
+                      id="cell"
+                      name="cell"
+                      label="Please input your Mobile Phone Number here"
                       fullWidth
                       autoComplete=""
                       variant="standard"
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => setMobile(e.target.value)}
                     />
                   </Box>
                 </Paper>
