@@ -23,6 +23,7 @@ export default function RegisterForm(props) {
   const [seal1, setSeal1] = useState("");
   const [seal2, setSeal2] = useState("");
   const [seal3, setSeal3] = useState("");
+  const [submitText, setSubmitText] = useState("Submit");
 
   function hashCond(cond) {
     var md = window.forge.md.sha256.create();
@@ -32,18 +33,23 @@ export default function RegisterForm(props) {
 
   function encrypt(share, shareKey) {
     console.log(shareKey);
-    var aesKey = window.forge.util.hexToBytes(shareKey);
-    var cipher = window.forge.cipher.createCipher('AES-ECB', aesKey);
-    var iv = window.forge.random.getBytesSync(16);
-    cipher.start({
-      tagLength: 256
-    });
-    cipher.update(window.forge.util.createBuffer(share));
-    cipher.finish();
-    return cipher.output.toHex();
+    try {
+      var aesKey = window.forge.util.hexToBytes(shareKey);
+      var cipher = window.forge.cipher.createCipher('AES-ECB', aesKey);
+      var iv = window.forge.random.getBytesSync(16);
+      cipher.start({
+        tagLength: 256
+      });
+      cipher.update(window.forge.util.createBuffer(share));
+      cipher.finish();
+      return cipher.output.toHex();  
+    } catch (err) {
+      console.log(err);
+      return "";
+    }
   }
 
-  function sealPiece(cond, share, t) {
+  function sealPiece(t, cond, share) {
     console.log("piece ", share);
     console.log("share Key ", shareKey);
     var h;
@@ -83,9 +89,9 @@ export default function RegisterForm(props) {
     }
     const secretHex = window.secrets.str2hex(secretKey);
     var shares = window.secrets.share(secretHex, 3, 2);
-    sealPiece(email, shares[0], 'email');
-    sealPiece(mobile, shares[1], 'mobile');
-    sealPiece(password, shares[2], 'password');
+    sealPiece('email', email, shares[0]);
+    sealPiece('mobile', mobile, shares[1]);
+    sealPiece('password', password, shares[2]);
   }
 
   // after local pub key generated, exchange for remote pub key
@@ -105,14 +111,15 @@ export default function RegisterForm(props) {
   }
 
   useEffect(() => {
-    exchangeKey();
-  }, [localPubKey]);
+    if (seal1 + seal2 + seal3 == 3) {
+      setSubmitText("Submit Completed!")
+      alert("Seal Completed.");
+    }    
+  }, [seal1, seal2, seal3]);
 
   useEffect(() => {
-    if (seal1 + seal2 + seal3 >= 2) {
-      alert("Seal Completed.");
-    }
-  }, [seal1, seal2, seal3]);
+    exchangeKey();
+  }, [localPubKey]);
 
   useEffect(() => {
     var ec = new window.elliptic.ec('p256');
@@ -133,7 +140,9 @@ export default function RegisterForm(props) {
             Registration
           </Typography>
           <Typography variant="h10" gutterBottom>
-            - Register your private keys to Keysafe Network
+            - Register your private keys to Keysafe Network. After registered, 
+              you can always recover your confidential data with any 2 of 3
+              conditions fulfilled. Remember your conditions.
           </Typography>
           </Box>
           </Grid>
@@ -226,17 +235,31 @@ export default function RegisterForm(props) {
                 </Paper>
               </Box>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={12}>
               <Box sx={{ px: 2, py: 1 }} >
-                <Button variant="outlined" onClick={seal}>Confirm & Submit</Button>
-              </Box>
-            </Grid>
-            <Grid item xs={8}>
-              <Box sx={{ px: 2, py: 1 }} >
-                <Typography>
-                  After registered, you can always recover your confidential data with any 2 of 3
-                  conditions fulfilled. Remember your conditions.
-                </Typography>
+              <Grid container alignItems="center" direction="row" justifyContent="center" spacing={16}>
+                  <Grid item >
+                    <Button variant="contained" disabled={seal1+seal2+seal3===3}
+                      onClick={seal}>
+                        {submitText}
+                    </Button>
+                  </Grid>
+                  <Grid item >
+                    <Button variant="contained" disabled={seal1===""}>
+                        Shard1
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <Button variant="contained" disabled={seal2===""}>
+                      Shard2
+                    </Button>
+                  </Grid>
+                  <Grid item >
+                    <Button variant="contained"  disabled={seal3===""}>
+                      Shard3
+                    </Button>
+                  </Grid>
+                </Grid>
               </Box>
             </Grid>
           </Grid>
