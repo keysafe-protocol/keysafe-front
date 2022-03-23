@@ -91,7 +91,7 @@ export default function RegisterForm(props) {
       axios.post('/exchange_key', { 'data': localPubKey.encode('hex') })
         .then((remoteKey) => {
           console.log("remote pub hex ", remoteKey.data);
-          var ec = new window.elliptic.ec('p256');
+          var ec = new window.elliptic.ec('secp256k1');
           setRemotePubKey(ec.keyFromPublic(remoteKey.data, 'hex'));
           setShareKey(localKeyPair.derive(remotePubKey));
         });
