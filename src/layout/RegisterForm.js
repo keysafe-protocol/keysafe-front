@@ -140,9 +140,8 @@ export default function RegisterForm(props) {
             Registration
           </Typography>
           <Typography variant="h10" gutterBottom>
-            - Register your private keys to Keysafe Network. After registered, 
-              you can always recover your confidential data with any 2 of 3
-              conditions fulfilled. Remember your conditions.
+            - Register your private keys to Keysafe Network. After registered, you can always recover 
+              your confidential data with any 2 of 3 conditions fulfilled. Remember your conditions.
           </Typography>
           </Box>
           </Grid>
