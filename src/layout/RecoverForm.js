@@ -25,6 +25,7 @@ export default function RecoverForm() {
   const [seal1, setSeal1] = useState("");
   const [seal2, setSeal2] = useState("");
   const [seal3, setSeal3] = useState("");
+  const [textOutput, setTextOutput] = useState("");
 
   function notify(t, cond) {
     const axios = require('axios').default;
@@ -37,6 +38,28 @@ export default function RecoverForm() {
       .then(result => {
         alert(result);
       })
+  }
+
+  function recoverReady() {
+    var a1 = 0;
+    var a2 = 0;
+    var a3 = 0;
+    if (seal1 === "") {
+      a1 = 0;
+    } else {
+      a1 = 1;
+    }
+    if (seal2 === "") {
+      a2 = 0;
+    } else {
+      a2 = 1;
+    }
+    if (seal3 === "") {
+      a3 = 0;
+    } else {
+      a3 = 1;
+    }
+    return (a1 + a2 + a3 < 2);
   }
 
   function encrypt(a) {
@@ -62,7 +85,7 @@ export default function RecoverForm() {
         const msg = decrypt(result);
         if (cond === 'email') {
           setSeal1(msg);
-        } else if (cond === 'mobile') {
+        } else if (cond === 'password') {
           setSeal2(msg);
         } else {
           setSeal3(msg);
@@ -107,6 +130,7 @@ export default function RecoverForm() {
     }
     const comb = window.secrets.combine(s1, s2);
     setSecretKey(comb);
+    setTextOutput(comb);
   }
 
   // after local pub key generated, exchange for remote pub key
@@ -199,7 +223,11 @@ export default function RecoverForm() {
                         />
                       </Grid>
                       <Grid container={true} xs={2}>
-                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} variant="text">Submit</Button>
+                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} 
+                          onClick={() => prove_me('email', emailConfirm)}
+                          variant="text">
+                          Submit
+                        </Button>
                       </Grid>
                     </Grid>
                   </Box>
@@ -227,7 +255,11 @@ export default function RecoverForm() {
                     />
                     </Grid>
                     <Grid container={true} xs={2}>
-                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} variant="text">Submit</Button>
+                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} 
+                          onClick={()=>prove_me('password', password)}
+                          variant="text">
+                          Submit
+                        </Button>
                       </Grid>
                     </Grid>
                   </Box>
@@ -255,9 +287,12 @@ export default function RecoverForm() {
                     />
                     </Grid>
                     <Grid container={true} xs={2}>
-                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} variant="text">Send Verification</Button>
+                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} 
+                          onClick={()=>notify('mobile', mobile)}
+                          variant="text">
+                          Send Verification
+                        </Button>
                       </Grid>
-
                     </Grid>
                     <Grid container>
                       <Grid item xs={10}>
@@ -273,9 +308,12 @@ export default function RecoverForm() {
                     />
                     </Grid>
                     <Grid container={true} xs={2}>
-                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} variant="text">Submit</Button>
+                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} 
+                          onClick={() => prove_me('mobile', mobileConfirm)}
+                          variant="text">
+                          Submit
+                        </Button>
                       </Grid>
-
                     </Grid>
                   </Box>
                 </Paper>
@@ -284,26 +322,45 @@ export default function RecoverForm() {
             <Grid item xs={12}>
             <Box sx={{ px: 2, pt: 0.5 }}>
                 <Grid container alignItems="center" direction="row" justifyContent="center" spacing={16}>
-                  <Grid item ><Tooltip title=""><Button variant="contained" disabled={true}>Recover</Button></Tooltip></Grid>
-                  <Grid item ><Tooltip title=""><Button variant="contained" disabled={true} >Shard1</Button></Tooltip></Grid>
-                  <Grid item><Tooltip title=""><Button variant="contained" disabled={true} >Shard2</Button></Tooltip></Grid>
-                  <Grid item ><Tooltip title=""><Button variant="contained"  disabled={true}>Shard3</Button></Tooltip></Grid>
+                  <Grid item >
+                    <Button variant="contained" disabled={recoverReady}
+                      onClick={recover}>
+                        Recover
+                    </Button>
+                  </Grid>
+                  <Grid item >
+                    <Button variant="contained" disabled={seal1!==""} 
+                      onClick={()=>setTextOutput(seal1)}>
+                        Shard1
+                    </Button>
+                  </Grid>
+                  <Grid item>
+                    <Button variant="contained" disabled={seal2!==""} 
+                      onClick={()=>setTextOutput(seal1)}>
+                      Shard2
+                    </Button>
+                  </Grid>
+                  <Grid item >
+                    <Button variant="contained"  disabled={seal3!==""}
+                      onClick={()=>setTextOutput(seal1)}>
+                      Shard3
+                    </Button>
+                  </Grid>
                 </Grid>
               </Box>
             </Grid>
             <Grid item xs={12}>
             <Box sx={{ px: 2, pt: 0.5 }}>
             <TextField
-                      id="privatekey"
-                      name="privatekey"
-                      label="Recover Data will be displayed here."
-                      fullWidth
-                      multiline
-                      autoComplete=""
-                      variant="outlined"
-                      onChange={(e) => setSecretKey(e.target.value)}
-                    />
-
+              id="privatekey"
+              name="privatekey"
+              label="Recover Data will be displayed here."
+              fullWidth
+              multiline
+              autoComplete=""
+              variant="outlined"
+              value={textOutput}
+            />
             </Box>
             </Grid>
           </Grid>
