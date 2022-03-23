@@ -8,6 +8,7 @@ import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import { Box } from '@mui/system';
 import Chip from '@mui/material/Chip';
+import aes from 'crypto-js/aes';
 
 
 export default function RegisterForm(props) {
@@ -32,7 +33,7 @@ export default function RegisterForm(props) {
   function encrypt(share, shareKey) {
     console.log(shareKey);
     var aesKey = window.forge.util.hexToBytes(shareKey);
-    var cipher = window.forge.cipher.createCipher('AES-GCM', shareKey);
+    var cipher = window.forge.cipher.createCipher('AES-GCM', aesKey);
     var iv = window.forge.random.getBytesSync(16);
     cipher.start({
       iv: iv, // should be a 12-byte binary-encoded string or byte buffer
