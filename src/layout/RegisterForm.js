@@ -40,7 +40,7 @@ export default function RegisterForm(props) {
     });
     cipher.update(window.forge.util.createBuffer(share));
     cipher.finish();
-    return cipher.output;
+    return cipher.output.toHex();
   }
 
   function sealPiece(cond, share, t) {
@@ -91,7 +91,7 @@ export default function RegisterForm(props) {
   function exchangeKey() {
     if (localPubKey !== "") {
       const axios = require('axios').default;
-      axios.post('/exchange_key', { 'data': localPubKey.encode('hex') })
+      axios.post('/exchange_key', { 'data': localPubKey })
         .then((remoteKey) => {
           console.log("remote pub hex ", remoteKey.data);
           var ec = new window.elliptic.ec('p256');
@@ -116,7 +116,7 @@ export default function RegisterForm(props) {
   useEffect(() => {
     var ec = new window.elliptic.ec('p256');
     var keypair = ec.genKeyPair();
-    setLocalPubKey(keypair.getPublic());
+    setLocalPubKey(keypair.getPublic().encode('hex'));
     setLocalKeyPair(keypair);
     console.log(keypair.getPublic().encode('hex'));
   }, []);
