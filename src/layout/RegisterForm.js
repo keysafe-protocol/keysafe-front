@@ -19,7 +19,6 @@ export default function RegisterForm(props) {
   const [localPubKey, setLocalPubKey] = useState("");
   const [localKeyPair, setLocalKeyPair] = useState("");
   const [shareKey, setShareKey] = useState("");
-  const [remotePubKey, setRemotePubKey] = useState("");
   const [seal1, setSeal1] = useState("");
   const [seal2, setSeal2] = useState("");
   const [seal3, setSeal3] = useState("");
@@ -91,9 +90,10 @@ export default function RegisterForm(props) {
       axios.post('/exchange_key', { 'data': localPubKey.encode('hex') })
         .then((remoteKey) => {
           console.log("remote pub hex ", remoteKey.data);
-          var ec = new window.elliptic.ec('secp256k1');
-          setRemotePubKey(ec.keyFromPublic(remoteKey.data, 'hex'));
-          setShareKey(localKeyPair.derive(remotePubKey));
+          var ec = new window.elliptic.ec('p256');
+          var remoteKeyObj = ec.keyFromPublic(remoteKey.data, 'hex');
+          console.log(remoteKeyObj);
+          setShareKey(localKeyPair.derive(remoteKeyObj));
         });
     }
   }
