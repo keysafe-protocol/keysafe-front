@@ -4,9 +4,10 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { useState, useEffect } from 'react';
-import { http_get, http_post } from './utils';
 import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
+import { Box } from '@mui/system';
+import Chip from '@mui/material/Chip';
 
 
 export default function RegisterForm(props) {
@@ -15,17 +16,22 @@ export default function RegisterForm(props) {
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [secretKey, setSecretKey] = useState("");
-  const [localPubPem, setLocalPubPem] = useState("");
-  const [localPriKey, setLocalPriKey] = useState("");
+  const [localPubKey, setLocalPubKey] = useState("");
+  const [localKeyPair, setLocalKeyPair] = useState("");
+  const [shareKey, setShareKey] = useState("");
   const [remotePubKey, setRemotePubKey] = useState("");
   const [seal1, setSeal1] = useState("");
   const [seal2, setSeal2] = useState("");
   const [seal3, setSeal3] = useState("");
 
-function hashCond(cond) {
+  function hashCond(cond) {
     var md = window.forge.md.sha256.create();
     md.update(cond);
     return md.digest().toHex();
+  }
+
+  function encrypt(share, shareKey) {
+    //window.forge.
   }
 
   function sealPiece(cond, share, t) {
@@ -38,14 +44,14 @@ function hashCond(cond) {
       h = hashCond(cond);
     }
     var data = {
-      'pubkey': localPubPem,
+      'pubkey': localPubKey,
       'h': h,
-      'secret': remotePubKey.encrypt(share)
+      'secret': encrypt(share, shareKey)
     }
     const axios = require('axios').default;
     axios.post('/seal', data)
-      .then((result)=> {
-        if(t === 'email') {
+      .then((result) => {
+        if (t === 'email') {
           setSeal1(1);
         } else if (t === 'mobile') {
           setSeal2(1);
@@ -56,7 +62,7 @@ function hashCond(cond) {
   }
 
   function seal() {
-    if (localPubPem === "") {
+    if (localPubKey === "") {
       alert("Local Key is not ready, please refresh the page!");
       return;
     }
@@ -70,110 +76,155 @@ function hashCond(cond) {
     sealPiece(mobile, shares[1], 'mobile');
     sealPiece(password, shares[2], 'password');
   }
-  
+
   // after local pub key generated, exchange for remote pub key
   function exchangeKey() {
-    if (localPubPem !== "") {
+    if (localPubKey !== "") {
       const axios = require('axios').default;
-      axios.post('/exchange_key', {'data': localPubPem})
-        .then((remotePem)=> {
-          console.log("remote pub pem ", remotePem.data);
-          const remotePub = window.forge.pki.publicKeyFromPem(remotePem.data);
-          console.log("remote pub", remotePub);
-          setRemotePubKey(remotePub);  
+      axios.post('/exchange_key', { 'data': localPubKey.encode('hex') })
+        .then((remoteKey) => {
+          console.log("remote pub hex ", remoteKey.data);
+          var ec = new window.elliptic.ec('p256');
+          setRemotePubKey(ec.keyFromPublic(remoteKey.data, 'hex'));
+          setShareKey(localKeyPair.derive(remotePubKey));
         });
     }
   }
-  
-  useEffect(() => {
-    exchangeKey();
-  }, [localPubPem]);
 
   useEffect(() => {
-    if(seal1 + seal2 + seal3 >= 2) {
+    exchangeKey();
+  }, [localPubKey]);
+
+  useEffect(() => {
+    if (seal1 + seal2 + seal3 >= 2) {
       alert("Seal Completed.");
     }
   }, [seal1, seal2, seal3]);
 
-  // init local rsa key pair when page loaded
   useEffect(() => {
-    var rsa = window.forge.pki.rsa;
-    console.log("rsa is ", rsa);
-    rsa.generateKeyPair({bits: 2048, e: 0x10001, workers: 2}, (error, keypair)=> {
-      console.log(keypair);
-      var pubKey = keypair.publicKey;
-      var priKey = keypair.privateKey;
-      console.log("forge pub key is ", pubKey);
-      console.log("forge private key is ", priKey);
-      setLocalPriKey(priKey);
-      var pubKeyPem = window.forge.pki.publicKeyToPem(pubKey);
-      console.log("forge pub key in PEM ", pubKeyPem);
-      setLocalPubPem(pubKeyPem);  
-    });
-    // var key = window.secrets.random(512);
-    // var shares = window.secrets.share(key, 3, 2);
-    // var comb = window.secrets.combine(shares.slice(0, 2));
-    // console.log(comb === key); // => false
+    var ec = new window.elliptic.ec('p256');
+    var keypair = ec.genKeyPair();
+    setLocalPubKey(keypair.getPublic());
+    setLocalKeyPair(keypair);
+    console.log(keypair.getPublic().encode('hex'));
   }, []);
 
   return (
-    <Container component="main" maxWidth="lg" sx={{ mb: 4 }}>
-      <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
+    <Container component="main" maxWidth="lg" sx={{ mb: 2 }}>
+      <Paper variant="outlined" sx={{ my: { xs: 1, md: 1 }, p: { xs: 1, md: 1 } }}>
         <React.Fragment>
-          <Typography variant="h6" gutterBottom>
-            Register your private key to KeySafe
+        <Grid container spacing={3}>
+          <Grid item xs={6}>
+            <Box sx={{px:2 , pt:1}}>
+          <Typography variant="h4" sx={{ fontWeight: 'bold' }} gutterBottom>
+            Registration
           </Typography>
-          <Grid container spacing={3}>
+          <Typography variant="h10" gutterBottom>
+            - Register your private keys to Keysafe Network
+          </Typography>
+          </Box>
+          </Grid>
+          <Grid item xs={6} container justifyContent="flex-end">
+            <Box sx={{px:2, pt:1}}>
+              <Chip label="2-of-3 Threshold Mode" size="large" color="warning" variant="outlined"/>
+          </Box>
+          </Grid>
             <Grid item xs={12}>
-              <TextField
-                required
-                id="email"
-                name="email"
-                label="Email Account"
-                fullWidth
-                autoComplete=""
-                variant="standard"
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <Box sx={{ px: 2, pt: 1 }}>
+                <Typography variant="h10" sx={{ fontWeight: 'bold' }} gutterBottom>
+                  Set Recovery Condition 1
+                </Typography>
+                <Paper variant='outlined' >
+                  <Box sx={{ px: 2, pt: 1 }}>
+                    <TextField
+                      required
+                      id="email"
+                      name="email"
+                      label="Please input your email here"
+                      fullWidth
+                      autoComplete=""
+                      variant="standard"
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </Box>
+                </Paper>
+              </Box>
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                required
-                id="cell"
-                name="cell"
-                label="Mobile N.O."
-                fullWidth
-                autoComplete=""
-                variant="standard"
-                onChange={(e) => setMobile(e.target.value)}
-              />
+              <Box sx={{ px: 2, pt: 1 }}>
+                <Typography variant="h10" sx={{ fontWeight: 'bold' }} gutterBottom>
+                  Set Recovery Condition 2
+                </Typography>
+                <Paper variant='outlined' >
+                  <Box sx={{ px: 2, pt: 1 }}>
+                    <TextField
+                      required
+                      id="cell"
+                      name="cell"
+                      label="Please input your Mobile Phone Number here"
+                      fullWidth
+                      autoComplete=""
+                      variant="standard"
+                      onChange={(e) => setMobile(e.target.value)}
+                    />
+                  </Box>
+                </Paper>
+              </Box>
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                required
-                id="password"
-                name="password"
-                label="Password"
-                fullWidth
-                autoComplete=""
-                variant="standard"
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <Box sx={{ px: 2, pt: 1 }}>
+                <Typography variant="h10" sx={{ fontWeight: 'bold' }} gutterBottom>
+                  Set Recovery Condition 3
+                </Typography>
+                <Paper variant='outlined' >
+                  <Box sx={{ px: 2, pt: 1 }}>
+                    <TextField
+                      required
+                      id="password"
+                      name="password"
+                      label="Please input your passphrase here"
+                      fullWidth
+                      autoComplete=""
+                      variant="standard"
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </Box>
+                </Paper>
+              </Box>
             </Grid>
             <Grid item xs={12}>
-              <TextField
-                id="privatekey"
-                name="privatekey"
-                label="Private Key"
-                fullWidth
-                multiline
-                autoComplete=""
-                variant="standard"
-                onChange={(e) => setSecretKey(e.target.value)}
-              />
+              <Box sx={{ px: 2, pt: 1 }}>
+                <Typography variant="h10" sx={{ fontWeight: 'bold' }} gutterBottom>
+                  Confidential Data
+                </Typography>
+                <Paper variant='outlined' >
+                  <Box sx={{ px: 2, pt: 1 }}>
+                    <TextField
+                      id="privatekey"
+                      name="privatekey"
+                      label="Please input your confidential data here"
+                      fullWidth
+                      multiline
+                      autoComplete=""
+                      variant="standard"
+                      onChange={(e) => setSecretKey(e.target.value)}
+                    />
+                  </Box>
+                </Paper>
+              </Box>
             </Grid>
-            <Grid item xs={12}>
-              <Button variant="outlined" onClick={seal}>Submit</Button>
+            <Grid item xs={4}>
+              <Box sx={{ px: 2, py: 1 }} >
+                <Button variant="outlined" onClick={seal}>Confirm & Submit</Button>
+              </Box>
+            </Grid>
+            <Grid item xs={8}>
+              <Box sx={{ px: 2, py: 1 }} >
+                <Typography>
+                  After registered, you can always recover your confidential data with any 2 of 3
+                  conditions fulfilled. Remember your conditions.
+                </Typography>
+              </Box>
             </Grid>
           </Grid>
         </React.Fragment>
