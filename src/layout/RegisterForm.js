@@ -115,8 +115,8 @@ export default function RegisterForm(props) {
         <React.Fragment>
         <Grid container spacing={3}>
           <Grid item xs={6}>
-            <Box sx={{px:2 , pt:1}}>
-          <Typography variant="h4" sx={{ fontWeight: 'bold' }} gutterBottom>
+            <Box sx={{px:2 , pt:0.5}}>
+          <Typography variant="h5" sx={{ fontWeight: 'bold' }} gutterBottom>
             Registration
           </Typography>
           <Typography variant="h10" gutterBottom>
@@ -125,22 +125,22 @@ export default function RegisterForm(props) {
           </Box>
           </Grid>
           <Grid item xs={6} container justifyContent="flex-end">
-            <Box sx={{px:2, pt:1}}>
+            <Box sx={{px:2, pt:0.5}}>
               <Chip label="2-of-3 Threshold Mode" size="large" color="warning" variant="outlined"/>
           </Box>
           </Grid>
             <Grid item xs={12}>
-              <Box sx={{ px: 2, pt: 1 }}>
+              <Box sx={{ px: 2, pt: 0.5 }}>
                 <Typography variant="h10" sx={{ fontWeight: 'bold' }} gutterBottom>
                   Set Recovery Condition 1
                 </Typography>
                 <Paper variant='outlined' >
-                  <Box sx={{ px: 2, pt: 1 }}>
+                  <Box sx={{ px: 2, py: 0.5 }}>
                     <TextField
                       required
                       id="email"
                       name="email"
-                      label="Please input your email here"
+                      label="Please input your Email here"
                       fullWidth
                       autoComplete=""
                       variant="standard"
@@ -151,12 +151,12 @@ export default function RegisterForm(props) {
               </Box>
             </Grid>
             <Grid item xs={12}>
-              <Box sx={{ px: 2, pt: 1 }}>
+              <Box sx={{ px: 2, pt: 0.5 }}>
                 <Typography variant="h10" sx={{ fontWeight: 'bold' }} gutterBottom>
                   Set Recovery Condition 2
                 </Typography>
                 <Paper variant='outlined' >
-                  <Box sx={{ px: 2, pt: 1 }}>
+                  <Box sx={{ px: 2, py: 0.5 }}>
                     <TextField
                       required
                       id="cell"
@@ -172,17 +172,17 @@ export default function RegisterForm(props) {
               </Box>
             </Grid>
             <Grid item xs={12}>
-              <Box sx={{ px: 2, pt: 1 }}>
+              <Box sx={{ px: 2, pt: 0.5 }}>
                 <Typography variant="h10" sx={{ fontWeight: 'bold' }} gutterBottom>
                   Set Recovery Condition 3
                 </Typography>
                 <Paper variant='outlined' >
-                  <Box sx={{ px: 2, pt: 1 }}>
+                  <Box sx={{ px: 2, py: 0.5 }}>
                     <TextField
                       required
                       id="password"
                       name="password"
-                      label="Please input your passphrase here"
+                      label="Please input your Passphrase here"
                       fullWidth
                       autoComplete=""
                       variant="standard"
@@ -193,16 +193,16 @@ export default function RegisterForm(props) {
               </Box>
             </Grid>
             <Grid item xs={12}>
-              <Box sx={{ px: 2, pt: 1 }}>
+              <Box sx={{ px: 2, pt: 0.5 }}>
                 <Typography variant="h10" sx={{ fontWeight: 'bold' }} gutterBottom>
                   Confidential Data
                 </Typography>
                 <Paper variant='outlined' >
-                  <Box sx={{ px: 2, pt: 1 }}>
+                  <Box sx={{ px: 2, py: 0.5 }}>
                     <TextField
                       id="privatekey"
                       name="privatekey"
-                      label="Please input your confidential data here"
+                      label="Please input your Confidential Data here"
                       fullWidth
                       multiline
                       autoComplete=""

@@ -7,6 +7,8 @@ import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import { useState, useEffect } from 'react';
 import Box from '@material-ui/core/Box';
+import Chip from '@mui/material/Chip';
+import Tooltip from '@mui/material/Tooltip';
 
 
 export default function RecoverForm() {
@@ -144,162 +146,170 @@ export default function RecoverForm() {
 
   return (
     <Container component="main" maxWidth="lg" sx={{ mb: 4 }}>
-      <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
+      <Paper variant="outlined" sx={{ my: { xs: 1, md: 1 }, p: { xs: 1, md: 1 } }}>
         <React.Fragment>
-          <Typography variant="h6" gutterBottom>
-            Recover your private key from KeySafe
-          </Typography>
-            <Grid container spacing={3}>
-              <Grid item xs={12} sm={2}>
-                <TextField
-                  required
-                  id="email"
-                  name="email"
-                  label="Email Account"
-                  fullWidth
-                  autoComplete=""
-                  variant="standard"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} sm={2} style={{ display: "flex", justifyContent: "flex-bottom" }} >
-                <Button variant="outlined" onClick={() => notify_me('email', email)}>
-                  Notify Me
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={2}>
-                <TextField
-                  required
-                  id="emailAuthCode"
-                  name="emailAuthCode"
-                  label="Email Confirmation Code"
-                  fullWidth
-                  autoComplete=""
-                  variant="standard"
-                  onChange={(e) => setEmailConfirm(e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} sm={2} style={{ display: "flex", justifyContent: "flex-bottom" }} >
-                <Button variant="outlined" onClick={() => prove_me('email', email)}>
-                  Prove Me
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  id="piece1"
-                  name="piece1"
-                  label="Private Key Piece1"
-                  fullWidth
-                  autoComplete=""
-                  multiline
-                  variant="standard"
-                  value={seal1}
-                  onChange={(e) => (e.target.value)}
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={2}>
-                <TextField
-                  required
-                  id="mobile"
-                  name="mobile"
-                  label="Mobile N.O."
-                  fullWidth
-                  autoComplete=""
-                  variant="standard"
-                  onChange={(e) => setMobile(e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} sm={2} style={{ display: "flex", justifyContent: "flex-bottom" }} >
-                <Button variant="outlined" onClick={() => notify_me('mobile', mobile)}>
-                  Notify Me
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={2}>
-                <TextField
-                  required
-                  id="mobileConfirmCode"
-                  name="mobileConfirmCode"
-                  label="Mobile Confirmation Code"
-                  fullWidth
-                  autoComplete=""
-                  variant="standard"
-                  onChange={(e) => setMobileConfirm(e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} sm={2} style={{ display: "flex", justifyContent: "flex-bottom" }} >
-                <Button variant="outlined" onClick={() => prove_me('mobile', mobile)}>
-                  Prove Me
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  required
-                  id="piece2"
-                  name="piece2"
-                  label="Private Key Piece2"
-                  fullWidth
-                  autoComplete=""
-                  variant="standard"
-                  value={seal2}
-                  onChange={(e) => (e.target.value)}
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={2}>
-                <TextField
-                  required
-                  id="password"
-                  name="password"
-                  label="Password"
-                  fullWidth
-                  autoComplete=""
-                  variant="standard"
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} sm={2} style={{ display: "flex", justifyContent: "flex-bottom" }}> 
-                <Button variant="outlined" onClick={() => prove_me('password', password)}>
-                  Prove Me
-                </Button>
-              </Grid>
-              <Grid item xs={12} sm={2}>
-              </Grid>
-              <Grid item xs={12} sm={2}>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  required
-                  id="piece1"
-                  name="piece1"
-                  label="Private Key Piece3"
-                  fullWidth
-                  autoComplete=""
-                  variant="standard"
-                  value={seal3}
-                  onChange={(e) => (e.target.value)}
-                />
-              </Grid>
-
-              <Grid item xs={12} sm={12}>
-                <TextField
-                  id="privatekey"
-                  name="privatekey"
-                  label="Private Key"
-                  fullWidth
-                  multiline
-                  autoComplete=""
-                  variant="standard"
-                  value={secretKey}
-                  onChange={(e) => (e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} style={{ display: "flex", justifyContent: "flex-bottom" }}>
-                <Button variant="outlined" onClick={() => recover(seal1, seal2, seal3)}>
-                  Recover
-                </Button>
-              </Grid>
+          <Grid container spacing={3}>
+            <Grid item xs={6}>
+              <Box sx={{ px: 2, pt: 0.5 }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold' }} gutterBottom>
+                  Recovery
+                </Typography>
+                <Typography variant="h10" gutterBottom>
+                  - Claim your registered Confidential Data from Keysafe Network
+                </Typography>
+              </Box>
             </Grid>
+            <Grid item xs={6} container justifyContent="flex-end">
+              <Box sx={{ px: 2, pt: 0.5 }}>
+                <Chip label="2-of-3 Threshold Mode" size="large" color="warning" variant="outlined" />
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Box sx={{ px: 2, pt: 0.5 }}>
+                <Typography variant="h10" sx={{ fontWeight: 'bold' }} gutterBottom>
+                  Fulfill Recovery Condition 1
+                </Typography>
+                <Paper variant='outlined' >
+                  <Box sx={{ px: 2, py: 0.5 }}>
+                    <Grid container>
+                      <Grid item xs={10}>
+                        <TextField
+                          required
+                          id="email"
+                          name="email"
+                          label="Enter your Email registered for recovery verification"
+                          fullWidth
+                          autoComplete=""
+                          variant="standard"
+                          onChange={(e) => setEmail(e.target.value)}
+                        />
+                      </Grid>
+                      <Grid container={true} xs={2}>
+                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} variant="text">Send Verification</Button>
+                      </Grid>
+                    </Grid>
+                    <Grid container>
+                      <Grid item xs={10}>
+                        <TextField
+                          required
+                          id="emailConfirm"
+                          name="emailConfirm"
+                          label="Enter the verification code you received"
+                          fullWidth
+                          autoComplete=""
+                          variant="standard"
+                          onChange={(e) => setEmailConfirm(e.target.value)}
+                        />
+                      </Grid>
+                      <Grid container={true} xs={2}>
+                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} variant="text">Submit</Button>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </Paper>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Box sx={{ px: 2, pt: 0.5 }}>
+                <Typography variant="h10" sx={{ fontWeight: 'bold' }} gutterBottom>
+                  Fulfill Recovery Condition 2
+                </Typography>
+                <Paper variant='outlined' >
+                  <Box sx={{ px: 2, py: 0.5 }}>
+                  <Grid container>
+                      <Grid item xs={10}>
+                    <TextField
+                      required
+                      id="password"
+                      name="password"
+                      label="Enter your Passphrase for recovery verification"
+                      fullWidth
+                      autoComplete=""
+                      variant="standard"
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                    </Grid>
+                    <Grid container={true} xs={2}>
+                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} variant="text">Submit</Button>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </Paper>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Box sx={{ px: 2, pt: 0.5 }}>
+                <Typography variant="h10" sx={{ fontWeight: 'bold' }} gutterBottom>
+                  Fulfill Recovery Condition 3
+                </Typography>
+                <Paper variant='outlined' >
+                  <Box sx={{ px: 2, py: 0.5 }}>
+                  <Grid container>
+                      <Grid item xs={10}>
+                    <TextField
+                      required
+                      id="mobile"
+                      name="mobile"
+                      label="Enter your Mobile Phone Number registered for recovery verification"
+                      fullWidth
+                      autoComplete=""
+                      variant="standard"
+                      onChange={(e) => setMobile(e.target.value)}
+                    />
+                    </Grid>
+                    <Grid container={true} xs={2}>
+                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} variant="text">Send Verification</Button>
+                      </Grid>
+
+                    </Grid>
+                    <Grid container>
+                      <Grid item xs={10}>
+                    <TextField
+                      required
+                      id="mobileConfirm"
+                      name="mobileConfirm"
+                      label="Enter the verification code you received"
+                      fullWidth
+                      autoComplete=""
+                      variant="standard"
+                      onChange={(e) => setMobileConfirm(e.target.value)}
+                    />
+                    </Grid>
+                    <Grid container={true} xs={2}>
+                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} variant="text">Submit</Button>
+                      </Grid>
+
+                    </Grid>
+                  </Box>
+                </Paper>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+            <Box sx={{ px: 2, pt: 0.5 }}>
+                <Grid container alignItems="center" direction="row" justifyContent="center" spacing={16}>
+                  <Grid item ><Tooltip title=""><Button variant="contained" disabled={true}>Recover</Button></Tooltip></Grid>
+                  <Grid item ><Tooltip title=""><Button variant="contained" disabled={true} >Shard1</Button></Tooltip></Grid>
+                  <Grid item><Tooltip title=""><Button variant="contained" disabled={true} >Shard2</Button></Tooltip></Grid>
+                  <Grid item ><Tooltip title=""><Button variant="contained"  disabled={true}>Shard3</Button></Tooltip></Grid>
+                </Grid>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+            <Box sx={{ px: 2, pt: 0.5 }}>
+            <TextField
+                      id="privatekey"
+                      name="privatekey"
+                      label="Recover Data will be displayed here."
+                      fullWidth
+                      multiline
+                      autoComplete=""
+                      variant="outlined"
+                      onChange={(e) => setSecretKey(e.target.value)}
+                    />
+
+            </Box>
+            </Grid>
+          </Grid>
         </React.Fragment>
       </Paper>
     </Container>
