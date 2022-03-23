@@ -83,9 +83,9 @@ export default function RecoverForm() {
       .then(result => {
         alert(result);
         const msg = decrypt(result);
-        if (cond === 'email') {
+        if (t === 'email') {
           setSeal1(msg);
-        } else if (cond === 'password') {
+        } else if (t === 'password') {
           setSeal2(msg);
         } else {
           setSeal3(msg);
@@ -336,13 +336,13 @@ export default function RecoverForm() {
                   </Grid>
                   <Grid item>
                     <Button variant="contained" disabled={seal2===""} 
-                      onClick={()=>setTextOutput(seal1)}>
+                      onClick={()=>setTextOutput(seal2)}>
                       Shard2
                     </Button>
                   </Grid>
                   <Grid item >
                     <Button variant="contained"  disabled={seal3===""}
-                      onClick={()=>setTextOutput(seal1)}>
+                      onClick={()=>setTextOutput(seal3)}>
                       Shard3
                     </Button>
                   </Grid>
