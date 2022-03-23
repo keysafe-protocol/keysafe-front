@@ -31,6 +31,7 @@ export default function RegisterForm(props) {
 
   function encrypt(share, shareKey) {
     console.log(shareKey);
+    var aesKey = window.forge.util.hexToBytes(shareKey);
     var cipher = window.forge.cipher.createCipher('AES-GCM', shareKey);
     var iv = window.forge.random.getBytesSync(16);
     cipher.start({
@@ -95,6 +96,7 @@ export default function RegisterForm(props) {
           var ec = new window.elliptic.ec('p256');
           var remoteKeyObj = ec.keyFromPublic(remoteKey.data, 'hex');
           var bn = localKeyPair.derive(remoteKeyObj.getPublic());
+          console.log(bn.toString(16));
           setShareKey(bn.toString(16));
         });
     }
