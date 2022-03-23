@@ -93,7 +93,7 @@ export default function RegisterForm(props) {
           var ec = new window.elliptic.ec('p256');
           var remoteKeyObj = ec.keyFromPublic(remoteKey.data, 'hex');
           console.log(remoteKeyObj);
-          setShareKey(localKeyPair.derive(remoteKeyObj));
+          setShareKey(localKeyPair.derive(remoteKeyObj.getPublic()));
         });
     }
   }
