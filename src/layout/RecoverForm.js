@@ -290,7 +290,7 @@ export default function RecoverForm() {
                     </Grid>
                     <Grid container={true} xs={2}>
                         <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} 
-                          onClick={()=>notify('mobile', mobile)}
+                          onClick={()=>alert("SMS is not supported, will coming soon.")}
                           variant="text">
                           Send Verification
                         </Button>
@@ -311,7 +311,7 @@ export default function RecoverForm() {
                     </Grid>
                     <Grid container={true} xs={2}>
                         <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} 
-                          onClick={() => prove('mobile', mobile, mobileConfirm)}
+                          onClick={() => alert("SMS is not supported, will coming soon.")}
                           variant="text">
                           Submit
                         </Button>

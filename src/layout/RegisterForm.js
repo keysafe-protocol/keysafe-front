@@ -85,8 +85,8 @@ export default function RegisterForm(props) {
       alert("Local Key is not ready, please refresh the page!");
       return;
     }
-    if (secretKey === "") {
-      alert("Please set private key to store.");
+    if (secretKey === "" || !/^[0-9a-fA-F]+$/.test(secretKey)) {
+      alert("Only hex formatted private key is supported for now.");
       return;
     }
     const shares = window.secrets.share(secretKey, 3, 2);
