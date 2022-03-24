@@ -18,6 +18,7 @@ export default function RecoverForm() {
   const [mobile, setMobile] = useState("");
   const [mobileConfirm, setMobileConfirm] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
   const [secretKey, setSecretKey] = useState("");
   const [localPubKey, setLocalPubKey] = useState("");
   const [localKeyPair, setLocalKeyPair] = useState("");
@@ -29,15 +30,26 @@ export default function RecoverForm() {
   const [recoverReady, setRecoverReady] = useState(false);
 
   function notify(t, cond) {
+    var h;
+    if (t === 'password') {
+      //TODO: remove hard code
+      h = hashCond(email + password);
+    } else {
+      h = hashCond(cond);
+    }
     const axios = require('axios').default;
     const data = {
       'pubkey': localPubKey,
       't': t,
-      'cond': cond
+      'cond': cond,
+      'h': h
     }
     axios.post('/notify', data)
       .then(result => {
-        alert(result);
+        console.log('notify done');
+        if (t === 'password') {
+          setPasswordConfirm(result.data);
+        }
       })
   }
 
@@ -63,6 +75,9 @@ export default function RecoverForm() {
     setRecoverReady(a1 + a2 + a3 < 2);
   }, [seal1, seal2, seal3]);
 
+  useEffect(() => {
+    prove('password', password, passwordConfirm);
+  }, [passwordConfirm]);
 
   function encrypt(a) {
     return a; // replace with AES
@@ -72,13 +87,12 @@ export default function RecoverForm() {
     return a; // replace with AES
   }
 
-  function prove(t, cond, condCode, h) {
+  function prove(t, cond, condCode) {
     const data = {
       'pubkey': localPubKey,
       't': t,
       'cond': cond,
-      'code': encrypt(condCode),
-      'h': h
+      'code': encrypt(condCode).toString(),
     }
     const axios = require('axios').default;
     axios.post('/prove', data)
@@ -93,7 +107,7 @@ export default function RecoverForm() {
           setSeal3(msg);
         }
       })
-  }
+    }
 
   function hashCond(cond) {
     var md = window.forge.md.sha256.create();
@@ -101,22 +115,6 @@ export default function RecoverForm() {
     return md.digest().toHex();
   }
 
-  function prove_me(t, cond) {
-    var h;
-    if (t === 'password') {
-      //TODO: remove hard code
-      h = hashCond(email + password);
-    } else {
-      h = hashCond(cond);
-    }
-    if (t === 'email') {
-      prove('email', cond, emailConfirm, h);
-    } else if (t === 'mobile') {
-      prove('mobile', cond, mobileConfirm, h);
-    } else {
-      prove('password', password, password, h);
-    }
-  }
 
   function recover() {
     var s1, s2;
@@ -130,7 +128,9 @@ export default function RecoverForm() {
       s1 = seal1;
       s2 = seal2;
     }
-    const comb = window.secrets.combine(s1, s2);
+    s1 = s1.replaceAll('\x00', '');
+    s2 = s2.replaceAll('\x00', '');
+    const comb = window.secrets.combine([s1, s2]);
     setSecretKey(comb);
     setTextOutput(comb);
   }
@@ -226,7 +226,7 @@ export default function RecoverForm() {
                       </Grid>
                       <Grid container={true} xs={2}>
                         <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} 
-                          onClick={() => prove_me('email', emailConfirm)}
+                          onClick={() => prove('email', email, emailConfirm)}
                           variant="text">
                           Submit
                         </Button>
@@ -258,7 +258,7 @@ export default function RecoverForm() {
                     </Grid>
                     <Grid container={true} xs={2}>
                         <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} 
-                          onClick={()=>prove_me('password', password)}
+                          onClick={()=>notify('password', password, password)}
                           variant="text">
                           Submit
                         </Button>
@@ -311,7 +311,7 @@ export default function RecoverForm() {
                     </Grid>
                     <Grid container={true} xs={2}>
                         <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} 
-                          onClick={() => prove_me('mobile', mobileConfirm)}
+                          onClick={() => prove('mobile', mobile, mobileConfirm)}
                           variant="text">
                           Submit
                         </Button>

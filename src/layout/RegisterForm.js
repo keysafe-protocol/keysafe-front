@@ -20,6 +20,8 @@ export default function RegisterForm(props) {
   const [localPubKey, setLocalPubKey] = useState("");
   const [localKeyPair, setLocalKeyPair] = useState("");
   const [shareKey, setShareKey] = useState("");
+  const [share1, setShare1] = useState("");
+  const [share2, setShare2] = useState("");
   const [seal1, setSeal1] = useState("");
   const [seal2, setSeal2] = useState("");
   const [seal3, setSeal3] = useState("");
@@ -87,11 +89,10 @@ export default function RegisterForm(props) {
       alert("Please set private key to store.");
       return;
     }
-    const secretHex = window.secrets.str2hex(secretKey);
-    var shares = window.secrets.share(secretHex, 3, 2);
+    const shares = window.secrets.share(secretKey, 3, 2);
     sealPiece('email', email, shares[0]);
-    sealPiece('mobile', mobile, shares[1]);
-    sealPiece('password', password, shares[2]);
+    setShare1(shares[1]);
+    setShare2(shares[2]);
   }
 
   // after local pub key generated, exchange for remote pub key
@@ -109,6 +110,18 @@ export default function RegisterForm(props) {
         });
     }
   }
+
+  useEffect(() => {
+    if (seal1 === 1 && share1 !== "") {
+      sealPiece('mobile', mobile, share1);
+    }
+  }, [seal1, share1]);
+
+  useEffect(() => {
+    if (seal2 === 1 && share2 !== "") {
+      sealPiece('password', password, share2);
+    }
+  }, [seal2, share2]);
 
   useEffect(() => {
     if (seal1 + seal2 + seal3 == 3) {
