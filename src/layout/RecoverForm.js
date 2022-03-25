@@ -76,7 +76,9 @@ export default function RecoverForm() {
   }, [seal1, seal2, seal3]);
 
   useEffect(() => {
-    prove('password', password, passwordConfirm);
+    if(passwordConfirm !== "") {
+      prove('password', password, passwordConfirm);
+    }
   }, [passwordConfirm]);
 
   function encrypt(a) {
