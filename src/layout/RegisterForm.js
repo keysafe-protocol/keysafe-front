@@ -10,7 +10,6 @@ import { Box } from '@mui/system';
 import Chip from '@mui/material/Chip';
 import aes from 'crypto-js/aes';
 
-
 export default function RegisterForm(props) {
 
   const [email, setEmail] = useState("");
@@ -22,9 +21,10 @@ export default function RegisterForm(props) {
   const [shareKey, setShareKey] = useState("");
   const [share1, setShare1] = useState("");
   const [share2, setShare2] = useState("");
-  const [seal1, setSeal1] = useState("");
-  const [seal2, setSeal2] = useState("");
-  const [seal3, setSeal3] = useState("");
+  const [seal1, setSeal1] = useState(false);
+  const [seal2, setSeal2] = useState(false);
+  const [seal3, setSeal3] = useState(false);
+  const [sealComplete, setSealComplete] = useState(false);
   const [submitText, setSubmitText] = useState("Submit");
 
   function hashCond(cond) {
@@ -71,11 +71,11 @@ export default function RegisterForm(props) {
     axios.post('/seal', data)
       .then((result) => {
         if (t === 'email') {
-          setSeal1(1);
+          setSeal1(true);
         } else if (t === 'mobile') {
-          setSeal2(1);
+          setSeal2(true);
         } else {
-          setSeal3(1);
+          setSeal3(true);
         }
       });
   }
@@ -89,7 +89,8 @@ export default function RegisterForm(props) {
       alert("Only hex formatted private key is supported for now.");
       return;
     }
-    const shares = window.secrets.share(secretKey, 3, 2);
+    const secretKeyHex = window.secrets.str2hex(secretKey);
+    const shares = window.secrets.share(secretKeyHex, 3, 2);
     sealPiece('email', email, shares[0]);
     setShare1(shares[1]);
     setShare2(shares[2]);
@@ -111,24 +112,36 @@ export default function RegisterForm(props) {
     }
   }
 
+  /* mapping sequence: 
+      seal1, email, share0
+      seal2, mobile, share1
+      seal3, password, share2
+      sealComplete
+  */
+
   useEffect(() => {
-    if (seal1 === 1 && share1 !== "") {
+    // after seal1 complete, and share1 ready, do seal2
+    if (seal1 && share1 !== "") {
       sealPiece('mobile', mobile, share1);
     }
   }, [seal1, share1]);
 
   useEffect(() => {
-    if (seal2 === 1 && share2 !== "") {
+    // after seal2 complete, and share2 ready, do seal3
+    if (seal2 && share2 !== "") {
       sealPiece('password', password, share2);
     }
   }, [seal2, share2]);
 
   useEffect(() => {
-    if (seal1 + seal2 + seal3 == 3) {
-      setSubmitText("Submit Completed!")
-      alert("Seal Completed.");
-    }    
+    if (seal1 && seal2 && seal3) {
+      setSealComplete(true);
+    }
   }, [seal1, seal2, seal3]);
+
+  useEffect(() => {
+    setSubmitText("Submit Completed");
+  }, [sealComplete]);
 
   useEffect(() => {
     exchangeKey();
@@ -251,23 +264,23 @@ export default function RegisterForm(props) {
               <Box sx={{ px: 2, py: 1 }} >
               <Grid container alignItems="center" direction="row" justifyContent="center" spacing={16}>
                   <Grid item >
-                    <Button variant="contained" disabled={seal1+seal2+seal3===3}
+                    <Button variant="contained" disabled={sealComplete}
                       onClick={seal}>
                         {submitText}
                     </Button>
                   </Grid>
                   <Grid item >
-                    <Button variant="contained" disabled={seal1===""}>
+                    <Button variant="contained" disabled={!seal1}>
                         Shard1
                     </Button>
                   </Grid>
                   <Grid item>
-                    <Button variant="contained" disabled={seal2===""}>
+                    <Button variant="contained" disabled={!seal2}>
                       Shard2
                     </Button>
                   </Grid>
                   <Grid item >
-                    <Button variant="contained"  disabled={seal3===""}>
+                    <Button variant="contained"  disabled={!seal3}>
                       Shard3
                     </Button>
                   </Grid>

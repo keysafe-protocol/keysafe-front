@@ -133,8 +133,9 @@ export default function RecoverForm() {
     s1 = s1.replaceAll('\x00', '');
     s2 = s2.replaceAll('\x00', '');
     const comb = window.secrets.combine([s1, s2]);
-    setSecretKey(comb);
-    setTextOutput(comb);
+    const secret = window.secrets.hex2str(comb);
+    setSecretKey(secret);
+    setTextOutput(secret);
   }
 
   // after local pub key generated, exchange for remote pub key
