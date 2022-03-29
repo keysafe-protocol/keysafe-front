@@ -85,8 +85,7 @@ export default function RegisterForm(props) {
       alert("Local Key is not ready, please refresh the page!");
       return;
     }
-    if (secretKey === "" || !/^[0-9a-fA-F]+$/.test(secretKey)) {
-      alert("Only hex formatted private key is supported for now.");
+    if (secretKey === "") {
       return;
     }
     const secretKeyHex = window.secrets.str2hex(secretKey);
@@ -140,7 +139,9 @@ export default function RegisterForm(props) {
   }, [seal1, seal2, seal3]);
 
   useEffect(() => {
-    setSubmitText("Submit Completed");
+    if(sealComplete) {
+      setSubmitText("Submit Completed");
+    }
   }, [sealComplete]);
 
   useEffect(() => {
