@@ -140,6 +140,7 @@ export default function RegisterForm(props) {
 
   useEffect(() => {
     if(sealComplete) {
+      alert("Register Completed.")
       setSubmitText("Submit Completed");
     }
   }, [sealComplete]);
