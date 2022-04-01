@@ -46,9 +46,13 @@ export default function RecoverForm() {
     }
     axios.post('/notify', data)
       .then(result => {
-        console.log('notify done');
-        if (t === 'password') {
-          setPasswordConfirm(result.data);
+        if (result.data === "seal not found") {
+          alert("Condition not found in Keysafe Network, please corret it and try again.");
+        } else {
+          console.log('notify done');
+          if (t === 'password') {
+            setPasswordConfirm(result.data);
+          }
         }
       })
   }
@@ -89,6 +93,12 @@ export default function RecoverForm() {
     return a; // replace with AES
   }
 
+  function validateShare(data) {
+    // when wrong token provided, enclave will provide a long empty string as a result
+    const d = data.replaceAll('\x00', '');
+    return (d.length > 5);
+  }
+
   function prove(t, cond, condCode) {
     const data = {
       'pubkey': localPubKey,
@@ -99,14 +109,18 @@ export default function RecoverForm() {
     const axios = require('axios').default;
     axios.post('/prove', data)
       .then(result => {
-        alert(result.data);
-        const msg = decrypt(result.data);
-        if (t === 'email') {
-          setSeal1(msg);
-        } else if (t === 'password') {
-          setSeal2(msg);
+        // alert(result.data);
+        if(validateShare(result.data)) {
+          const msg = decrypt(result.data);
+          if (t === 'email') {
+            setSeal1(msg);
+          } else if (t === 'password') {
+            setSeal2(msg);
+          } else {
+            setSeal3(msg);
+          }
         } else {
-          setSeal3(msg);
+          alert("Wrong token, please try again.");
         }
       })
     }
