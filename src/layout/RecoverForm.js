@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 import Box from '@material-ui/core/Box';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
-
+import {encrypt, decrypt} from './utils'
 
 export default function RecoverForm() {
 
@@ -85,14 +85,6 @@ export default function RecoverForm() {
     }
   }, [passwordConfirm]);
 
-  function encrypt(a) {
-    return a; // replace with AES
-  }
-
-  function decrypt(a) {
-    return a; // replace with AES
-  }
-
   function validateShare(data) {
     // when wrong token provided, enclave will provide a long empty string as a result
     const d = data.replaceAll('\x00', '');
@@ -130,7 +122,6 @@ export default function RecoverForm() {
     md.update(cond);
     return md.digest().toHex();
   }
-
 
   function recover() {
     var s1, s2;

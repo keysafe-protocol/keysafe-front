@@ -9,6 +9,7 @@ import Paper from '@mui/material/Paper';
 import { Box } from '@mui/system';
 import Chip from '@mui/material/Chip';
 import aes from 'crypto-js/aes';
+import {encrypt, decrypt} from './utils'
 
 export default function RegisterForm(props) {
 
@@ -33,23 +34,6 @@ export default function RegisterForm(props) {
     return md.digest().toHex();
   }
 
-  function encrypt(share, shareKey) {
-    console.log(shareKey);
-    try {
-      var aesKey = window.forge.util.hexToBytes(shareKey);
-      var cipher = window.forge.cipher.createCipher('AES-ECB', aesKey);
-      var iv = window.forge.random.getBytesSync(16);
-      cipher.start({
-        tagLength: 256
-      });
-      cipher.update(window.forge.util.createBuffer(share));
-      cipher.finish();
-      return cipher.output.toHex();  
-    } catch (err) {
-      console.log(err);
-      return "";
-    }
-  }
 
   function sealPiece(t, cond, share) {
     console.log("piece ", share);
