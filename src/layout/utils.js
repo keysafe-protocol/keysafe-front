@@ -11,7 +11,7 @@ export function encrypt(rawText, key) {
         var iv =  [0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00];
         cipher.start({
             iv: iv,
-            tagLength: 256
+            tagLength: 128
         });
         cipher.update(window.forge.util.createBuffer(rawText));
         cipher.finish();
@@ -34,7 +34,7 @@ export function decrypt(secretText, key) {
         var iv =  [0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00];
         decipher.start({
             iv: iv,
-            tagLength: 256,
+            tagLength: 128,
             //tag?
         });
         decipher.update(window.forge.util.createBuffer(secretText));
