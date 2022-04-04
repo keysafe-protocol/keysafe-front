@@ -34,7 +34,6 @@ export default function RegisterForm(props) {
     return md.digest().toHex();
   }
 
-
   function sealPiece(t, cond, share) {
     console.log("piece ", share);
     console.log("share Key ", shareKey);

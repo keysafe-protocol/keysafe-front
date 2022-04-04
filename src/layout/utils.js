@@ -8,7 +8,7 @@ export function encrypt(rawText, key) {
     try {
         var aesKey = window.forge.util.hexToBytes(key);
         var cipher = window.forge.cipher.createCipher('AES-GCM', aesKey);
-        var iv = window.forge.random.getBytesSync(16);
+        var iv =  [0x99,0xaa,0x3e,0x68,0xed,0x81,0x73,0xa0,0xee,0xd0,0x66,0x84];
         cipher.start({
             iv: iv,
             tagLength: 256
@@ -31,7 +31,7 @@ export function decrypt(secretText, key) {
     try {
         var aesKey = window.forge.util.hexToBytes(key);
         var decipher = window.forge.cipher.createDecipher('AES-GCM', aesKey);
-        var iv = window.forge.random.getBytesSync(16);
+        var iv = [0x99,0xaa,0x3e,0x68,0xed,0x81,0x73,0xa0,0xee,0xd0,0x66,0x84];
         decipher.start({
             iv: iv,
             tagLength: 256,
