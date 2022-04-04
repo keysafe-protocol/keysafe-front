@@ -1,6 +1,6 @@
 
 export function encrypt(rawText, key) {
-    console.log(key);
+    console.log("encrypt content: {} with {}.", rawText, key);
     if (key === "") {
         alert("Secure Channel to Keysafe Node is not setup correctly. Please refresh page and try again.");
         return;
@@ -8,7 +8,7 @@ export function encrypt(rawText, key) {
     try {
         var aesKey = window.forge.util.hexToBytes(key);
         var cipher = window.forge.cipher.createCipher('AES-GCM', aesKey);
-        var iv =  [0x99,0xaa,0x3e,0x68,0xed,0x81,0x73,0xa0,0xee,0xd0,0x66,0x84];
+        var iv =  [0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00];
         cipher.start({
             iv: iv,
             tagLength: 256
@@ -31,7 +31,7 @@ export function decrypt(secretText, key) {
     try {
         var aesKey = window.forge.util.hexToBytes(key);
         var decipher = window.forge.cipher.createDecipher('AES-GCM', aesKey);
-        var iv = [0x99,0xaa,0x3e,0x68,0xed,0x81,0x73,0xa0,0xee,0xd0,0x66,0x84];
+        var iv =  [0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00];
         decipher.start({
             iv: iv,
             tagLength: 256,
