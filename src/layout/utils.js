@@ -8,12 +8,12 @@ export function encrypt(rawText, key) {
     try {
         var aesKey = window.forge.util.hexToBytes(key);
         var cipher = window.forge.cipher.createCipher('AES-GCM', aesKey);
-        var iv =  [0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00];
+        var iv =  new Uint8Array(12);
         cipher.start({
             iv: iv,
             tagLength: 0
         });
-        cipher.update(window.forge.util.createBuffer(rawText));
+        cipher.update(window.forge.util.createBuffer(rawText, 'raw'));
         cipher.finish();
         console.log(cipher.output.toHex());
         console.log(cipher.mode.tag.toHex());
@@ -34,7 +34,7 @@ export function decrypt(secretText, key) {
         var aesKey = window.forge.util.hexToBytes(key);
         var rawText = window.forge.util.hexToBytes(secretText);
         var decipher = window.forge.cipher.createDecipher('AES-GCM', aesKey);
-        var iv =  [0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00];
+        var iv =  new Uint8Array(12);
         decipher.start({
             iv: iv,
             tagLength: 0,
