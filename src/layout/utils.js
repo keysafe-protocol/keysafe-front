@@ -11,10 +11,12 @@ export function encrypt(rawText, key) {
         var iv =  [0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00];
         cipher.start({
             iv: iv,
-            tagLength: 256
+            tagLength: 0
         });
         cipher.update(window.forge.util.createBuffer(rawText));
         cipher.finish();
+        console.log(cipher.output.toHex());
+        console.log(cipher.mode.tag.toHex());
         return cipher.output.toHex();
     } catch (err) {
         console.log(err);
@@ -30,16 +32,16 @@ export function decrypt(secretText, key) {
     }
     try {
         var aesKey = window.forge.util.hexToBytes(key);
+        var rawText = window.forge.util.hexToBytes(secretText);
         var decipher = window.forge.cipher.createDecipher('AES-GCM', aesKey);
         var iv =  [0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00];
         decipher.start({
             iv: iv,
-            tagLength: 256,
-            //tag?
+            tagLength: 0,
         });
-        decipher.update(window.forge.util.createBuffer(secretText));
+        decipher.update(window.forge.util.createBuffer(rawText, 'raw'));
         decipher.finish();
-        return decipher.output.toHex();
+        return decipher.output.data;
     } catch (err) {
         console.log(err);
         return "";

@@ -96,7 +96,7 @@ export default function RecoverForm() {
       'pubkey': localPubKey,
       't': t,
       'cond': cond,
-      'code': encrypt(condCode).toString(),
+      'code': encrypt(condCode, shareKey),
     }
     const axios = require('axios').default;
     axios.post('/prove', data)
