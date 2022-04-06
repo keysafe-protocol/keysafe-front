@@ -16,7 +16,6 @@ export function encrypt(rawText, key) {
         cipher.update(window.forge.util.createBuffer(rawText, 'raw'));
         cipher.finish();
         console.log(cipher.output.toHex());
-        console.log(cipher.mode.tag.toHex());
         return cipher.output.toHex();
     } catch (err) {
         console.log(err);
