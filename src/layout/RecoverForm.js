@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 import Box from '@material-ui/core/Box';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
-import {encrypt, decrypt} from './utils'
+import {encrypt, encrypt2, decrypt} from './utils'
 
 export default function RecoverForm() {
 
@@ -51,7 +51,7 @@ export default function RecoverForm() {
         } else {
           console.log('notify done');
           if (t === 'password') {
-            setPasswordConfirm(result.data);
+            setPasswordConfirm(result.data.toString());
           }
         }
       })
@@ -81,7 +81,7 @@ export default function RecoverForm() {
 
   useEffect(() => {
     if(passwordConfirm !== "") {
-      prove('password', password, passwordConfirm);
+      prove('password', '', passwordConfirm);
     }
   }, [passwordConfirm]);
 
@@ -103,7 +103,7 @@ export default function RecoverForm() {
       .then(result => {
         // alert(result.data);
         if(validateShare(result.data)) {
-          const msg = decrypt(result.data);
+          const msg = decrypt(result.data.replaceAll('\x00', ''), shareKey);
           if (t === 'email') {
             setSeal1(msg);
           } else if (t === 'password') {
@@ -153,8 +153,9 @@ export default function RecoverForm() {
           var ec = new window.elliptic.ec('p256');
           var remoteKeyObj = ec.keyFromPublic(remoteKey.data, 'hex');
           var bn = localKeyPair.derive(remoteKeyObj.getPublic());
-          console.log(bn.toString(16));
-          setShareKey(bn.toString(16));
+          var skey = bn.toString(16);
+          console.log(skey);
+          setShareKey(skey);
         });
     }
   }
@@ -227,7 +228,7 @@ export default function RecoverForm() {
                           name="emailConfirm"
                           label="Enter the verification code you received"
                           fullWidth
-                          autoComplete=""
+                          data    autoComplete=""
                           variant="standard"
                           onChange={(e) => setEmailConfirm(e.target.value)}
                         />
@@ -266,7 +267,7 @@ export default function RecoverForm() {
                     </Grid>
                     <Grid container={true} xs={2}>
                         <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} 
-                          onClick={()=>notify('password', password, password)}
+                          onClick={()=>notify('password', '')}
                           variant="text">
                           Submit
                         </Button>

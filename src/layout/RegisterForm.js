@@ -27,6 +27,7 @@ export default function RegisterForm(props) {
   const [seal3, setSeal3] = useState(false);
   const [sealComplete, setSealComplete] = useState(false);
   const [submitText, setSubmitText] = useState("Submit");
+  var iv =  new Uint8Array(12);
 
   function hashCond(cond) {
     var md = window.forge.md.sha256.create();
@@ -73,6 +74,7 @@ export default function RegisterForm(props) {
     }
     const secretKeyHex = window.secrets.str2hex(secretKey);
     const shares = window.secrets.share(secretKeyHex, 3, 2);
+    console.log(shares[0]);
     sealPiece('email', email, shares[0]);
     setShare1(shares[1]);
     setShare2(shares[2]);

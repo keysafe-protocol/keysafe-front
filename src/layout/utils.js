@@ -1,30 +1,39 @@
 
 export function encrypt(rawText, key) {
-    console.log("encrypt content: {} with {}.", rawText, key);
+    console.log("encrypt content", rawText, " with ", key);
     if (key === "") {
         alert("Secure Channel to Keysafe Node is not setup correctly. Please refresh page and try again.");
         return;
     }
     try {
+        console.log("prepare key");
         var aesKey = window.forge.util.hexToBytes(key);
         var cipher = window.forge.cipher.createCipher('AES-GCM', aesKey);
-        var iv =  new Uint8Array(12);
+        const iv =  new Uint8Array(12);
+        console.log("prepare iv");
         cipher.start({
             iv: iv,
             tagLength: 0
         });
+        console.log(cipher);
         cipher.update(window.forge.util.createBuffer(rawText, 'raw'));
+        console.log("finish.");
         cipher.finish();
-        console.log(cipher.output.toHex());
-        return cipher.output.toHex();
+        const a = cipher.output.toHex();
+        console.log("encrypted ", a);
+        cipher.output.getBytes();
+        return a;
     } catch (err) {
-        console.log(err);
+        console.log("failing");
+        console.log("error happening ", err);
         return "";
     }
 }
 
+
 export function decrypt(secretText, key) {
-    console.log(key);
+    //TODO: check if secretText is hex or binary
+    console.log("decrypt content ", secretText, " with ", key);
     if (key === "") {
         alert("Secure Channel to Keysafe Node is not setup correctly. Please refresh page and try again.");
         return;
@@ -40,7 +49,11 @@ export function decrypt(secretText, key) {
         });
         decipher.update(window.forge.util.createBuffer(rawText, 'raw'));
         decipher.finish();
-        return decipher.output.data;
+        const a = decipher.output.toHex();
+        console.log("decrypted hex ", a);
+        const o = decipher.output.data;
+        console.log("decrypted output ", o);
+        return o;
     } catch (err) {
         console.log(err);
         return "";
