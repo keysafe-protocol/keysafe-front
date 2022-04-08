@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper';
 import { Box } from '@mui/system';
 import Chip from '@mui/material/Chip';
 import aes from 'crypto-js/aes';
-import {encrypt, decrypt} from './utils'
+import { encrypt, decrypt } from './utils'
 
 export default function RegisterForm(props) {
 
@@ -27,7 +27,6 @@ export default function RegisterForm(props) {
   const [seal3, setSeal3] = useState(false);
   const [sealComplete, setSealComplete] = useState(false);
   const [submitText, setSubmitText] = useState("Submit");
-  var iv =  new Uint8Array(12);
 
   function hashCond(cond) {
     var md = window.forge.md.sha256.create();
@@ -96,6 +95,28 @@ export default function RegisterForm(props) {
     }
   }
 
+  function requireSecret() {
+    if (localPubKey !== "") {
+      const axios = require('axios').default;
+      const data = {
+        'pubkey': localPubKey,
+        'email': email
+      }
+      axios.post('/require_secret', data)
+        .then((totpSecret) => {
+          console.log("totpSecret ", totpSecret.data);
+          //const originSecret = decrypt(totpSecret.data, shareKey);
+          const originSecret = totpSecret.data;
+          console.log(originSecret);
+          const qrText = `otpauth://totp/Keysafe:${email}?secret=${originSecret}&issuer=Keysafe.network`;
+          new window.QRCode(
+            document.getElementById("qrcode"),
+            totpSecret.data
+          )
+        });
+    }
+  }
+
   /* mapping sequence: 
       seal1, email, share0
       seal2, mobile, share1
@@ -124,7 +145,7 @@ export default function RegisterForm(props) {
   }, [seal1, seal2, seal3]);
 
   useEffect(() => {
-    if(sealComplete) {
+    if (sealComplete) {
       alert("Register Completed.")
       setSubmitText("Submit Completed");
     }
@@ -146,23 +167,23 @@ export default function RegisterForm(props) {
     <Container component="main" maxWidth="lg" sx={{ mb: 2 }}>
       <Paper variant="outlined" sx={{ my: { xs: 1, md: 1 }, p: { xs: 1, md: 1 } }}>
         <React.Fragment>
-        <Grid container spacing={3}>
-          <Grid item xs={6}>
-            <Box sx={{px:2 , pt:0.5}}>
-          <Typography variant="h5" sx={{ fontWeight: 'bold' }} gutterBottom>
-            Registration
-          </Typography>
-          <Typography variant="h10" gutterBottom>
-            - Register your private keys to Keysafe Network. After registered, you can always recover 
-              your confidential data with any 2 of 3 conditions fulfilled. Remember your conditions.
-          </Typography>
-          </Box>
-          </Grid>
-          <Grid item xs={6} container justifyContent="flex-end">
-            <Box sx={{px:2, pt:0.5}}>
-              <Chip label="2-of-3 Threshold Mode" size="large" color="warning" variant="outlined"/>
-          </Box>
-          </Grid>
+          <Grid container spacing={3}>
+            <Grid item xs={6}>
+              <Box sx={{ px: 2, pt: 0.5 }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold' }} gutterBottom>
+                  Registration
+                </Typography>
+                <Typography variant="h10" gutterBottom>
+                  - Register your private keys to Keysafe Network. After registered, you can always recover
+                  your confidential data with any 2 of 3 conditions fulfilled. Remember your conditions.
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid item xs={6} container justifyContent="flex-end">
+              <Box sx={{ px: 2, pt: 0.5 }}>
+                <Chip label="2-of-3 Threshold Mode" size="large" color="warning" variant="outlined" />
+              </Box>
+            </Grid>
             <Grid item xs={12}>
               <Box sx={{ px: 2, pt: 0.5 }}>
                 <Typography variant="h10" sx={{ fontWeight: 'bold' }} gutterBottom>
@@ -229,6 +250,30 @@ export default function RegisterForm(props) {
             <Grid item xs={12}>
               <Box sx={{ px: 2, pt: 0.5 }}>
                 <Typography variant="h10" sx={{ fontWeight: 'bold' }} gutterBottom>
+                  Set Recovery Condition 4
+                </Typography>
+                <Paper variant='outlined' >
+                  <Box sx={{ px: 2, py: 0.5 }}>
+                    <Grid container>
+                      <Grid container={true} xs={2}>
+                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} variant="text"
+                          onClick={() => requireSecret()}
+                        >
+                          Enable Google Authenticator
+                        </Button>
+                      </Grid>
+                      <Grid item xs={10}>
+                        <div id="qrcode">
+                        </div>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </Paper>
+              </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Box sx={{ px: 2, pt: 0.5 }}>
+                <Typography variant="h10" sx={{ fontWeight: 'bold' }} gutterBottom>
                   Confidential Data
                 </Typography>
                 <Paper variant='outlined' >
@@ -249,16 +294,16 @@ export default function RegisterForm(props) {
             </Grid>
             <Grid item xs={12}>
               <Box sx={{ px: 2, py: 1 }} >
-              <Grid container alignItems="center" direction="row" justifyContent="center" spacing={16}>
+                <Grid container alignItems="center" direction="row" justifyContent="center" spacing={16}>
                   <Grid item >
                     <Button variant="contained" disabled={sealComplete}
                       onClick={seal}>
-                        {submitText}
+                      {submitText}
                     </Button>
                   </Grid>
                   <Grid item >
                     <Button variant="contained" disabled={!seal1}>
-                        Shard1
+                      Shard1
                     </Button>
                   </Grid>
                   <Grid item>
@@ -267,7 +312,7 @@ export default function RegisterForm(props) {
                     </Button>
                   </Grid>
                   <Grid item >
-                    <Button variant="contained"  disabled={!seal3}>
+                    <Button variant="contained" disabled={!seal3}>
                       Shard3
                     </Button>
                   </Grid>
