@@ -59,3 +59,10 @@ export function decrypt(secretText, key) {
         return "";
     }
 }
+
+
+export  function hashCond(cond) {
+    var md = window.forge.md.sha256.create();
+    md.update(cond);
+    return md.digest().toHex();
+  }

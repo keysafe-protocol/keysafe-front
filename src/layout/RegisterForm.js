@@ -9,38 +9,35 @@ import Paper from '@mui/material/Paper';
 import { Box } from '@mui/system';
 import Chip from '@mui/material/Chip';
 import aes from 'crypto-js/aes';
-import { encrypt, decrypt } from './utils'
+import { encrypt, decrypt, hashCond } from './utils'
 
 export default function RegisterForm(props) {
 
-  const [email, setEmail] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState(""); // piece0, seal0, shard1
+  const [password, setPassword] = useState(""); // piece1, seal1, shard2
+  const [gauth, setGauth] = useState(""); // piece2, seal2, shard3
   const [secretKey, setSecretKey] = useState("");
   const [localPubKey, setLocalPubKey] = useState("");
   const [localKeyPair, setLocalKeyPair] = useState("");
   const [shareKey, setShareKey] = useState("");
+  const [share0, setShare0] = useState("");
   const [share1, setShare1] = useState("");
   const [share2, setShare2] = useState("");
+  const [seal0, setSeal0] = useState(false);
   const [seal1, setSeal1] = useState(false);
   const [seal2, setSeal2] = useState(false);
-  const [seal3, setSeal3] = useState(false);
   const [sealComplete, setSealComplete] = useState(false);
   const [submitText, setSubmitText] = useState("Submit");
 
-  function hashCond(cond) {
-    var md = window.forge.md.sha256.create();
-    md.update(cond);
-    return md.digest().toHex();
-  }
 
   function sealPiece(t, cond, share) {
-    console.log("piece ", share);
-    console.log("share Key ", shareKey);
+    // t -> type, cond -> value, share -> slice of secret
+    console.log("sealing share ", share);
     var h;
     if (t === 'password') {
-      //TODO: remove hard code
       h = hashCond(email + password);
+    } else if (t == 'gauth') {
+      h = hashCond(email + ".gauth");
     } else {
       h = hashCond(cond);
     }
@@ -48,19 +45,10 @@ export default function RegisterForm(props) {
       'pubkey': localPubKey,
       'h': h,
       'secret': encrypt(share, shareKey),
-      'text': share
+      'text': share  //TODO: delete
     }
     const axios = require('axios').default;
-    axios.post('/seal', data)
-      .then((result) => {
-        if (t === 'email') {
-          setSeal1(true);
-        } else if (t === 'mobile') {
-          setSeal2(true);
-        } else {
-          setSeal3(true);
-        }
-      });
+    return axios.post('/seal', data);
   }
 
   function seal() {
@@ -69,12 +57,13 @@ export default function RegisterForm(props) {
       return;
     }
     if (secretKey === "") {
+      alert("Input your secret key!");
       return;
     }
+    // cut secret into 3 pieces
     const secretKeyHex = window.secrets.str2hex(secretKey);
     const shares = window.secrets.share(secretKeyHex, 3, 2);
-    console.log(shares[0]);
-    sealPiece('email', email, shares[0]);
+    setShare0(shares[0]);
     setShare1(shares[1]);
     setShare2(shares[2]);
   }
@@ -118,36 +107,47 @@ export default function RegisterForm(props) {
   }
 
   /* mapping sequence: 
-      seal1, email, share0
-      seal2, mobile, share1
-      seal3, password, share2
+      seal0, email, share0
+      seal1, password, share1
+      seal2, gauth, share2
       sealComplete
   */
-
   useEffect(() => {
-    // after seal1 complete, and share1 ready, do seal2
-    if (seal1 && share1 !== "") {
-      sealPiece('mobile', mobile, share1);
+    if(share0 !== "") {
+      sealPiece('email', email, share0).then((result) => {
+        setSeal0(true);
+      })
     }
-  }, [seal1, share1]);
+  }, [share0]);
 
   useEffect(() => {
-    // after seal2 complete, and share2 ready, do seal3
-    if (seal2 && share2 !== "") {
-      sealPiece('password', password, share2);
+    // after seal0 complete, and share1 ready, do seal1
+    if (seal0 && share1 !== "") {
+      sealPiece('password', password, share1).then((result) => {
+        setSeal1(true);
+      })
     }
-  }, [seal2, share2]);
+  }, [seal0, share1]);
 
   useEffect(() => {
-    if (seal1 && seal2 && seal3) {
+    // after seal1 complete, and share2 ready, do seal2
+    if (seal1 && share2 !== "") {
+      sealPiece('gauth', gauth, share2).then(() => {
+        setSeal2(true);
+      })
+    }
+  }, [seal1, share2]);
+
+  useEffect(() => {
+    if (seal0 && seal1 && seal2) {
       setSealComplete(true);
     }
-  }, [seal1, seal2, seal3]);
+  }, [seal0, seal1, seal2]);
 
   useEffect(() => {
     if (sealComplete) {
-      alert("Register Completed.")
       setSubmitText("Submit Completed");
+      alert("Register Completed.")
     }
   }, [sealComplete]);
 
@@ -233,27 +233,6 @@ export default function RegisterForm(props) {
                 </Typography>
                 <Paper variant='outlined' >
                   <Box sx={{ px: 2, py: 0.5 }}>
-                    <TextField
-                      required
-                      id="cell"
-                      name="cell"
-                      label="Please input your Mobile Phone Number here"
-                      fullWidth
-                      autoComplete=""
-                      variant="standard"
-                      onChange={(e) => setMobile(e.target.value)}
-                    />
-                  </Box>
-                </Paper>
-              </Box>
-            </Grid>
-            <Grid item xs={12}>
-              <Box sx={{ px: 2, pt: 0.5 }}>
-                <Typography variant="h10" sx={{ fontWeight: 'bold' }} gutterBottom>
-                  Set Recovery Condition 4
-                </Typography>
-                <Paper variant='outlined' >
-                  <Box sx={{ px: 2, py: 0.5 }}>
                     <Grid container>
                       <Grid container={true} xs={2}>
                         <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} variant="text"
@@ -302,17 +281,17 @@ export default function RegisterForm(props) {
                     </Button>
                   </Grid>
                   <Grid item >
-                    <Button variant="contained" disabled={!seal1}>
+                    <Button variant="contained" disabled={!seal0}>
                       Shard1
                     </Button>
                   </Grid>
                   <Grid item>
-                    <Button variant="contained" disabled={!seal2}>
+                    <Button variant="contained" disabled={!seal1}>
                       Shard2
                     </Button>
                   </Grid>
                   <Grid item >
-                    <Button variant="contained" disabled={!seal3}>
+                    <Button variant="contained" disabled={!seal2}>
                       Shard3
                     </Button>
                   </Grid>

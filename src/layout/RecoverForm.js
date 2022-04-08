@@ -9,23 +9,23 @@ import { useState, useEffect } from 'react';
 import Box from '@material-ui/core/Box';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
-import {encrypt, encrypt2, decrypt} from './utils'
+import { encrypt, hashCond, decrypt } from './utils'
 
 export default function RecoverForm() {
 
   const [email, setEmail] = useState("");
   const [emailConfirm, setEmailConfirm] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [mobileConfirm, setMobileConfirm] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [gauth, setGauth] = useState("");
+  const [gauthConfirm, setGauthConfirm] = useState("");
   const [secretKey, setSecretKey] = useState("");
   const [localPubKey, setLocalPubKey] = useState("");
   const [localKeyPair, setLocalKeyPair] = useState("");
   const [shareKey, setShareKey] = useState("");
-  const [seal1, setSeal1] = useState("");
-  const [seal2, setSeal2] = useState("");
-  const [seal3, setSeal3] = useState("");
+  const [share0, setShare0] = useState("");
+  const [share1, setShare1] = useState("");
+  const [share2, setShare2] = useState("");
   const [textOutput, setTextOutput] = useState("");
   const [recoverReady, setRecoverReady] = useState(false);
 
@@ -34,6 +34,8 @@ export default function RecoverForm() {
     if (t === 'password') {
       //TODO: remove hard code
       h = hashCond(email + password);
+    } else if (t === 'gauth') {
+      h = hashCond(email + '.gauth');
     } else {
       h = hashCond(cond);
     }
@@ -58,29 +60,17 @@ export default function RecoverForm() {
   }
 
   useEffect(() => {
-    var a1 = 0;
-    var a2 = 0;
-    var a3 = 0;
-    if (seal1 === "") {
-      a1 = 0;
-    } else {
-      a1 = 1;
+    var a = 0;
+    for (let i in [share0, share1, share2]) {
+      if (i !== "") {
+        a = a + 1;
+      }
     }
-    if (seal2 === "") {
-      a2 = 0;
-    } else {
-      a2 = 1;
-    }
-    if (seal3 === "") {
-      a3 = 0;
-    } else {
-      a3 = 1;
-    }
-    setRecoverReady(a1 + a2 + a3 < 2);
-  }, [seal1, seal2, seal3]);
+    setRecoverReady(a < 2);
+  }, [share0, share1, share2]);
 
   useEffect(() => {
-    if(passwordConfirm !== "") {
+    if (passwordConfirm !== "") {
       prove('password', '', passwordConfirm);
     }
   }, [passwordConfirm]);
@@ -102,42 +92,29 @@ export default function RecoverForm() {
     axios.post('/prove', data)
       .then(result => {
         // alert(result.data);
-        if(validateShare(result.data)) {
+        if (validateShare(result.data)) {
           const msg = decrypt(result.data.replaceAll('\x00', ''), shareKey);
           if (t === 'email') {
-            setSeal1(msg);
+            setShare0(msg);
           } else if (t === 'password') {
-            setSeal2(msg);
+            setShare1(msg);
           } else {
-            setSeal3(msg);
+            setShare2(msg);
           }
         } else {
           alert("Wrong token, please try again.");
         }
       })
-    }
-
-  function hashCond(cond) {
-    var md = window.forge.md.sha256.create();
-    md.update(cond);
-    return md.digest().toHex();
   }
 
   function recover() {
-    var s1, s2;
-    if (seal1 === "") {
-      s1 = seal2;
-      s2 = seal3;
-    } else if (seal2 === "") {
-      s1 = seal1;
-      s2 = seal3;
-    } else {
-      s1 = seal1;
-      s2 = seal2;
+    var shares = [];
+    for (let s in [share0, share1, share2]) {
+      if (s !== "") {
+        shares.push(s.replaceAll('\x00', ''));
+      }
     }
-    s1 = s1.replaceAll('\x00', '');
-    s2 = s2.replaceAll('\x00', '');
-    const comb = window.secrets.combine([s1, s2]);
+    const comb = window.secrets.combine(shares);
     const secret = window.secrets.hex2str(comb);
     setSecretKey(secret);
     setTextOutput(secret);
@@ -214,7 +191,7 @@ export default function RecoverForm() {
                       </Grid>
                       <Grid container={true} xs={2}>
                         <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} variant="text"
-                                onClick={()=>notify("email", email)}
+                          onClick={() => notify("email", email)}
                         >
                           Send Verification
                         </Button>
@@ -228,13 +205,13 @@ export default function RecoverForm() {
                           name="emailConfirm"
                           label="Enter the verification code you received"
                           fullWidth
-                          data    autoComplete=""
+                          data autoComplete=""
                           variant="standard"
                           onChange={(e) => setEmailConfirm(e.target.value)}
                         />
                       </Grid>
                       <Grid container={true} xs={2}>
-                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} 
+                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }}
                           onClick={() => prove('email', email, emailConfirm)}
                           variant="text">
                           Submit
@@ -252,22 +229,22 @@ export default function RecoverForm() {
                 </Typography>
                 <Paper variant='outlined' >
                   <Box sx={{ px: 2, py: 0.5 }}>
-                  <Grid container>
+                    <Grid container>
                       <Grid item xs={10}>
-                    <TextField
-                      required
-                      id="password"
-                      name="password"
-                      label="Enter your Passphrase for recovery verification"
-                      fullWidth
-                      autoComplete=""
-                      variant="standard"
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                    </Grid>
-                    <Grid container={true} xs={2}>
-                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} 
-                          onClick={()=>notify('password', '')}
+                        <TextField
+                          required
+                          id="password"
+                          name="password"
+                          label="Enter your Passphrase for recovery verification"
+                          fullWidth
+                          autoComplete=""
+                          variant="standard"
+                          onChange={(e) => setPassword(e.target.value)}
+                        />
+                      </Grid>
+                      <Grid container={true} xs={2}>
+                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }}
+                          onClick={() => notify('password', '')}
                           variant="text">
                           Submit
                         </Button>
@@ -284,43 +261,22 @@ export default function RecoverForm() {
                 </Typography>
                 <Paper variant='outlined' >
                   <Box sx={{ px: 2, py: 0.5 }}>
-                  <Grid container>
-                      <Grid item xs={10}>
-                    <TextField
-                      required
-                      id="mobile"
-                      name="mobile"
-                      label="Enter your Mobile Phone Number registered for recovery verification"
-                      fullWidth
-                      autoComplete=""
-                      variant="standard"
-                      onChange={(e) => setMobile(e.target.value)}
-                    />
-                    </Grid>
-                    <Grid container={true} xs={2}>
-                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} 
-                          onClick={()=>alert("SMS is not supported, will coming soon.")}
-                          variant="text">
-                          Send Verification
-                        </Button>
-                      </Grid>
-                    </Grid>
                     <Grid container>
                       <Grid item xs={10}>
-                    <TextField
-                      required
-                      id="mobileConfirm"
-                      name="mobileConfirm"
-                      label="Enter the verification code you received"
-                      fullWidth
-                      autoComplete=""
-                      variant="standard"
-                      onChange={(e) => setMobileConfirm(e.target.value)}
-                    />
-                    </Grid>
-                    <Grid container={true} xs={2}>
-                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }} 
-                          onClick={() => alert("SMS is not supported, will coming soon.")}
+                        <TextField
+                          required
+                          id="gauth"
+                          name="gauth"
+                          label="Enter Token from Google Authenticator"
+                          fullWidth
+                          autoComplete=""
+                          variant="standard"
+                          onChange={(e) => setGauth(e.target.value)}
+                        />
+                      </Grid>
+                      <Grid container={true} xs={2}>
+                        <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }}
+                          onClick={() => notify('gauth', '')}
                           variant="text">
                           Submit
                         </Button>
@@ -331,29 +287,29 @@ export default function RecoverForm() {
               </Box>
             </Grid>
             <Grid item xs={12}>
-            <Box sx={{ px: 2, pt: 0.5 }}>
+              <Box sx={{ px: 2, pt: 0.5 }}>
                 <Grid container alignItems="center" direction="row" justifyContent="center" spacing={16}>
                   <Grid item >
                     <Button variant="contained" disabled={recoverReady}
                       onClick={recover}>
-                        Recover
+                      Recover
                     </Button>
                   </Grid>
                   <Grid item >
-                    <Button variant="contained" disabled={seal1===""} 
-                      onClick={()=>setTextOutput(seal1)}>
-                        Shard1
+                    <Button variant="contained" disabled={share0 === ""}
+                      onClick={() => setTextOutput(share0)}>
+                      Shard1
                     </Button>
                   </Grid>
                   <Grid item>
-                    <Button variant="contained" disabled={seal2===""} 
-                      onClick={()=>setTextOutput(seal2)}>
+                    <Button variant="contained" disabled={share1 === ""}
+                      onClick={() => setTextOutput(share1)}>
                       Shard2
                     </Button>
                   </Grid>
                   <Grid item >
-                    <Button variant="contained"  disabled={seal3===""}
-                      onClick={()=>setTextOutput(seal3)}>
+                    <Button variant="contained" disabled={share2 === ""}
+                      onClick={() => setTextOutput(share2)}>
                       Shard3
                     </Button>
                   </Grid>
@@ -361,18 +317,18 @@ export default function RecoverForm() {
               </Box>
             </Grid>
             <Grid item xs={12}>
-            <Box sx={{ px: 2, pt: 0.5 }}>
-            <TextField
-              id="privatekey"
-              name="privatekey"
-              label="Recover Data will be displayed here."
-              fullWidth
-              multiline
-              autoComplete=""
-              variant="outlined"
-              value={textOutput}
-            />
-            </Box>
+              <Box sx={{ px: 2, pt: 0.5 }}>
+                <TextField
+                  id="privatekey"
+                  name="privatekey"
+                  label="Recover Data will be displayed here."
+                  fullWidth
+                  multiline
+                  autoComplete=""
+                  variant="outlined"
+                  value={textOutput}
+                />
+              </Box>
             </Grid>
           </Grid>
         </React.Fragment>
