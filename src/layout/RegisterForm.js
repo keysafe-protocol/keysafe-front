@@ -89,18 +89,22 @@ export default function RegisterForm(props) {
       const axios = require('axios').default;
       const data = {
         'pubkey': localPubKey,
-        'email': email
+        'email': email,
+        'h': hashCond(email + 'gauth')
       }
       axios.post('/require_secret', data)
         .then((totpSecret) => {
           console.log("totpSecret ", totpSecret.data);
-          //const originSecret = decrypt(totpSecret.data, shareKey);
-          const originSecret = totpSecret.data;
+          const tmp = totpSecret.data.replaceAll(/0{10,}/g, '');
+          const originSecret = decrypt(tmp, shareKey);
+          //const originSecret = totpSecret.data;
           console.log(originSecret);
           const qrText = `otpauth://totp/Keysafe:${email}?secret=${originSecret}&issuer=Keysafe.network`;
+          console.log(qrText);
+          document.getElementById("qrcode").innerHTML = "";
           new window.QRCode(
             document.getElementById("qrcode"),
-            totpSecret.data
+            qrText
           )
         });
     }
