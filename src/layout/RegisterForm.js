@@ -98,8 +98,8 @@ export default function RegisterForm(props) {
           const tmp = totpSecret.data.replaceAll(/0{10,}/g, '');
           const originSecret = decrypt(tmp, shareKey);
           //const originSecret = totpSecret.data;
-          console.log(originSecret);
-          const qrText = `otpauth://totp/Keysafe:${email}?secret=${originSecret}&issuer=Keysafe.network`;
+          console.log(originSecret.slice(0, 26));
+          const qrText = `otpauth://totp/Keysafe:${email}?secret=${originSecret.slice(0,26)}&issuer=Keysafe.network`;
           console.log(qrText);
           document.getElementById("qrcode").innerHTML = "";
           new window.QRCode(
