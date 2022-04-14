@@ -8,7 +8,6 @@ import Paper from '@mui/material/Paper';
 import { useState, useEffect } from 'react';
 import Box from '@material-ui/core/Box';
 import Chip from '@mui/material/Chip';
-import Tooltip from '@mui/material/Tooltip';
 import { encrypt, hashCond, decrypt } from './utils'
 
 export default function RecoverForm() {
@@ -29,17 +28,14 @@ export default function RecoverForm() {
   const [textOutput, setTextOutput] = useState("");
   const [recoverReady, setRecoverReady] = useState(false);
 
+
+
   function notify(t, cond) {
-    var h;
-    if (t === 'password') {
-      //TODO: remove hard code
-      h = hashCond(email + password);
-    } else if (t === 'gauth') {
-      h = hashCond(email + '.gauth');
-    } else {
-      h = hashCond(cond);
-    }
+    const h = hashCond(t, cond, email);
     const axios = require('axios').default;
+    if (cond === "password") {
+      cond = ""; // do not send password to server, send only email
+    } 
     const data = {
       'pubkey': localPubKey,
       't': t,
@@ -81,11 +77,37 @@ export default function RecoverForm() {
     return (d.length > 5);
   }
 
+  function prove_code(t, cond, condCode) {
+    const data = {
+      'pubkey': localPubKey,
+      't': t,
+      'h': hashCond(t, cond, email),
+      'code': encrypt(condCode, shareKey),
+    }
+    const axios = require('axios').default;
+    axios.post('/prove_code', data)
+      .then(result => {
+        // alert(result.data);
+        if (validateShare(result.data)) {
+          const msg = decrypt(result.data.replaceAll('\x00', ''), shareKey);
+          if (t === 'email') {
+            setShare0(msg);
+          } else if (t === 'password') {
+            setShare1(msg);
+          } else {
+            setShare2(msg);
+          }
+        } else {
+          alert("Wrong token, please try again.");
+        }
+      })
+  }
+
   function prove(t, cond, condCode) {
     const data = {
       'pubkey': localPubKey,
       't': t,
-      'cond': cond,
+      'h': hashCond(t, cond, email),
       'code': encrypt(condCode, shareKey),
     }
     const axios = require('axios').default;
@@ -108,13 +130,15 @@ export default function RecoverForm() {
   }
 
   function recover() {
-    var shares = [];
-    for (let s in [share0, share1, share2]) {
-      if (s !== "") {
-        shares.push(s.replaceAll('\x00', ''));
+    const shares = [share0, share1, share2];
+    var valueShares = [];
+    for (let s in shares) {
+      if (shares[s] !== "") {
+        valueShares.push(shares[s]);
       }
     }
-    const comb = window.secrets.combine(shares);
+    console.log("recovering with shares ", valueShares);
+    const comb = window.secrets.combine(valueShares);
     const secret = window.secrets.hex2str(comb);
     setSecretKey(secret);
     setTextOutput(secret);
@@ -244,7 +268,7 @@ export default function RecoverForm() {
                       </Grid>
                       <Grid container={true} xs={2}>
                         <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }}
-                          onClick={() => notify('password', '')}
+                          onClick={() => notify('password', password)}
                           variant="text">
                           Submit
                         </Button>
@@ -276,7 +300,7 @@ export default function RecoverForm() {
                       </Grid>
                       <Grid container={true} xs={2}>
                         <Button sx={{ pb: 0 }} alignItems="stretch" style={{ display: "flex" }}
-                          onClick={() => notify('gauth', '')}
+                          onClick={() => prove_code('gauth', '', gauth)}
                           variant="text">
                           Submit
                         </Button>

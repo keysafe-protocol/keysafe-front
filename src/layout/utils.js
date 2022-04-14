@@ -60,9 +60,25 @@ export function decrypt(secretText, key) {
     }
 }
 
-
-export  function hashCond(cond) {
+export function hashStr(cond) {
     var md = window.forge.md.sha256.create();
     md.update(cond);
     return md.digest().toHex();
-  }
+}
+
+export function hashCond(t, cond, condBase) {
+    if (condBase === "") {
+        alert("Please setup your email first");
+        return "";
+    }
+    if (t === 'email') {
+        return hashStr(cond);
+    } else if (t === 'password') {
+        return hashStr(condBase + cond);
+    } else if (t === 'gauth') {
+        return hashStr(condBase + '.gauth');
+    } else {
+        alert("Wrong condition type");
+        return "";
+    }
+}

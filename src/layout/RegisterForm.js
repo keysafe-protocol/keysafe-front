@@ -8,7 +8,6 @@ import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import { Box } from '@mui/system';
 import Chip from '@mui/material/Chip';
-import aes from 'crypto-js/aes';
 import { encrypt, decrypt, hashCond } from './utils'
 
 export default function RegisterForm(props) {
@@ -33,14 +32,7 @@ export default function RegisterForm(props) {
   function sealPiece(t, cond, share) {
     // t -> type, cond -> value, share -> slice of secret
     console.log("sealing share ", share);
-    var h;
-    if (t === 'password') {
-      h = hashCond(email + password);
-    } else if (t == 'gauth') {
-      h = hashCond(email + ".gauth");
-    } else {
-      h = hashCond(cond);
-    }
+    const h = hashCond(t, cond, email);
     var data = {
       'pubkey': localPubKey,
       'h': h,
@@ -90,7 +82,7 @@ export default function RegisterForm(props) {
       const data = {
         'pubkey': localPubKey,
         'email': email,
-        'h': hashCond(email + 'gauth')
+        'h': hashCond('gauth', '', email)
       }
       axios.post('/require_secret', data)
         .then((totpSecret) => {
@@ -136,7 +128,7 @@ export default function RegisterForm(props) {
   useEffect(() => {
     // after seal1 complete, and share2 ready, do seal2
     if (seal1 && share2 !== "") {
-      sealPiece('gauth', gauth, share2).then(() => {
+      sealPiece('gauth', '', share2).then(() => {
         setSeal2(true);
       })
     }
