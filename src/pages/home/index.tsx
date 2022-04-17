@@ -7,7 +7,7 @@ const Home = () => {
     <div>
       <div className="flex flex-col items-start mt-40 ml-20">
         <h2 className="text-6xl font-bold">Keysafe</h2>
-        <p className="mt-4 font-">
+        <p className="mt-4 ">
           The decentralized key custody network, powered by Keysafe Protocol.
         </p>
         <div className="flex flex-col mt-10">
