@@ -73,7 +73,7 @@ const Login = () => {
   };
 
   return (
-    <section className="flex justify-center items-center h-screen">
+    <section className="flex justify-center items-center ks-full-container">
       {/* 登录框 */}
       <div
         className="border rounded border-gray-700 px-20 py-10"
