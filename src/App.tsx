@@ -5,17 +5,17 @@ import Header from "./components/header";
 import { Route, Routes } from "react-router-dom";
 import { ROUTES } from "./constants/routes";
 import Home from "./pages/home";
-import Register from "./pages/register";
+import Register from "./pages/sign-up";
 import Login from "./pages/login";
 
 function App() {
   return (
-    <div className="App">
+    <div>
       <Header />
       <Routes>
-        <Route path={ROUTES.home} element={<Home />}></Route>
-        <Route path={ROUTES.register} element={<Register />}></Route>
-        <Route path={ROUTES.login} element={<Login />}></Route>
+        <Route path={ROUTES.HOME} element={<Home />}></Route>
+        <Route path={ROUTES.SIGN_UP} element={<Register />}></Route>
+        <Route path={ROUTES.LOGIN} element={<Login />}></Route>
       </Routes>
     </div>
   );

@@ -17,14 +17,14 @@ const StepEmail: FC<{
 }> = ({ email, onEmailChange }) => {
   return (
     <div className="">
-      <p>Log in Keysafe with your email:</p>
+      <p>Sign up with your email:</p>
       <Input
         type="email"
         value={email}
         onChange={(e) => onEmailChange(e.target.value)}
       />
       <aside className="mt-4 text-sm">
-        Or <Link to={ROUTES["SIGN_UP"]}>Sign up</Link> for a keysafe account
+        Or <Link to={ROUTES.LOGIN}>Log in</Link> if you already have an account
       </aside>
     </div>
   );
@@ -48,7 +48,7 @@ const StepCode: FC<{
     <div>
       <p className="text-sm text-justify">
         We've sent a verification code to your email {email}. To continue with
-        your login, please fill in with the verification code:
+        your sign-up, please fill in with the verification code:
       </p>
       <Input value={code} onChange={(e) => onCodeChange(e.target.value)} />
       <p>
@@ -58,7 +58,7 @@ const StepCode: FC<{
   );
 };
 
-const Login = () => {
+const SignUp = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
@@ -105,4 +105,4 @@ const Login = () => {
     </section>
   );
 };
-export default Login;
+export default SignUp;
