@@ -3,12 +3,13 @@ import React from "react";
 import { FC } from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Button from "../../components/button";
-import { ROUTES } from "../../constants/routes";
 import { useCountDown } from "ahooks";
 import dayjs from "dayjs";
-import number from "../../utils/number";
-import Input from "../../components/input";
+import Input from "components/input";
+import { ROUTES } from "constants/routes";
+import number from "utils/number";
+import Button from "components/button";
+import { formatCountDown } from "utils";
 
 // 输入邮箱
 const StepEmail: FC<{
@@ -52,7 +53,7 @@ const StepCode: FC<{
       </p>
       <Input value={code} onChange={(e) => onCodeChange(e.target.value)} />
       <p>
-        <span>Resend({Math.round(number.divide(countDown, 1000))})</span>
+        <span>Resend({formatCountDown(countDown)})</span>
       </p>
     </div>
   );

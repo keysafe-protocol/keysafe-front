@@ -4,4 +4,6 @@ export const ROUTES = {
   SIGN_UP: "/sign-up",
   REGISTER: "/register",
   REGISTER_KEYS: "/register-keys",
+  DELEGATE_SETTINGS: "/delegate-settings",
+  SET_CONDITIONS: "/set-conditions",
 };

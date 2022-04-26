@@ -1,7 +1,7 @@
+import Button from "components/button";
+import { ROUTES } from "constants/routes";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Button from "../../components/button";
-import { ROUTES } from "../../constants/routes";
 
 const Register = () => {
   const navigate = useNavigate();

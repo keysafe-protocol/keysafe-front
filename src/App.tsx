@@ -7,6 +7,8 @@ import SignUp from "./pages/sign-up";
 import Login from "./pages/login";
 import Register from "./pages/register";
 import RegisterKeys from "./pages/register-keys";
+import DelegateSetting from "pages/delegate-setting";
+import SetConditions from "pages/set-conditions";
 
 function App() {
   return (
@@ -19,6 +21,14 @@ function App() {
           <Route path={ROUTES.LOGIN} element={<Login />}></Route>
           <Route path={ROUTES.REGISTER} element={<Register />}></Route>
           <Route path={ROUTES.REGISTER_KEYS} element={<RegisterKeys />}></Route>
+          <Route
+            path={ROUTES.DELEGATE_SETTINGS}
+            element={<DelegateSetting />}
+          ></Route>
+          <Route
+            path={ROUTES.SET_CONDITIONS}
+            element={<SetConditions />}
+          ></Route>
         </Routes>
       </main>
     </div>
