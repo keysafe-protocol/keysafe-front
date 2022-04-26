@@ -9,6 +9,8 @@ import Register from "./pages/register";
 import RegisterKeys from "./pages/register-keys";
 import DelegateSetting from "pages/delegate-setting";
 import SetConditions from "pages/set-conditions";
+import RegisterConfirm from "pages/register-confirm";
+import RegisterSuccess from "pages/register-success";
 
 function App() {
   return (
@@ -28,6 +30,14 @@ function App() {
           <Route
             path={ROUTES.SET_CONDITIONS}
             element={<SetConditions />}
+          ></Route>
+          <Route
+            path={ROUTES.REGISTER_CONFIRM}
+            element={<RegisterConfirm />}
+          ></Route>
+          <Route
+            path={ROUTES.REGISTER_SUCCESS}
+            element={<RegisterSuccess />}
           ></Route>
         </Routes>
       </main>

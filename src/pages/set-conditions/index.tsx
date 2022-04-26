@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import SetCondition from "./set-condition";
+import { ROUTES } from "constants/routes";
 
 const SetConditions = observer(() => {
   const {
@@ -27,9 +28,14 @@ const SetConditions = observer(() => {
                 {condition?.type && <span>- {condition?.type}</span>}
               </div>
               <div className="flex items-center">
-                <Input value={condition?.value} disabled className="w-80" />
+                <Input
+                  value={condition?.value}
+                  disabled
+                  className="w-80"
+                  type={condition?.type === "passphrase" ? "password" : "text"}
+                />
                 <span className="ml-2">
-                  <SetCondition />
+                  <SetCondition conditionIndex={index} />
                 </span>
               </div>
             </div>
@@ -37,7 +43,12 @@ const SetConditions = observer(() => {
         })}
       </main>
       <footer className="flex mt-20">
-        <Button type="primary">CONTINUE</Button>
+        <Button
+          type="primary"
+          onClick={() => navigate(ROUTES.REGISTER_CONFIRM)}
+        >
+          CONTINUE
+        </Button>
         <Button onClick={() => navigate(-1)} className="ml-4">
           GO BACK
         </Button>
