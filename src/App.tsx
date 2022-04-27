@@ -11,6 +11,8 @@ import DelegateSetting from "pages/delegate-setting";
 import SetConditions from "pages/set-conditions";
 import RegisterConfirm from "pages/register-confirm";
 import RegisterSuccess from "pages/register-success";
+import RecoverKeys from "./pages/recover-keys";
+import Transfer from "./pages/transfer";
 
 function App() {
   return (

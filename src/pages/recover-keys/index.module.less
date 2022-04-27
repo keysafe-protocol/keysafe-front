@@ -1,0 +1,45 @@
+@width: 60vw;
+@height: 60vh;
+
+.authContainer {
+  width: @width;
+  height: @height;
+  :global {
+    .bg-reconstructing {
+      position: relative;
+      .progress {
+        animation: progress 3s infinite;
+        background-color: #40b673;
+        position: absolute;
+        height: 100%;
+        z-index: -1;
+        left: 0;
+      }
+    }
+  }
+}
+.dialogRoot {
+  :global {
+    .rc-dialog-mask {
+      top: 4rem;
+    }
+    .rc-dialog-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 4rem;
+    }
+    .rc-dialog {
+      width: @width;
+      height: @height;
+    }
+    .rc-dialog-content {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    .rc-dialog-body {
+      flex: 1;
+    }
+  }
+}
