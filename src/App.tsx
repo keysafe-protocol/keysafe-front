@@ -11,6 +11,8 @@ import DelegateSetting from "pages/delegate-setting";
 import SetConditions from "pages/set-conditions";
 import RegisterConfirm from "pages/register-confirm";
 import RegisterSuccess from "pages/register-success";
+import RecoverKeys from "./pages/recover-keys";
+import Transfer from "./pages/transfer";
 
 function App() {
   return (
@@ -39,6 +41,8 @@ function App() {
             path={ROUTES.REGISTER_SUCCESS}
             element={<RegisterSuccess />}
           ></Route>
+          <Route path={ROUTES.RECOVER_KEYS} element={<RecoverKeys />}></Route>
+          <Route path={ROUTES.TRANSFER} element={<Transfer />}></Route>
         </Routes>
       </main>
     </div>

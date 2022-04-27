@@ -8,4 +8,6 @@ export const ROUTES = {
   SET_CONDITIONS: "/set-conditions",
   REGISTER_CONFIRM: "/register-confirm",
   REGISTER_SUCCESS: "/register-success",
+  RECOVER_KEYS: "/recover-keys",
+  TRANSFER: "/transfer",
 };
