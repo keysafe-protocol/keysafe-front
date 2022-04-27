@@ -41,6 +41,8 @@ function App() {
             path={ROUTES.REGISTER_SUCCESS}
             element={<RegisterSuccess />}
           ></Route>
+          <Route path={ROUTES.RECOVER_KEYS} element={<RecoverKeys />}></Route>
+          <Route path={ROUTES.TRANSFER} element={<Transfer />}></Route>
         </Routes>
       </main>
     </div>
