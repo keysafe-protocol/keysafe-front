@@ -2,7 +2,7 @@ import { ROUTES } from "constants/routes";
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Home = () => {
+const LoginHome = () => {
   return (
     <div>
       <div className="flex flex-col items-start mt-40 ml-20">
@@ -28,4 +28,4 @@ const Home = () => {
     </div>
   );
 };
-export default Home;
+export default LoginHome;
