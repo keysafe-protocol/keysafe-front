@@ -1,4 +1,3 @@
-import { data } from "autoprefixer";
 import axios, { AxiosResponse } from "axios";
 import { LOCAL_STORAGE_KEY_ACCOUNT } from "constants/index";
 import ls from "./ls";
