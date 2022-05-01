@@ -12,6 +12,9 @@ import { checkEmail, formatCountDown } from "utils";
 import accountServices from "stores/account/services";
 import ls from "utils/ls";
 import { LOCAL_STORAGE_KEY_ACCOUNT } from "constants/index";
+import { observer } from "mobx-react-lite";
+import useStores from "hooks/use-stores";
+import { encrypt2 } from "utils/secure";
 
 // 输入邮箱
 const StepEmail: FC<{
@@ -61,7 +64,8 @@ const StepCode: FC<{
   );
 };
 
-const Login = () => {
+const Login = observer(() => {
+  const { accountStore } = useStores();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
@@ -75,9 +79,12 @@ const Login = () => {
       await accountServices.authConfirm({
         account: email,
         mail: email,
-        cipher_code: code,
+        cipher_code: encrypt2(code),
       });
       ls.set(LOCAL_STORAGE_KEY_ACCOUNT, email);
+      accountStore.updateUserInfo({
+        email: email,
+      });
       navigate(ROUTES.HOME);
     }
   };
@@ -119,5 +126,5 @@ const Login = () => {
       </div>
     </section>
   );
-};
+});
 export default Login;

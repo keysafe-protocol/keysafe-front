@@ -1,18 +1,36 @@
 import Button from "components/button";
 import Input from "components/input";
 import { ROUTES } from "constants/routes";
+import useStores from "hooks/use-stores";
+import { observer } from "mobx-react-lite";
 import Switch from "rc-switch";
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import registerServices from "stores/register/services";
+import { checkEmail } from "utils";
 
-const DelegateSetting = () => {
+const DelegateSetting = observer(() => {
+  const {
+    accountStore: { userInfo },
+  } = useStores();
   const [delegate, setDelegate] = useState(false);
+  const [delegateEmail, setDelegateEmail] = useState("");
   const navigate = useNavigate();
+
+  const onDelegateClick = async () => {
+    if (delegate) {
+      await registerServices.delegate({
+        account: userInfo.email!,
+        to: delegateEmail,
+      });
+    }
+    navigate(ROUTES.SET_CONDITIONS);
+  };
 
   return (
     <section className="p-4">
-      <h2 className="text-2xl font-bold" style={{ color: "#2563eb" }}>
+      <h2 className="text-2xl font-bold" style={{ color: "#41B06E" }}>
         Delegate Settings
       </h2>
       <main className="mt-4">
@@ -38,20 +56,25 @@ const DelegateSetting = () => {
               registered private keys when he or she is authed to Keysafe.
             </div>
             <div className="flex items-center mt-2">
-              <Input className="w-80" />
-              <Button className="ml-4" type="primary">
-                CONFIRM
-              </Button>
+              <Input
+                className="w-80"
+                value={delegateEmail}
+                onChange={(e) => setDelegateEmail(e.target.value)}
+              />
             </div>
           </div>
         )}
       </main>
       <footer className="mt-20">
-        <Button type="primary" onClick={() => navigate(ROUTES.SET_CONDITIONS)}>
+        <Button
+          type="primary"
+          onClick={onDelegateClick}
+          disable={delegate && !checkEmail(delegateEmail)}
+        >
           CONTINUE
         </Button>
       </footer>
     </section>
   );
-};
+});
 export default DelegateSetting;

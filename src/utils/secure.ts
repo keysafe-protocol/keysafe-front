@@ -1,5 +1,13 @@
 import forge from "node-forge";
 
+export function encrypt2(text: string) {
+  return text;
+}
+
+export function decrypt2(text: string) {
+  return text;
+}
+
 export function encrypt(rawText: string, key: string) {
   console.log("encrypt content", rawText, " with ", key);
   if (key === "") {

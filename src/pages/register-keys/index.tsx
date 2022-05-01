@@ -21,7 +21,7 @@ const RegisterKeys = observer(() => {
 
   return (
     <section className="p-4">
-      <h2 className="text-2xl font-bold" style={{ color: "#2563eb" }}>
+      <h2 className="text-2xl font-bold" style={{ color: "#41B06E" }}>
         Input Private Keys
       </h2>
       <div className="mt-8">
@@ -54,6 +54,7 @@ const RegisterKeys = observer(() => {
         <Button
           type="primary"
           onClick={() => navigate(ROUTES.DELEGATE_SETTINGS)}
+          disable={privateKeys.length === 0}
         >
           CONTINUE
         </Button>
