@@ -91,7 +91,7 @@ const Shard = () => {
             <Button
               type="primary"
               className="mr-4 px-10"
-              onClick={() => alert(shards.join("\n"))}
+              onClick={() => setStep(StepType.RESULT)}
             >
               EXPORT RESULTS
             </Button>

@@ -11,9 +11,7 @@ import styles from "./index.module.less";
 const AuthPass = () => {
   const { activeAuth, setActiveAuth, getAuth, setAuth } = useStore();
   const [pass, setPass] = useState("");
-  const [passConfirm, setPassConfirm] = useState("");
   const [valid, setValid] = useState(false);
-  const [validConfirm, setValidConfirm] = useState(false);
 
   const handleConfirm = () => {
     const auth = getAuth(AuthType.PASS);
@@ -23,10 +21,7 @@ const AuthPass = () => {
 
   useEffect(() => {
     setValid(pass.length > 0 && regexp.test(pass));
-    setValidConfirm(
-      passConfirm.length > 0 && regexp.test(pass) && pass === passConfirm
-    );
-  }, [pass, passConfirm]);
+  }, [pass]);
 
   return (
     <Dialog
@@ -36,7 +31,7 @@ const AuthPass = () => {
       title="AUTH #2"
       footer={
         <footer className="  text-center">
-          {validConfirm && (
+          {valid && (
             <Button type="primary" className="mr-2" onClick={handleConfirm}>
               CONFIRM
             </Button>
@@ -58,18 +53,6 @@ const AuthPass = () => {
             />
             <span className="ml-4 w-4">
               {valid && <IconCheck className="w-4 h-4" />}
-            </span>
-          </div>
-        </section>
-        <section className="mt-4">
-          <p className="text-orange-300">Input your passphrase again.</p>
-          <div className="flex items-center">
-            <Input
-              className="flex-1"
-              onChange={(e) => setPassConfirm(e.target.value)}
-            />
-            <span className="ml-4 w-4">
-              {validConfirm && <IconCheck className="w-4 h-4" />}
             </span>
           </div>
         </section>

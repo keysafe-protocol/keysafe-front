@@ -1,3 +1,4 @@
+import { ChainType } from "constants/enum";
 import create from "zustand";
 
 export enum AuthType {
@@ -8,9 +9,12 @@ export enum AuthType {
 
 export enum StepType {
   INTRODUCTION,
+  ACCOUNT,
   AUTH,
   SHARD,
+  RESULT,
 }
+export type Account = { chain: string; chianAddr: string };
 
 type Auth = {
   type: AuthType;
@@ -19,6 +23,7 @@ type Auth = {
 } & Record<string, any>;
 
 interface AuthState {
+  account: Account;
   shards: string[];
   auths: Auth[];
   step: StepType;
@@ -26,6 +31,7 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
+  account: { chain: ChainType.Eth, chianAddr: "" },
   shards: [],
   auths: [
     { type: AuthType.EMAIL },
@@ -43,6 +49,7 @@ const useStore = create<
     setActiveAuth: (type: AuthType | null) => void;
     setAuth: (auth: Auth) => void;
     getAuth: (type: AuthType) => Auth;
+    setAccount: (account: Account) => void;
   }
 >((set, get) => ({
   ...initialState,
@@ -64,6 +71,7 @@ const useStore = create<
     }
     return auth;
   },
+  setAccount: (account: Account) => set({ account }),
 }));
 
 export default useStore;

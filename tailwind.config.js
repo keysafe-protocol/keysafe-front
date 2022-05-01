@@ -4,10 +4,10 @@ module.exports = {
     extend: {
       colors: {
         basecolor: "#41B06E",
-        authpass: "#40b673",
-        authfail: "#ffc4c5",
-        shardready: "#d2edde",
-        titleblue: "#047FD9",
+        authpass: "#59bb80",
+        authfail: "#eff9f3",
+        shardready: "#bce1cc",
+        titlecolor: "#41B06E",
       },
     },
   },

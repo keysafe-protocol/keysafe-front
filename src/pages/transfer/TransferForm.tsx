@@ -39,7 +39,7 @@ const TransferForm = () => {
   return (
     <main className={styles.authContainer}>
       <div className="max-w-xl mx-auto grid grid-cols-1 gap-6">
-        <h2 className="mb-2 text-2xl font-bold text-titleblue">
+        <h2 className="mb-2 text-2xl font-bold text-titlecolor">
           Make a Transfer
         </h2>
         <section>

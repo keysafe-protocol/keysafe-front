@@ -19,7 +19,7 @@ const AuthGoogle = () => {
   };
 
   useEffect(() => {
-    setValid(code.length > 0);
+    setValid(code.length >= 6);
   }, [code]);
 
   return (
