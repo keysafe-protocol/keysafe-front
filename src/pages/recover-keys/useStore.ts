@@ -31,6 +31,7 @@ interface AuthState {
   auths: Auth[];
   step: StepType;
   activeAuth: AuthType | null;
+  privateKey: string;
 }
 
 const initialState: AuthState = {
@@ -44,6 +45,7 @@ const initialState: AuthState = {
   ],
   step: StepType.INTRODUCTION,
   activeAuth: null,
+  privateKey: "",
 };
 
 const useStore = create<
@@ -56,6 +58,7 @@ const useStore = create<
     setAccountChain: (accountChain: AccountChain) => void;
     setAccountStore: (store: AccountStore) => void;
     setUserInfo: (userInfo: UserInfo) => void;
+    setPrivateKey: (privateKey: string) => void;
   }
 >((set, get) => ({
   ...initialState,
@@ -80,6 +83,7 @@ const useStore = create<
   setAccountChain: (accountChain: AccountChain) => set({ accountChain }),
   setAccountStore: (accountStore: AccountStore) => set({ accountStore }),
   setUserInfo: (userInfo: UserInfo) => set({ userInfo }),
+  setPrivateKey: (privateKey: string) => set({ privateKey }),
 }));
 
 export default useStore;

@@ -21,13 +21,17 @@ const AccountForm = () => {
   }, [accountChain, accountStore, setFields]);
 
   const handleConfirm = () => {
-    setAccountChain(fields);
-    setStep(StepType.AUTH);
+    const current = accountStore!.accountChains.find(
+      (c) => c.chain_addr === fields.chain_addr
+    );
+    if (current) {
+      setAccountChain({ ...current });
+      setStep(StepType.AUTH);
+    }
   };
 
   return (
     <main className={styles.authContainer}>
-      <pre>{JSON.stringify(fields, null, 2)}</pre>
       <div className="max-w-xl mx-auto grid grid-cols-1 gap-6">
         <h2 className="mb-2 text-2xl font-bold text-titlecolor">Recover Key</h2>
         <section>
@@ -41,7 +45,7 @@ const AccountForm = () => {
               }
             >
               <option value={ChainType.Eth}>{ChainType.Eth}</option>
-              <option value={ChainType.Btc}>{ChainType.Btc}</option>
+              {/* <option value={ChainType.Btc}>{ChainType.Btc}</option> */}
             </select>
           </div>
         </section>

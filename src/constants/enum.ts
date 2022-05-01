@@ -5,6 +5,6 @@ export enum ChainType {
 
 export enum ConditionType {
   Email = "email",
-  Passphrase = "passphrase",
+  Passphrase = "password",
   GAuth = "gauth",
 }

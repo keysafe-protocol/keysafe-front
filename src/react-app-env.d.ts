@@ -13,6 +13,8 @@ declare interface Window {
   secrets: {
     str2hex(str: string, bytesPerChar?: unknown): string;
     share(secret?, numShares?, threshold?, padLength?): string[];
+    combine(shares: string[], at?: number): string;
+    hex2str(str: string, bytesPerChar?: number): string;
   };
   Web3: any;
 

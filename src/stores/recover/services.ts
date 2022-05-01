@@ -3,10 +3,11 @@ import request from "utils/request";
 
 type UnSealType = {
   account: string;
+  owner: string;
   chain: string;
   chain_addr: string;
-  condition_type: ConditionType;
-  cipher_condition_value: string;
+  cond_type: ConditionType;
+  cipher_cond_value: string;
 };
 const RecoverServices = {
   unseal(data: UnSealType) {

@@ -6,12 +6,22 @@ import Button from "components/button";
 import Input from "components/input";
 import { ReactComponent as IconCheck } from "assets/check.svg";
 import styles from "./index.module.less";
+import { ChainType } from "constants/enum";
 
 const TransferForm = () => {
-  const { reset, setStep, setTransfer, transfer } = useStore();
+  const {
+    reset,
+    setStep,
+    setTransfer,
+    setAccountChain,
+    accountChain,
+    accountStore,
+    transfer,
+  } = useStore();
   const [verified, setVerified] = useState(true);
 
   const [fields, setFields] = useSetState<Transfer>(transfer);
+  const [addrs, setAddrs] = useState<string[]>([]);
   const [valid, setValid] = useSetState<Record<string, boolean>>({
     account: false,
     from: false,
@@ -20,7 +30,6 @@ const TransferForm = () => {
   });
 
   useEffect(() => {
-    console.log(fields);
     const [account, from, to, amount] = [
       Boolean(fields.account),
       Boolean(fields.from),
@@ -31,9 +40,24 @@ const TransferForm = () => {
     setVerified(account && from && to && amount);
   }, [setValid, fields]);
 
+  useEffect(() => {
+    if (accountStore) {
+      const first = accountStore.accountChains[0];
+      const addrs = accountStore.accountChains.map((chain) => chain.chain_addr);
+      setFields({ ...fields, account: first.chain, from: first.chain_addr });
+      setAddrs(addrs);
+    }
+  }, [accountChain, accountStore, fields, setFields]);
+
   const handleTransfer = () => {
-    setStep(StepType.AUTH);
-    setTransfer(fields);
+    const current = accountStore!.accountChains.find(
+      (c) => c.chain_addr === fields.from
+    );
+    if (current) {
+      setAccountChain({ ...current });
+      setTransfer(fields);
+      setStep(StepType.AUTH);
+    }
   };
 
   return (
@@ -48,28 +72,31 @@ const TransferForm = () => {
             <select
               className="block flex-1"
               value={fields.account}
-              onChange={(e) => setFields({ account: e.target.value })}
+              onChange={(e) =>
+                setFields({ account: e.target.value as ChainType })
+              }
             >
-              <option value="ethereum">ethereum</option>
-              <option value="btc">btc</option>
+              <option value={ChainType.Eth}>{ChainType.Eth}</option>
+              {/* <option value={ChainType.Btc}>{ChainType.Btc}</option> */}
             </select>
-            <span className="ml-4 w-4">
-              {/* {valid.account && <IconCheck className="w-4 h-4" />} */}
-            </span>
+            <span className="ml-4 w-4"></span>
           </div>
         </section>
         <section>
           <p className="text-gray-700 mb-1">From Address:</p>
           <div className="flex items-center">
-            <Input
-              type="text"
-              className="flex-1"
+            <select
+              className="block flex-1"
               value={fields.from}
               onChange={(e) => setFields({ from: e.target.value })}
-            />
-            <span className="ml-4 w-4">
-              {valid.from && <IconCheck className="w-4 h-4" />}
-            </span>
+            >
+              {addrs.map((addr, index) => (
+                <option key={index} value={addr}>
+                  {addr}
+                </option>
+              ))}
+            </select>
+            <span className="ml-4 w-4"></span>
           </div>
         </section>
         <section>

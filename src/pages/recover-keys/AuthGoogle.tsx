@@ -25,10 +25,11 @@ const AuthGoogle = () => {
   const handleConfirm = async () => {
     const data: any = await RecoverServices.unseal({
       account: userInfo.email!,
+      owner: accountChain.owner,
       chain: accountChain.chain,
       chain_addr: accountChain.chain_addr,
-      condition_type: ConditionType.GAuth,
-      cipher_condition_value: encrypt2(code),
+      cond_type: ConditionType.GAuth,
+      cipher_cond_value: encrypt2(code),
     });
 
     const auth = getAuth(AuthType.GOOGLE);

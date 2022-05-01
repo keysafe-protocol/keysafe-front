@@ -14,6 +14,7 @@ import RecoverServices from "stores/recover/services";
 import { ConditionType } from "constants/enum";
 import { encrypt2 } from "utils/secure";
 import { checkEmail } from "utils";
+import registerServices from "stores/register/services";
 
 const AuthEmail = () => {
   const {
@@ -39,7 +40,13 @@ const AuthEmail = () => {
     },
   });
 
-  const handleSend = () => {
+  const handleSend = async () => {
+    await registerServices.registerMailAuth({
+      account: userInfo.email!,
+      mail: email,
+      cipher_mail: email,
+    });
+
     setTargetDate(dayjs().add(60, "s").toDate());
     setSent(true);
     setShowVerify(true);
@@ -49,10 +56,11 @@ const AuthEmail = () => {
   const handleConfirm = async () => {
     const data: any = await RecoverServices.unseal({
       account: userInfo.email!,
+      owner: accountChain.owner,
       chain: accountChain.chain,
       chain_addr: accountChain.chain_addr,
-      condition_type: ConditionType.Email,
-      cipher_condition_value: encrypt2(code),
+      cond_type: ConditionType.Email,
+      cipher_cond_value: encrypt2(code),
     });
     const auth = getAuth(AuthType.EMAIL);
     setAuth({

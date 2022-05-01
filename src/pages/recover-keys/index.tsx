@@ -3,7 +3,7 @@ import Introduction from "./Introduction";
 import AccountForm from "./AccountForm";
 import Auth from "./Auth";
 import Shard from "./Shard";
-import useStore from "./useStore";
+import useStore, { StepType } from "./useStore";
 import Result from "./Result";
 import { observer } from "mobx-react-lite";
 import useStores from "hooks/use-stores";
@@ -13,9 +13,11 @@ const Recover = () => {
   const { step, setAccountStore, setUserInfo } = useStore();
 
   useEffect(() => {
-    setAccountStore(accountStore);
-    setUserInfo(accountStore.userInfo);
-  }, [accountStore, setAccountStore, setUserInfo]);
+    if (step === StepType.INTRODUCTION) {
+      setAccountStore(accountStore);
+      setUserInfo(accountStore.userInfo);
+    }
+  }, [accountStore, setAccountStore, setUserInfo, step]);
 
   const STEPS = [
     <Introduction />,

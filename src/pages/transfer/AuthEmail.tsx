@@ -10,12 +10,21 @@ import Input from "components/input";
 import { ReactComponent as IconCheck } from "assets/check.svg";
 
 import styles from "./index.module.less";
-import { checkEmail } from "utils";
 import RecoverServices from "stores/recover/services";
 import { ConditionType } from "constants/enum";
+import { encrypt2 } from "utils/secure";
+import { checkEmail } from "utils";
+import registerServices from "stores/register/services";
 
 const AuthEmail = () => {
-  const { activeAuth, setActiveAuth, getAuth, setAuth } = useStore();
+  const {
+    activeAuth,
+    accountChain,
+    userInfo,
+    setActiveAuth,
+    getAuth,
+    setAuth,
+  } = useStore();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [sent, setSent] = useState(false);
@@ -31,8 +40,8 @@ const AuthEmail = () => {
   });
 
   const handleSend = async () => {
-    await RecoverServices.registerMailAuth({
-      account: email,
+    await registerServices.registerMailAuth({
+      account: userInfo.email!,
       mail: email,
       cipher_mail: email,
     });
@@ -43,18 +52,15 @@ const AuthEmail = () => {
     setVerified(false);
   };
 
-  const handleChange = (code: string) => {
-    setCode(code);
-    setVerified(code.length > 0);
-  };
 
   const handleConfirm = async () => {
-    await RecoverServices.unseal({
-      account: email,
-      chain: "",
-      chain_addr: "",
-      condition_type: ConditionType.Email,
-      cipher_condition_value: code,
+    const data: any = await RecoverServices.unseal({
+      account: userInfo.email!,
+      owner: accountChain.owner,
+      chain: accountChain.chain,
+      chain_addr: accountChain.chain_addr,
+      cond_type: ConditionType.Email,
+      cipher_cond_value: encrypt2(code),
     });
 
     const auth = getAuth(AuthType.EMAIL);
@@ -62,9 +68,13 @@ const AuthEmail = () => {
       ...auth,
       success: true,
       email: email,
-      shard: "email test shard",
+      shard: data.cipher_secret,
     });
     setActiveAuth(null);
+  };
+  const handleChange = (code: string) => {
+    setCode(code);
+    setVerified(code.length > 0);
   };
 
   useEffect(() => {
@@ -129,13 +139,6 @@ const AuthEmail = () => {
                 onChange={(e) => handleChange(e.target.value)}
               />
               {verified && <IconCheck className="w-4 h-4" />}
-              {/* {verified ? (
-                <IconCheck className="w-4 h-4" />
-              ) : (
-                <Button onClick={handleVerify} disable={!code.length}>
-                  VERIFY
-                </Button>
-              )} */}
             </div>
           </section>
         )}

@@ -7,8 +7,7 @@ import useStore, { AuthType, StepType } from "./useStore";
 import styles from "./index.module.less";
 
 const Auth = () => {
-  const { shards, activeAuth, getAuth, setActiveAuth, setStep, reset } =
-    useStore();
+  const { shards, activeAuth, getAuth, setActiveAuth, setStep } = useStore();
   const [readyRecover, setReadyRecover] = useState(false);
   const authEmail = getAuth(AuthType.EMAIL);
   const authPass = getAuth(AuthType.PASS);
@@ -81,7 +80,7 @@ const Auth = () => {
         >
           SUBMIT
         </Button>
-        <Button className="px-10" onClick={() => reset()}>
+        <Button className="px-10" onClick={() => setStep(StepType.ACCOUNT)}>
           GO BACK
         </Button>
       </footer>
