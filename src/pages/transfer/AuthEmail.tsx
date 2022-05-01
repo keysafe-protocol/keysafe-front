@@ -10,6 +10,9 @@ import Input from "components/input";
 import { ReactComponent as IconCheck } from "assets/check.svg";
 
 import styles from "./index.module.less";
+import { checkEmail } from "utils";
+import RecoverServices from "stores/recover/services";
+import { ConditionType } from "constants/enum";
 
 const AuthEmail = () => {
   const { activeAuth, setActiveAuth, getAuth, setAuth } = useStore();
@@ -27,18 +30,33 @@ const AuthEmail = () => {
     },
   });
 
-  const handleSend = () => {
+  const handleSend = async () => {
+    await RecoverServices.registerMailAuth({
+      account: email,
+      mail: email,
+      cipher_mail: email,
+    });
+
     setTargetDate(dayjs().add(60, "s").toDate());
     setSent(true);
     setShowVerify(true);
     setVerified(false);
   };
 
-  const handleVerify = () => {
-    setVerified(true);
+  const handleChange = (code: string) => {
+    setCode(code);
+    setVerified(code.length > 0);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
+    await RecoverServices.unseal({
+      account: email,
+      chain: "",
+      chain_addr: "",
+      condition_type: ConditionType.Email,
+      cipher_condition_value: code,
+    });
+
     const auth = getAuth(AuthType.EMAIL);
     setAuth({
       ...auth,
@@ -50,7 +68,7 @@ const AuthEmail = () => {
   };
 
   useEffect(() => {
-    setEmailValid(email.length > 0 && regexp.test(email));
+    setEmailValid(email.length > 0 && checkEmail(email));
   }, [email]);
 
   return (
@@ -108,15 +126,16 @@ const AuthEmail = () => {
               <Input
                 placeholder="Input verification code"
                 className="flex-1 mr-4"
-                onChange={(e) => setCode(e.target.value)}
+                onChange={(e) => handleChange(e.target.value)}
               />
-              {verified ? (
+              {verified && <IconCheck className="w-4 h-4" />}
+              {/* {verified ? (
                 <IconCheck className="w-4 h-4" />
               ) : (
                 <Button onClick={handleVerify} disable={!code.length}>
                   VERIFY
                 </Button>
-              )}
+              )} */}
             </div>
           </section>
         )}
@@ -126,7 +145,3 @@ const AuthEmail = () => {
 };
 
 export default AuthEmail;
-
-const regexp = new RegExp(
-  "^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$"
-);

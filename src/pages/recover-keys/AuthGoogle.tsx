@@ -6,15 +6,33 @@ import Button from "components/button";
 import styles from "./index.module.less";
 import Input from "components/input";
 import { ReactComponent as IconCheck } from "assets/check.svg";
+import RecoverServices from "stores/recover/services";
+import { ConditionType } from "constants/enum";
+import { encrypt2 } from "utils/secure";
 
 const AuthGoogle = () => {
-  const { activeAuth, setActiveAuth, getAuth, setAuth } = useStore();
+  const {
+    activeAuth,
+    userInfo,
+    accountChain,
+    setActiveAuth,
+    getAuth,
+    setAuth,
+  } = useStore();
   const [code, setCode] = useState("");
   const [valid, setValid] = useState(false);
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
+    const data: any = await RecoverServices.unseal({
+      account: userInfo.email!,
+      chain: accountChain.chain,
+      chain_addr: accountChain.chain_addr,
+      condition_type: ConditionType.GAuth,
+      cipher_condition_value: encrypt2(code),
+    });
+
     const auth = getAuth(AuthType.GOOGLE);
-    setAuth({ ...auth, success: true, code, shard: "test shard" });
+    setAuth({ ...auth, success: true, code, shard: data.cipher_secret });
     setActiveAuth(null);
   };
 

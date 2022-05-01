@@ -1,4 +1,6 @@
 import { ChainType } from "constants/enum";
+import AccountStore from "stores/account";
+import { AccountChain, UserInfo } from "stores/account/types";
 import create from "zustand";
 
 export enum AuthType {
@@ -14,7 +16,6 @@ export enum StepType {
   SHARD,
   RESULT,
 }
-export type Account = { chain: string; chianAddr: string };
 
 type Auth = {
   type: AuthType;
@@ -23,7 +24,9 @@ type Auth = {
 } & Record<string, any>;
 
 interface AuthState {
-  account: Account;
+  userInfo: UserInfo;
+  accountStore?: AccountStore;
+  accountChain: AccountChain;
   shards: string[];
   auths: Auth[];
   step: StepType;
@@ -31,7 +34,8 @@ interface AuthState {
 }
 
 const initialState: AuthState = {
-  account: { chain: ChainType.Eth, chianAddr: "" },
+  userInfo: {},
+  accountChain: { chain: ChainType.Eth, chain_addr: "", owner: "" }, // current selected chain
   shards: [],
   auths: [
     { type: AuthType.EMAIL },
@@ -49,7 +53,9 @@ const useStore = create<
     setActiveAuth: (type: AuthType | null) => void;
     setAuth: (auth: Auth) => void;
     getAuth: (type: AuthType) => Auth;
-    setAccount: (account: Account) => void;
+    setAccountChain: (accountChain: AccountChain) => void;
+    setAccountStore: (store: AccountStore) => void;
+    setUserInfo: (userInfo: UserInfo) => void;
   }
 >((set, get) => ({
   ...initialState,
@@ -71,7 +77,9 @@ const useStore = create<
     }
     return auth;
   },
-  setAccount: (account: Account) => set({ account }),
+  setAccountChain: (accountChain: AccountChain) => set({ accountChain }),
+  setAccountStore: (accountStore: AccountStore) => set({ accountStore }),
+  setUserInfo: (userInfo: UserInfo) => set({ userInfo }),
 }));
 
 export default useStore;

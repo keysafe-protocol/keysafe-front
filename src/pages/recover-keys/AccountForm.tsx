@@ -1,33 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSetState } from "ahooks";
-
-import useStore, { StepType, Account } from "./useStore";
+import useStore, { StepType } from "./useStore";
 import Button from "components/button";
 import styles from "./index.module.less";
 import { ChainType } from "constants/enum";
-import { observer } from "mobx-react-lite";
-import useStores from "hooks/use-stores";
+import { AccountChain } from "stores/account/types";
 
 const AccountForm = () => {
-  const {
-    accountStore: { accountChains },
-  } = useStores();
+  const { reset, setStep, accountChain, setAccountChain, accountStore } =
+    useStore();
+  const [fields, setFields] = useSetState<AccountChain>(accountChain);
+  const [addrs, setAddrs] = useState<string[]>([]);
 
-  const addrs = accountChains.map((account) => account.chain_addr);
-  const { reset, setStep, account, setAccount } = useStore();
-  const [fields, setFields] = useSetState<Account>({
-    ...account,
-    chianAddr: addrs[0],
-  });
+  useEffect(() => {
+    if (accountStore) {
+      const addrs = accountStore.accountChains.map((chain) => chain.chain_addr);
+      setAddrs(addrs);
+      setFields({ ...accountChain, chain_addr: addrs[0] });
+    }
+  }, [accountChain, accountStore, setFields]);
 
   const handleConfirm = () => {
-    setAccount(fields);
+    setAccountChain(fields);
     setStep(StepType.AUTH);
   };
 
   return (
     <main className={styles.authContainer}>
-      <pre>{JSON.stringify(account, null, 2)}</pre>
+      <pre>{JSON.stringify(fields, null, 2)}</pre>
       <div className="max-w-xl mx-auto grid grid-cols-1 gap-6">
         <h2 className="mb-2 text-2xl font-bold text-titlecolor">Recover Key</h2>
         <section>
@@ -36,7 +36,9 @@ const AccountForm = () => {
             <select
               className="block flex-1"
               value={fields.chain}
-              onChange={(e) => setFields({ chain: e.target.value })}
+              onChange={(e) =>
+                setFields({ chain: e.target.value as ChainType })
+              }
             >
               <option value={ChainType.Eth}>{ChainType.Eth}</option>
               <option value={ChainType.Btc}>{ChainType.Btc}</option>
@@ -49,8 +51,8 @@ const AccountForm = () => {
           <div className="flex items-center">
             <select
               className="block flex-1"
-              value={fields.chianAddr}
-              onChange={(e) => setFields({ chianAddr: e.target.value })}
+              value={fields.chain_addr}
+              onChange={(e) => setFields({ chain_addr: e.target.value })}
             >
               {addrs.map((addr, index) => (
                 <option key={index} value={addr}>
@@ -73,4 +75,4 @@ const AccountForm = () => {
   );
 };
 
-export default observer(AccountForm);
+export default AccountForm;
