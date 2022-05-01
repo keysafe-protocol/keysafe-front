@@ -5,27 +5,25 @@ import useStores from "hooks/use-stores";
 import { observer } from "mobx-react-lite";
 import Switch from "rc-switch";
 import React from "react";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import registerServices from "stores/register/services";
 import { checkEmail } from "utils";
 
 const DelegateSetting = observer(() => {
   const {
-    accountStore: { userInfo },
+    registerStore,
+    registerStore: { delegateInfo },
   } = useStores();
-  const [delegate, setDelegate] = useState(false);
-  const [delegateEmail, setDelegateEmail] = useState("");
   const navigate = useNavigate();
 
   const onDelegateClick = async () => {
-    if (delegate) {
-      await registerServices.delegate({
-        account: userInfo.email!,
-        to: delegateEmail,
-      });
-    }
     navigate(ROUTES.SET_CONDITIONS);
+  };
+
+  const onDelegateInfoUpdate = (key: string, value: unknown) => {
+    registerStore.updateDelegateInfo({
+      ...delegateInfo,
+      [key]: value,
+    });
   };
 
   return (
@@ -42,12 +40,12 @@ const DelegateSetting = observer(() => {
               access your registered private keys (for recovery or/and sig).
             </span>
             <Switch
-              checked={delegate}
-              onChange={(checked) => setDelegate(checked)}
+              checked={delegateInfo.delegate}
+              onChange={(checked) => onDelegateInfoUpdate("delegate", checked)}
             />
           </div>
         </div>
-        {delegate && (
+        {delegateInfo.delegate && (
           <div className="">
             <div className="text-lg font-medium">Set Your Delegate</div>
             <div className="text-gray-500">
@@ -58,8 +56,8 @@ const DelegateSetting = observer(() => {
             <div className="flex items-center mt-2">
               <Input
                 className="w-80"
-                value={delegateEmail}
-                onChange={(e) => setDelegateEmail(e.target.value)}
+                value={delegateInfo.to}
+                onChange={(e) => onDelegateInfoUpdate("to", e.target.value)}
               />
             </div>
           </div>
@@ -69,7 +67,7 @@ const DelegateSetting = observer(() => {
         <Button
           type="primary"
           onClick={onDelegateClick}
-          disable={delegate && !checkEmail(delegateEmail)}
+          disable={delegateInfo.delegate && !checkEmail(delegateInfo.to)}
         >
           CONTINUE
         </Button>

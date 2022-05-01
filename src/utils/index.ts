@@ -18,3 +18,10 @@ export const keyShares = (key: string) => {
   const shares = window.secrets.share(secretKeyHex, 3, 2);
   return shares;
 };
+
+export const gauthKey = (email: string, secret: string) => {
+  return `otpauth://totp/Keysafe:${email}?secret=${secret.slice(
+    0,
+    26
+  )}&issuer=Keysafe.network`;
+};

@@ -25,7 +25,6 @@ request.interceptors.response.use(
       case "success":
         return data;
       case "fail":
-        console.log(response);
         message({
           content: `Fail: ${response.config.url}`,
         });

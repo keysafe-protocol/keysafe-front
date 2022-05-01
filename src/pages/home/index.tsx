@@ -23,20 +23,21 @@ const Home = observer(() => {
 
   return (
     <section className="flex flex-col items-center ks-full-container justify-center">
-      <h2 className="font-bold text-8xl -mt-40">HOME</h2>
-      <p
-        className="mt-4 text-5xl text-center w-3/5 "
-        style={{ color: "#9D9999", lineHeight: "60px" }}
-      >
+      <h2 className="font-bold text-6xl ">HOME</h2>
+      <p className="mt-4 text-4xl text-center w-3/5 text-zinc-400">
         Your account has been safely stored by Keysafe, you can choose to
         restore your account or initiate a transfer at any time.
       </p>
       {!isEmpty(accountChains) && (
-        <footer className="flex items-center justify-center">
+        <footer className="flex items-center justify-center mt-20">
           <Button type="primary" onClick={() => navigate(ROUTES.RECOVER_KEYS)}>
             Recover
           </Button>
-          <Button type="primary" onClick={() => navigate(ROUTES.TRANSFER)}>
+          <Button
+            type="primary"
+            onClick={() => navigate(ROUTES.TRANSFER)}
+            className="ml-32"
+          >
             Transfer
           </Button>
         </footer>

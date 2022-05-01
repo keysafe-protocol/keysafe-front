@@ -7,19 +7,30 @@ import { keyShares } from "utils";
 import useStores from "hooks/use-stores";
 import { PrivateKey } from "stores/register/types";
 import registerServices from "stores/register/services";
+import { privateKeyToAddress } from "utils/eth";
+import message from "utils/message";
 
 const RegisterConfirm = observer(() => {
   const navigate = useNavigate();
   const {
-    registerStore: { conditions, privateKeys },
+    registerStore,
+    registerStore: { conditions, privateKeys, delegateInfo },
+    accountStore,
     accountStore: { userInfo },
   } = useStores();
 
   const onSubmitClick = async () => {
-    console.log(privateKeys, conditions);
     const promises = privateKeys.reduce((pre, cur) => {
       const { type, key } = cur;
       const shares = keyShares(key);
+      let chainAddr = "";
+      try {
+        chainAddr = privateKeyToAddress(key);
+      } catch (err) {
+        message({ content: "invalid secret key" });
+        throw Error();
+      }
+
       return [
         ...pre,
         ...conditions.map((condition, index) => {
@@ -27,15 +38,23 @@ const RegisterConfirm = observer(() => {
           return registerServices.seal({
             account: userInfo.email!,
             chain: type,
-            chain_addr: "TODO",
+            chain_addr: chainAddr,
             cond_type: conditionType!,
             cipher_secret: shares[index],
           });
         }),
       ];
     }, [] as Promise<unknown>[]);
-    console.log(promises);
+    // seal all shared secrets
     await Promise.all(promises);
+    if (delegateInfo.delegate) {
+      await registerServices.delegate({
+        account: userInfo.email!,
+        to: delegateInfo.to,
+      });
+    }
+    await accountStore.loadUserInfo();
+    registerStore.clearRegisterInfo();
     navigate(ROUTES.REGISTER_SUCCESS);
   };
 

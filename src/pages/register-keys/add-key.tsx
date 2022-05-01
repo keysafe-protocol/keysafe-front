@@ -9,6 +9,8 @@ import useStores from "hooks/use-stores";
 import { observer } from "mobx-react-lite";
 import { ChainType } from "constants/enum";
 import { isEmpty } from "lodash-es";
+import { checkEthKey } from "utils/eth";
+import { useMemo } from "react";
 
 const INIT_PRIVATEKEY: PrivateKey = {
   type: ChainType.Eth,
@@ -35,6 +37,11 @@ const AddKey = observer(() => {
     setVisible(false);
   };
 
+  const valid = useMemo(() => {
+    if (privateKey.key && !checkEthKey(privateKey.key)) return false;
+    return true;
+  }, [privateKey]);
+
   return (
     <>
       <Dialog visible={visible} onClose={() => setVisible(false)}>
@@ -58,13 +65,18 @@ const AddKey = observer(() => {
               value={privateKey.key}
               onChange={(e) => onValueChange("key", e.target.value)}
             />
+            {!valid && (
+              <p className="mt-2 text-sm text-orange-500">
+                Please input valid private key
+              </p>
+            )}
           </div>
           <footer className="flex justify-center mt-4">
             <Button
               type="primary"
               className="mr-2"
               onClick={onConfirmClick}
-              disable={isEmpty(privateKey.key)}
+              disable={isEmpty(privateKey.key) || !valid}
             >
               CONFIRM
             </Button>

@@ -7,6 +7,7 @@ import "./index.less";
 type ButtonProps = {
   type?: "default" | "primary" | "secondary" | "dashed" | "text" | "outline";
   disable?: boolean;
+  size?: "mini" | "small" | "normal" | "large" | "largest";
 } & Omit<ButtonHTMLAttributes<any>, "type"> &
   PropsWithChildren<unknown>;
 const Button: FC<ButtonProps> = ({
@@ -15,11 +16,14 @@ const Button: FC<ButtonProps> = ({
   disable = false,
   onClick,
   children,
+  size = "normal",
   ...rest
 }) => {
-  const btnClass = classNames("ks-button", className, {
+  const btnClass = classNames("ks-button h-8 px-4 text-base", className, {
     "ks-button-primary": type === "primary",
     "ks-button-disable": disable,
+    "h-10 px-6 text-lg": size === "large",
+    "h-12 px-8 text-xl": size === "largest",
   });
   const _onClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     if (disable) return;
