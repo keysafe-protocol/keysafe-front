@@ -48,6 +48,7 @@ const SetConditions = observer(() => {
         <Button
           type="primary"
           onClick={() => navigate(ROUTES.REGISTER_CONFIRM)}
+          disable={conditions.length < 3}
         >
           CONTINUE
         </Button>

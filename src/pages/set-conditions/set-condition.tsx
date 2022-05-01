@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import Dialog from "rc-dialog";
 import React, { useState, ChangeEvent, FC } from "react";
-import { checkEmail, formatCountDown } from "utils";
+import { checkEmail, formatCountDown, gauthKey } from "utils";
 import useStores from "hooks/use-stores";
 import { Condition } from "stores/register/types";
 import registerServices from "stores/register/services";
@@ -56,10 +56,9 @@ const SetCondition: FC<Props> = observer(({ conditionIndex }) => {
         const res = await registerServices.registerGAuth({
           account: userInfo.email!,
         });
-        // TODO: Get gauth link
         setCondition({
           ...condition,
-          value: "TODO",
+          value: res.gauth,
         });
       }
     },
@@ -184,18 +183,20 @@ const SetCondition: FC<Props> = observer(({ conditionIndex }) => {
         );
       case ConditionType.GAuth:
         return (
-          <div className="flex flex-col items-center">
+          <div className="mt-4">
             {/* <div ref={qrcodeRef} className="w-60 h-60"></div> */}
             {condition.value && (
-              <QRCodeSVG
-                style={{ width: 300, height: 300 }}
-                value={condition.value}
-              />
+              <div className="flex flex-col items-center">
+                <QRCodeSVG
+                  style={{ width: 300, height: 300 }}
+                  value={gauthKey(userInfo.email!, condition.value)}
+                />
+                <p className="text-center mt-2 text-basecolor">
+                  Please scan the QR code with Google Auth, otherwise the
+                  authentication information will not be saved normally
+                </p>
+              </div>
             )}
-            <p className="text-center mt-2 text-basecolor">
-              Please scan the QR code with Google Auth, otherwise the
-              authentication information will not be saved normally
-            </p>
           </div>
         );
     }

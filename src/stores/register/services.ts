@@ -21,7 +21,7 @@ export default {
     return request.post(`/register_password`, data);
   },
 
-  registerGAuth(data: RegisterGAuthRequest) {
+  registerGAuth(data: RegisterGAuthRequest): Promise<{ gauth: string }> {
     return request.post(`/register_gauth`, data);
   },
 

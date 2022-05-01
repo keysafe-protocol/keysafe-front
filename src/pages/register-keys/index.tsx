@@ -32,7 +32,7 @@ const RegisterKeys = observer(() => {
               return (
                 <div key={index} className="flex mb-2 items-center">
                   <span className="w-10">#{index + 1}</span>
-                  <span className="ml-2 p-1 border bg-gray-300 w-96">
+                  <span className="ml-2 p-1 border bg-gray-300 w-96 text-ellipsis overflow-hidden">
                     {privateKey.key}
                   </span>
                   <span className="ml-2 w-32 p-1 border bg-gray-300">
