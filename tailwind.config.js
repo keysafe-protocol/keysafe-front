@@ -3,6 +3,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        basecolor: "#41B06E",
         authpass: "#40b673",
         authfail: "#ffc4c5",
         shardready: "#d2edde",

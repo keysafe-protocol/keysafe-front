@@ -5,6 +5,7 @@ import message from "./message";
 
 const request = axios.create({
   baseURL: "https://47.93.85.187:30000/",
+  // baseURL: "https://bb2d4198-bc40-40c8-97c6-f18a802aee3a.mock.pstmn.io/",
 });
 
 request.interceptors.request.use((config) => {

@@ -11,3 +11,8 @@ export type AccountChain = {
   chain_addr: string;
   owner: string;
 };
+
+export type UserInfo = {
+  email?: string;
+  key?: string;
+};

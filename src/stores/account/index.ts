@@ -2,24 +2,26 @@ import { LOCAL_STORAGE_KEY_ACCOUNT } from "constants/index";
 import { makeAutoObservable } from "mobx";
 import ls from "utils/ls";
 import services from "./services";
-import { AccountChain } from "./types";
+import { AccountChain, UserInfo } from "./types";
 
 export default class AccountStore {
   accountChains: AccountChain[] = [];
+  userInfo: UserInfo = {};
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  getUserInfo() {
+  async loadUserInfo() {
+    const res = await services.getUserInfo();
+    this.accountChains = res.data || [];
     const email = ls.get(LOCAL_STORAGE_KEY_ACCOUNT);
-    return {
+    this.userInfo = {
       email: email,
     };
   }
 
-  async loadUserInfo() {
-    const res = await services.getUserInfo();
-    this.accountChains = res.data || [];
+  updateUserInfo(userInfo: UserInfo) {
+    this.userInfo = userInfo;
   }
 }

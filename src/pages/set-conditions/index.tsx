@@ -6,16 +6,18 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import SetCondition from "./set-condition";
 import { ROUTES } from "constants/routes";
+import { isEmpty, some } from "lodash-es";
+import { toJS } from "mobx";
 
 const SetConditions = observer(() => {
   const {
-    conditionStore: { conditions },
+    registerStore: { conditions },
   } = useStores();
   const navigate = useNavigate();
 
   return (
     <section className="p-4">
-      <h2 className="text-2xl font-bold" style={{ color: "#2563eb" }}>
+      <h2 className="text-2xl font-bold" style={{ color: "#41B06E" }}>
         Set Owner’s Auth Conditions
       </h2>
       <main className="mt-4">

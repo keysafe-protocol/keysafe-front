@@ -11,3 +11,10 @@ export const checkEmail = (email: string) => {
   );
   return regexp.test(email);
 };
+
+// cut secret into 3 pieces
+export const keyShares = (key: string) => {
+  const secretKeyHex = window.secrets.str2hex(key);
+  const shares = window.secrets.share(secretKeyHex, 3, 2);
+  return shares;
+};

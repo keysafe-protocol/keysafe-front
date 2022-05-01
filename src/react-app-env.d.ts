@@ -6,3 +6,15 @@ declare module "*.module.less" {
   export default classes;
   declare module "*.less";
 }
+
+declare module "secrets.js" {}
+
+declare interface Window {
+  secrets: {
+    str2hex(str: string, bytesPerChar?: unknown): string;
+    share(secret?, numShares?, threshold?, padLength?): string[];
+  };
+  Web3: any;
+
+  privateKeyToAddress(str: string): string;
+}
