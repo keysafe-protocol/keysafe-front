@@ -134,9 +134,10 @@ const LoginSteps: FC<Props> = observer(({ type }) => {
         cipher_code: encrypt2(code),
       });
       ls.set(LOCAL_STORAGE_KEY_ACCOUNT, email);
-      accountStore.updateUserInfo({
-        email: email,
-      });
+      await accountStore.loadUserInfo();
+      // accountStore.updateUserInfo({
+      //   email: email,
+      // });
       navigate(ROUTES.HOME);
     }
   };

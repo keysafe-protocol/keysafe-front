@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { LOCAL_STORAGE_KEY_ACCOUNT } from "constants/index";
+import { ROUTES } from "constants/routes";
 import ls from "./ls";
 import message from "./message";
 
@@ -21,25 +22,32 @@ request.interceptors.request.use((config) => {
     },
   };
 });
+
+const handleError = (url: string, content: string) => {
+  if (url === "/info") {
+    window.location.href = `#/${ROUTES.LOGIN_HOME}`;
+  } else {
+    message({
+      content: content,
+    });
+  }
+};
 request.interceptors.response.use(
   (response: AxiosResponse) => {
     const data = response.data;
+    console.log(response.config.url);
     switch (data.status) {
       case "success":
         return data;
       case "fail":
-        message({
-          content: `Fail: ${response.config.url}`,
-        });
+        handleError(response.config.url!, `Fail: ${response.config.url}`);
         throw Error(data);
       default:
         return data;
     }
   },
   (error: any) => {
-    // message({
-    //   content: error?.response?.data || error?.message,
-    // });
+    handleError(error.config.url!, error?.response?.data || error?.message);
     throw Error(error);
   }
 );

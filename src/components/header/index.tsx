@@ -3,13 +3,19 @@ import useStores from "hooks/use-stores";
 import { observer } from "mobx-react-lite";
 import Dropdown from "rc-dropdown";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Menu from "rc-menu";
 
 const Header = observer(() => {
   const {
     accountStore: { accountChains, userInfo },
   } = useStores();
+  const { pathname } = useLocation();
+
+  const transferLinks = [
+    <Link to={ROUTES.TRANSFER}>Transfer</Link>,
+    <Link to={ROUTES.RECOVER_KEYS}>Recover</Link>,
+  ];
 
   return (
     <header
@@ -29,13 +35,15 @@ const Header = observer(() => {
           <Dropdown
             overlay={
               <Menu>
-                <Menu.Item key="transfer">
-                  <Link to={ROUTES.TRANSFER}>Transfer</Link>
+                <Menu.Item key="1">
+                  {pathname === ROUTES.TRANSFER
+                    ? transferLinks[0]
+                    : transferLinks[1]}
                 </Menu.Item>
               </Menu>
             }
           >
-            <Link to={ROUTES.RECOVER_KEYS}>Recover</Link>
+            {pathname === ROUTES.TRANSFER ? transferLinks[1] : transferLinks[0]}
           </Dropdown>
         )}
       </nav>
