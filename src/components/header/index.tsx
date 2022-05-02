@@ -5,17 +5,13 @@ import Dropdown from "rc-dropdown";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import Menu from "rc-menu";
+import arrowIcon from "assets/imgs/arrow-down.svg";
 
 const Header = observer(() => {
   const {
     accountStore: { accountChains, userInfo },
   } = useStores();
   const { pathname } = useLocation();
-
-  const transferLinks = [
-    <Link to={ROUTES.TRANSFER}>Transfer</Link>,
-    <Link to={ROUTES.RECOVER_KEYS}>Recover</Link>,
-  ];
 
   return (
     <header
@@ -25,7 +21,7 @@ const Header = observer(() => {
       <h1 className="text-3xl font-bold  text-white">
         <Link to={ROUTES.HOME}>Keysafe Protocol Demo</Link>
       </h1>
-      <nav className="text-white">
+      <nav className="text-white border border-white rounded-full h-10 flex items-center justify-center px-6 font-bold">
         {/* If user not login, show login link, if no chains info, show register info, otherwise show recover/transfer */}
         {!userInfo.email ? (
           <Link to={ROUTES.LOGIN_HOME}>Login</Link>
@@ -35,15 +31,27 @@ const Header = observer(() => {
           <Dropdown
             overlay={
               <Menu>
-                <Menu.Item key="1">
-                  {pathname === ROUTES.TRANSFER
-                    ? transferLinks[0]
-                    : transferLinks[1]}
+                <Menu.Item key="recover">
+                  <Link
+                    to={ROUTES.RECOVER_KEYS}
+                    className="text-base font-bold"
+                  >
+                    Recover
+                  </Link>
+                </Menu.Item>
+                <Menu.Item key="transfer">
+                  <Link to={ROUTES.TRANSFER} className="text-base font-bold">
+                    Transfer
+                  </Link>
                 </Menu.Item>
               </Menu>
             }
           >
-            {pathname === ROUTES.TRANSFER ? transferLinks[1] : transferLinks[0]}
+            {/* {pathname === ROUTES.TRANSFER ? transferLinks[1] : transferLinks[0]} */}
+            <span className="flex items-center cursor-pointer">
+              {pathname === ROUTES.TRANSFER ? "Recover" : "Transfer"}
+              <img src={arrowIcon} className="ml-2 w-3" />
+            </span>
           </Dropdown>
         )}
       </nav>
