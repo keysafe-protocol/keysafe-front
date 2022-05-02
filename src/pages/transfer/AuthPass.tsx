@@ -66,6 +66,7 @@ const AuthPass = () => {
           </p>
           <div className="flex items-center">
             <Input
+              type="password"
               className="flex-1"
               onChange={(e) => setPass(e.target.value)}
             />
