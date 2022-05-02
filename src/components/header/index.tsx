@@ -49,7 +49,7 @@ const Header = observer(() => {
           >
             {/* {pathname === ROUTES.TRANSFER ? transferLinks[1] : transferLinks[0]} */}
             <span className="flex items-center cursor-pointer">
-              {pathname === ROUTES.TRANSFER ? "Recover" : "Transfer"}
+              {pathname === ROUTES.TRANSFER ? "Transfer" : "Recover"}
               <img src={arrowIcon} className="ml-2 w-3" />
             </span>
           </Dropdown>
