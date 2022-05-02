@@ -62,7 +62,7 @@ const AuthPass = () => {
       <main>
         <h5 className="mb-6">Auth Type: Passphrase</h5>
         <section>
-          <p className="text-orange-300">
+          <p className="text-blue-500">
             Input your passphrase. Letters, numbers and ‘_’ are allowed.
           </p>
           <div className="flex items-center">

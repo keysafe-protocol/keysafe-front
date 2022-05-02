@@ -16,7 +16,7 @@ const SendTX = () => {
         <div className="w-full h-60 bg-gray-200">
           <p className="break-all">{signature}</p>
         </div>
-        <p className="text-orange-300">
+        <p className="text-blue-500">
           Please confirm the transaction content before sending. You are still
           able to cancel the transaction in this step.
         </p>
