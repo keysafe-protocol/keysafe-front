@@ -47,7 +47,7 @@ const TransferForm = () => {
       setFields({ ...fields, account: first.chain, from: first.chain_addr });
       setAddrs(addrs);
     }
-  }, [accountChain, accountStore, fields, setFields]);
+  }, [accountStore]);
 
   const handleTransfer = () => {
     const current = accountStore!.accountChains.find(
