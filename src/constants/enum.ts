@@ -1,6 +1,6 @@
 export enum ChainType {
   Eth = "ethereum",
-  Btc = "btc",
+  // Btc = "btc",
 }
 
 export enum ConditionType {

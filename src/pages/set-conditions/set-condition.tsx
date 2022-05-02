@@ -99,6 +99,20 @@ const SetCondition: FC<Props> = observer(({ conditionIndex }) => {
     setVisible(false);
   };
 
+  const onVerifyEmailClick = async () => {
+    await registerServices.registerMailAuth({
+      account: userInfo.email!,
+      mail: condition.value,
+      cipher_mail: condition.value,
+    });
+    setSended(true);
+    setEndDate(
+      dayjs()
+        .add(60, "s")
+        .toDate()
+    );
+  };
+
   const renderCondition = () => {
     switch (condition.type) {
       case ConditionType.Email:
@@ -107,32 +121,20 @@ const SetCondition: FC<Props> = observer(({ conditionIndex }) => {
             <Input value={condition.value} onChange={onValueChange} />
             <div className="mt-2">
               {countDown > 0 ? (
-                <Button disabled>RESEND({formatCountDown(countDown)}s)</Button>
-              ) : (
-                <Button
-                  type="primary"
-                  onClick={async () => {
-                    await registerServices.registerMailAuth({
-                      account: userInfo.email!,
-                      mail: condition.value,
-                      cipher_mail: condition.value,
-                    });
-                    setSended(true);
-                    setEndDate(
-                      dayjs()
-                        .add(60, "s")
-                        .toDate()
-                    );
-                  }}
-                  disable={!checkEmail(condition.value)}
-                >
-                  VERIFY EMAIL
+                <Button disable={countDown > 0} onClick={onVerifyEmailClick}>
+                  RESEND({formatCountDown(countDown)}s)
                 </Button>
+              ) : (
+                checkEmail(condition.value) && (
+                  <Button type="primary" onClick={onVerifyEmailClick}>
+                    VERIFY EMAIL
+                  </Button>
+                )
               )}
             </div>
             {sended && (
               <div className="mt-6">
-                <p className="text-xs text-orange-500">
+                <p className="text-xs text-blue-500">
                   We have sent a verification code to your email. Fill the blank
                   with the code to get verified.
                 </p>
@@ -155,7 +157,7 @@ const SetCondition: FC<Props> = observer(({ conditionIndex }) => {
         return (
           <div className="mt-6">
             <div>
-              <p className="text-xs text-orange-500 mb-2">
+              <p className="text-xs text-blue-500 mb-2">
                 Input your passphrase. Letters, numbers and ‘_’ are allowed.
               </p>
               <Input
@@ -165,7 +167,7 @@ const SetCondition: FC<Props> = observer(({ conditionIndex }) => {
               />
             </div>
             <div className="mt-4">
-              <p className="text-xs text-orange-500 mb-2">
+              <p className="text-xs text-blue-500 mb-2">
                 Input your passphrase again.
               </p>
               <Input
@@ -191,7 +193,7 @@ const SetCondition: FC<Props> = observer(({ conditionIndex }) => {
                   style={{ width: 300, height: 300 }}
                   value={gauthKey(userInfo.email!, condition.value)}
                 />
-                <p className="text-center mt-2 text-basecolor">
+                <p className="text-center mt-2 text-blue-500">
                   Please scan the QR code with Google Auth, otherwise the
                   authentication information will not be saved normally
                 </p>

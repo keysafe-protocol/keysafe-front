@@ -71,6 +71,9 @@ const DelegateSetting = observer(() => {
         >
           CONTINUE
         </Button>
+        <Button onClick={() => navigate(-1)} className="ml-4">
+          GO BACK
+        </Button>
       </footer>
     </section>
   );

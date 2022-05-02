@@ -6,6 +6,7 @@ import closeIcon from "assets/imgs/close-circle-fill.svg";
 import Button from "components/button";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "constants/routes";
+import { privateKeyToAddress } from "utils/eth";
 
 const RegisterKeys = observer(() => {
   const {
@@ -32,8 +33,11 @@ const RegisterKeys = observer(() => {
               return (
                 <div key={index} className="flex mb-2 items-center">
                   <span className="w-10">#{index + 1}</span>
-                  <span className="ml-2 p-1 border bg-gray-300 w-96 text-ellipsis overflow-hidden">
-                    {privateKey.key}
+                  <span
+                    className="ml-2 p-1 border bg-gray-300 w-96 text-ellipsis overflow-hidden"
+                    title={privateKeyToAddress(privateKey.key)}
+                  >
+                    {privateKeyToAddress(privateKey.key)}
                   </span>
                   <span className="ml-2 w-32 p-1 border bg-gray-300">
                     {privateKey.type}
@@ -57,6 +61,9 @@ const RegisterKeys = observer(() => {
           disable={privateKeys.length === 0}
         >
           CONTINUE
+        </Button>
+        <Button onClick={() => navigate(-1)} className="ml-4">
+          CANCEL
         </Button>
       </footer>
     </section>

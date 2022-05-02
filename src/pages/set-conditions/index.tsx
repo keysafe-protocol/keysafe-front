@@ -8,6 +8,7 @@ import SetCondition from "./set-condition";
 import { ROUTES } from "constants/routes";
 import { isEmpty, some } from "lodash-es";
 import { toJS } from "mobx";
+import { ConditionType } from "constants/enum";
 
 const SetConditions = observer(() => {
   const {
@@ -31,10 +32,18 @@ const SetConditions = observer(() => {
               </div>
               <div className="flex items-center">
                 <Input
-                  value={condition?.value}
+                  value={
+                    condition?.type === ConditionType.GAuth
+                      ? "DONE"
+                      : condition?.value
+                  }
                   disabled
                   className="w-80"
-                  type={condition?.type === "password" ? "password" : "text"}
+                  type={
+                    condition?.type === ConditionType.Passphrase
+                      ? "password"
+                      : "text"
+                  }
                 />
                 <span className="ml-2">
                   <SetCondition conditionIndex={index} />
