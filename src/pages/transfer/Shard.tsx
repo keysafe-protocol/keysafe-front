@@ -41,7 +41,7 @@ const Shard = () => {
             );
             return (
               <div id={`shard${++index}`} key={index} className={shardClass}>
-                <span className="text-4xl">{`Shard #${index}`}</span>
+                <span className="text-3xl">{`Signature #${index}`}</span>
               </div>
             );
           })}
