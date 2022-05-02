@@ -1,10 +1,13 @@
 import Button from "components/button";
+import { ROUTES } from "constants/routes";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./index.module.less";
 import useStore from "./useStore";
 
 const Export = () => {
   const { reset, privateKey } = useStore();
+  const navigate = useNavigate();
 
   return (
     <main className={styles.authContainer}>
@@ -15,7 +18,13 @@ const Export = () => {
         </div>
       </section>
       <footer className="mt-10 flex justify-center">
-        <Button className="mr-4 px-10" onClick={() => reset()}>
+        <Button
+          className="mr-4 px-10"
+          onClick={() => {
+            reset();
+            navigate(ROUTES.HOME);
+          }}
+        >
           HOME
         </Button>
       </footer>

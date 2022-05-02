@@ -21,7 +21,7 @@ const Auth = () => {
     <div className={styles.authContainer}>
       <div className="grid gap-6">
         <section className={className(authEmail.success)}>
-          <h3>AUTH #1</h3>
+          <h3>Segment #1</h3>
           <div className="mt-5 px-10">
             {authEmail.success ? (
               <span>AUTH passed: Email Verification, {authEmail.email}</span>
@@ -38,7 +38,7 @@ const Auth = () => {
         </section>
 
         <section className={className(authPass.success)}>
-          <h3>AUTH #2</h3>
+          <h3>Segment #2</h3>
           <div className="mt-5 px-10">
             {authPass.success ? (
               <span>AUTH passed: Passphrase, **********</span>
@@ -55,7 +55,7 @@ const Auth = () => {
         </section>
 
         <section className={className(authGoogle.success)}>
-          <h3>AUTH #3</h3>
+          <h3>Segment #3</h3>
           <div className="mt-5 px-10">
             {authGoogle.success ? (
               <span>AUTH passed: Google Authenticator, {authGoogle.code}</span>

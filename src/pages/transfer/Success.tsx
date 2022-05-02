@@ -1,10 +1,13 @@
 import Button from "components/button";
+import { ROUTES } from "constants/routes";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./index.module.less";
 import useStore from "./useStore";
 
 const Success = () => {
   const { reset } = useStore();
+  const navigate = useNavigate();
 
   return (
     <main className={styles.authContainer}>
@@ -18,7 +21,13 @@ const Success = () => {
           to check Tx Hash.
         </p>
         <footer className="flex justify-center mt-80">
-          <Button className="px-10" onClick={() => reset()}>
+          <Button
+            className="px-10"
+            onClick={() => {
+              reset();
+              navigate(ROUTES.HOME);
+            }}
+          >
             HOME
           </Button>
         </footer>
