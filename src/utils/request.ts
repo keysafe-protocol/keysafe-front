@@ -25,7 +25,7 @@ request.interceptors.request.use((config) => {
 
 const handleError = (url: string, content: string) => {
   if (url === "/info") {
-    window.location.href = `#/${ROUTES.LOGIN_HOME}`;
+    window.location.href = `#${ROUTES.LOGIN_HOME}`;
   } else {
     message({
       content: content,
