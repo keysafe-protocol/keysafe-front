@@ -13,7 +13,7 @@ const Introduction = () => {
         decentralized custody network by fulfilling 2-of-3 Auth Conditions.
       </p>
       <footer className="mt-20">
-        <Button type="primary" onClick={() => setStep(StepType.AUTH)}>
+        <Button type="primary" onClick={() => setStep(StepType.ACCOUNT)}>
           CONTINUE
         </Button>
       </footer>

@@ -6,7 +6,7 @@ import useStore, { StepType } from "./useStore";
 import styles from "./index.module.less";
 
 const Shard = () => {
-  const { shards, auths, setStep, reset } = useStore();
+  const { shards, auths, setStep, reset, setPrivateKey } = useStore();
   const [status, setStatus] = useState(0);
 
   const handleRecover = () => {
@@ -14,6 +14,9 @@ const Shard = () => {
     setTimeout(() => {
       setStatus(2);
     }, 3000);
+    const comb = window.secrets.combine(shards);
+    const key = window.secrets.hex2str(comb);
+    setPrivateKey(key);
   };
 
   const reconClass = classNames(reconClassPrefix, {
@@ -91,7 +94,7 @@ const Shard = () => {
             <Button
               type="primary"
               className="mr-4 px-10"
-              onClick={() => alert(shards.join("\n"))}
+              onClick={() => setStep(StepType.RESULT)}
             >
               EXPORT RESULTS
             </Button>

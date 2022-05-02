@@ -34,7 +34,7 @@ const SetConditions = observer(() => {
                   value={condition?.value}
                   disabled
                   className="w-80"
-                  type={condition?.type === "passphrase" ? "password" : "text"}
+                  type={condition?.type === "password" ? "password" : "text"}
                 />
                 <span className="ml-2">
                   <SetCondition conditionIndex={index} />

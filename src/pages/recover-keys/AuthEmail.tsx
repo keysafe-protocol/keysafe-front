@@ -10,15 +10,28 @@ import Input from "components/input";
 import { ReactComponent as IconCheck } from "assets/check.svg";
 
 import styles from "./index.module.less";
+import RecoverServices from "stores/recover/services";
+import { ConditionType } from "constants/enum";
+import { encrypt2 } from "utils/secure";
+import { checkEmail } from "utils";
+import registerServices from "stores/register/services";
 
 const AuthEmail = () => {
-  const { activeAuth, setActiveAuth, getAuth, setAuth } = useStore();
+  const {
+    activeAuth,
+    accountChain,
+    userInfo,
+    setActiveAuth,
+    getAuth,
+    setAuth,
+  } = useStore();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [sent, setSent] = useState(false);
   const [emailValid, setEmailValid] = useState(false);
   const [verified, setVerified] = useState(false);
   const [showVerify, setShowVerify] = useState(false);
+
   const [targetDate, setTargetDate] = useState<Date>();
   const [countDown] = useCountDown({
     targetDate,
@@ -27,30 +40,45 @@ const AuthEmail = () => {
     },
   });
 
-  const handleSend = () => {
+  const handleSend = async () => {
+    await registerServices.registerMailAuth({
+      account: userInfo.email!,
+      mail: email,
+      cipher_mail: email,
+    });
+
     setTargetDate(dayjs().add(60, "s").toDate());
     setSent(true);
     setShowVerify(true);
     setVerified(false);
   };
 
-  const handleVerify = () => {
-    setVerified(true);
-  };
-
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
+    const data: any = await RecoverServices.unseal({
+      account: userInfo.email!,
+      owner: accountChain.owner,
+      chain: accountChain.chain,
+      chain_addr: accountChain.chain_addr,
+      cond_type: ConditionType.Email,
+      cipher_cond_value: encrypt2(code),
+    });
     const auth = getAuth(AuthType.EMAIL);
     setAuth({
       ...auth,
       success: true,
       email: email,
-      shard: "email test shard",
+      shard: data.cipher_secret,
     });
     setActiveAuth(null);
   };
 
+  const handleChange = (code: string) => {
+    setCode(code);
+    setVerified(code.length > 0);
+  };
+
   useEffect(() => {
-    setEmailValid(email.length > 0 && regexp.test(email));
+    setEmailValid(email.length > 0 && checkEmail(email));
   }, [email]);
 
   return (
@@ -108,15 +136,9 @@ const AuthEmail = () => {
               <Input
                 placeholder="Input verification code"
                 className="flex-1 mr-4"
-                onChange={(e) => setCode(e.target.value)}
+                onChange={(e) => handleChange(e.target.value)}
               />
-              {verified ? (
-                <IconCheck className="w-4 h-4" />
-              ) : (
-                <Button onClick={handleVerify} disable={!code.length}>
-                  VERIFY
-                </Button>
-              )}
+              {verified && <IconCheck className="w-4 h-4" />}
             </div>
           </section>
         )}
@@ -126,7 +148,3 @@ const AuthEmail = () => {
 };
 
 export default AuthEmail;
-
-const regexp = new RegExp(
-  "^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$"
-);

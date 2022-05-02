@@ -7,7 +7,8 @@ import useStore, { AuthType, StepType } from "./useStore";
 import styles from "./index.module.less";
 
 const Auth = () => {
-  const { shards, activeAuth, getAuth, setActiveAuth, setStep } = useStore();
+  const { shards, activeAuth, getAuth, setActiveAuth, setStep, reset } =
+    useStore();
   const [readyRecover, setReadyRecover] = useState(false);
   const authEmail = getAuth(AuthType.EMAIL);
   const authPass = getAuth(AuthType.PASS);
@@ -22,50 +23,53 @@ const Auth = () => {
       <div className="grid gap-6">
         <section className={className(authEmail.success)}>
           <h3>AUTH #1</h3>
-          {authEmail.success ? (
-            <span>AUTH passed: Email Verification, {authEmail.email}</span>
-          ) : (
-            <Button
-              className="mt-5 px-10"
-              type="primary"
-              disable={readyRecover}
-              onClick={() => setActiveAuth(AuthType.EMAIL)}
-            >
-              RETRIEVE
-            </Button>
-          )}
+          <div className="mt-5 px-10">
+            {authEmail.success ? (
+              <span>AUTH passed: Email Verification, {authEmail.email}</span>
+            ) : (
+              <Button
+                type="primary"
+                disable={readyRecover}
+                onClick={() => setActiveAuth(AuthType.EMAIL)}
+              >
+                RETRIEVE
+              </Button>
+            )}
+          </div>
         </section>
 
         <section className={className(authPass.success)}>
           <h3>AUTH #2</h3>
-          {authPass.success ? (
-            <span>AUTH passed: Passphrase, **********</span>
-          ) : (
-            <Button
-              className="mt-5 px-10"
-              type="primary"
-              disable={readyRecover}
-              onClick={() => setActiveAuth(AuthType.PASS)}
-            >
-              RETRIEVE
-            </Button>
-          )}
+          <div className="mt-5 px-10">
+            {authPass.success ? (
+              <span>AUTH passed: Passphrase, **********</span>
+            ) : (
+              <Button
+                type="primary"
+                disable={readyRecover}
+                onClick={() => setActiveAuth(AuthType.PASS)}
+              >
+                RETRIEVE
+              </Button>
+            )}
+          </div>
         </section>
 
         <section className={className(authGoogle.success)}>
           <h3>AUTH #3</h3>
-          {authGoogle.success ? (
-            <span>AUTH passed: Google Authenticator, {authGoogle.code}</span>
-          ) : (
-            <Button
-              className="mt-5 px-10"
-              type="primary"
-              disable={readyRecover}
-              onClick={() => setActiveAuth(AuthType.GOOGLE)}
-            >
-              RETRIEVE
-            </Button>
-          )}
+          <div className="mt-5 px-10">
+            {authGoogle.success ? (
+              <span>AUTH passed: Google Authenticator, {authGoogle.code}</span>
+            ) : (
+              <Button
+                type="primary"
+                disable={readyRecover}
+                onClick={() => setActiveAuth(AuthType.GOOGLE)}
+              >
+                RETRIEVE
+              </Button>
+            )}
+          </div>
         </section>
       </div>
 

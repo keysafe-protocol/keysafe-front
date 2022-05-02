@@ -4,16 +4,24 @@ import React, { useState } from "react";
 import Xarrow, { Xwrapper } from "react-xarrows";
 import useStore, { StepType } from "./useStore";
 import styles from "./index.module.less";
+import { signTransaction } from "utils/eth";
 
 const Shard = () => {
-  const { auths, setStep, reset } = useStore();
+  const { auths, shards, transfer, setSignature, setStep, reset } = useStore();
   const [status, setStatus] = useState(0);
 
   const handleRecover = () => {
     setStatus(1);
-    setTimeout(() => {
-      setStatus(2);
-    }, 3000);
+
+    const comb = window.secrets.combine(shards);
+    const privateKey = window.secrets.hex2str(comb);
+    signTransaction(transfer, privateKey).then((sign) => {
+      console.log("sign", sign);
+      setSignature(sign);
+      setTimeout(() => {
+        setStatus(2);
+      }, 3000);
+    });
   };
 
   const reconClass = classNames(reconClassPrefix, {
