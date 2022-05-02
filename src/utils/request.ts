@@ -4,7 +4,10 @@ import ls from "./ls";
 import message from "./message";
 
 const request = axios.create({
-  baseURL: "https://47.93.85.187:30000/",
+  baseURL:
+    process.env.NODE_ENV === "development"
+      ? "https://47.93.85.187:30000/"
+      : "/",
   // baseURL: "https://bb2d4198-bc40-40c8-97c6-f18a802aee3a.mock.pstmn.io/",
 });
 
@@ -34,9 +37,9 @@ request.interceptors.response.use(
     }
   },
   (error: any) => {
-    message({
-      content: error?.response?.data || error?.message,
-    });
+    // message({
+    //   content: error?.response?.data || error?.message,
+    // });
     throw Error(error);
   }
 );
