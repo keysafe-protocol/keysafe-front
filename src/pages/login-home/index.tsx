@@ -17,12 +17,12 @@ const LoginHome = () => {
           >
             LOG IN
           </Link>
-          <Link
+          {/* <Link
             to={ROUTES.SIGN_UP}
             className="rounded-full w-28 py-1 bg-yellow-500 text-center text-white font-bold mt-2"
           >
             SIGN UP
-          </Link>
+          </Link> */}
         </div>
       </div>
     </div>
