@@ -83,7 +83,7 @@ const Shard = () => {
           </>
         )}
         {status === 1 && (
-          <p className="text-orange-300">
+          <p className="text-blue-500">
             Private Key Reconstruction is processed on your local device. All
             data will be cleared after the reconstruction. Your Private Key will
             be safe.

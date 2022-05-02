@@ -52,7 +52,6 @@ const AuthEmail = () => {
     setVerified(false);
   };
 
-
   const handleConfirm = async () => {
     const data: any = await RecoverServices.unseal({
       account: userInfo.email!,
@@ -128,7 +127,7 @@ const AuthEmail = () => {
         </section>
         {showVerify && (
           <section className="mt-10">
-            <p className="text-orange-300">
+            <p className="text-blue-500">
               We have sent a verifdcation code to your email. Fill the blank
               with the code to get verified.
             </p>
