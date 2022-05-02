@@ -74,6 +74,7 @@ const Auth = () => {
 
       <footer className="mt-10 flex justify-center">
         <Button
+          type="primary"
           className="mr-4 px-10"
           disable={!readyRecover}
           onClick={() => setStep(StepType.SHARD)}

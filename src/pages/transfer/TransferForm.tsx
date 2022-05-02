@@ -34,7 +34,7 @@ const TransferForm = () => {
       Boolean(fields.account),
       Boolean(fields.from),
       Boolean(fields.to),
-      fields.amount > 0,
+      !isNaN(fields.amount) && Number(fields.amount) > 0,
     ];
     setValid({ account, from, to, amount });
     setVerified(account && from && to && amount);
@@ -55,7 +55,7 @@ const TransferForm = () => {
     );
     if (current) {
       setAccountChain({ ...current });
-      setTransfer(fields);
+      setTransfer({ ...fields, amount: Number(fields.amount) });
       setStep(StepType.AUTH);
     }
   };
@@ -116,10 +116,9 @@ const TransferForm = () => {
           <p className="text-gray-700 mb-1">Transfer Amount:</p>
           <div className="flex items-center">
             <Input
-              type="number"
               className="flex-1"
               value={fields.amount}
-              onChange={(e) => setFields({ amount: Number(e.target.value) })}
+              onChange={(e) => setFields({ amount: e.target.value })}
             />
             <span className="ml-4 w-4">
               {valid.amount && <IconCheck className="w-4 h-4" />}

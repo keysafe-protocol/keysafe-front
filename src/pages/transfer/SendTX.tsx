@@ -2,9 +2,12 @@ import Button from "components/button";
 import React from "react";
 import useStore from "./useStore";
 import styles from "./index.module.less";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "constants/routes";
 
 const SendTX = () => {
   const { signature, reset } = useStore();
+  const navigate = useNavigate();
 
   return (
     <main className={styles.authContainer}>
@@ -19,7 +22,13 @@ const SendTX = () => {
         </p>
       </section>
       <footer className="mt-10 flex justify-center">
-        <Button className="px-10" onClick={() => reset()}>
+        <Button
+          className="px-10"
+          onClick={() => {
+            reset();
+            navigate(ROUTES.HOME);
+          }}
+        >
           Home
         </Button>
       </footer>
