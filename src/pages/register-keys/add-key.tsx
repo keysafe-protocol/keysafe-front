@@ -66,7 +66,7 @@ const AddKey = observer(() => {
               onChange={(e) => onValueChange("key", e.target.value)}
             />
             {!valid && (
-              <p className="mt-2 text-sm text-orange-500">
+              <p className="mt-2 text-sm text-blue-500">
                 Please input valid private key
               </p>
             )}
