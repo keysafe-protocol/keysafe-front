@@ -121,7 +121,7 @@ const Accounts = observer(() => {
 
   return (
     <div className="ml-4 pt-8">
-      <div>
+      <div style={{ minHeight: 360 }}>
         <h3 className="text-2xl text-basecolor font-bold">Owned By Me</h3>
         <div className="mt-6">
           {renderTitle()}
