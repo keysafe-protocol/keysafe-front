@@ -221,9 +221,25 @@ const SetCondition: FC<Props> = observer(({ conditionIndex }) => {
 
   return (
     <>
-      <Dialog visible={visible} onClose={() => setVisible(false)}>
+      <Dialog
+        visible={visible}
+        onClose={() => setVisible(false)}
+        title="Set Auth Condition"
+        footer={
+          <footer className="flex justify-center">
+            <Button
+              type="primary"
+              className="mr-4"
+              onClick={onConfirmClick}
+              disable={disable}
+            >
+              CONFIRM
+            </Button>
+            <Button onClick={() => setVisible(false)}>CANCEL</Button>
+          </footer>
+        }
+      >
         <div>
-          <p className="font-bold mb-2 text-basecolor">Set Auth Condition:</p>
           <div className="flex mb-2 items-center">
             <span className="mr-1">Select Auth Type:</span>
             <select
@@ -240,17 +256,6 @@ const SetCondition: FC<Props> = observer(({ conditionIndex }) => {
             </select>
           </div>
           {renderCondition()}
-          <footer className="flex mt-6 justify-center">
-            <Button
-              type="primary"
-              className="mr-4"
-              onClick={onConfirmClick}
-              disable={disable}
-            >
-              CONFIRM
-            </Button>
-            <Button onClick={() => setVisible(false)}>CANCEL</Button>
-          </footer>
         </div>
       </Dialog>
       <Button

@@ -5,18 +5,29 @@ import Button from "components/button";
 import styles from "./index.module.less";
 import { ChainType } from "constants/enum";
 import { AccountChain } from "stores/account/types";
+import useQueryParams from "hooks/use-query-params";
 
 const AccountForm = () => {
-  const { reset, setStep, accountChain, setAccountChain, accountStore } =
-    useStore();
+  const {
+    reset,
+    setStep,
+    accountChain,
+    setAccountChain,
+    accountStore,
+  } = useStore();
   const [fields, setFields] = useSetState<AccountChain>(accountChain);
   const [addrs, setAddrs] = useState<string[]>([]);
+  const [query] = useQueryParams<{ chain: ChainType; chain_addr: string }>();
 
   useEffect(() => {
     if (accountStore) {
       const addrs = accountStore.accountChains.map((chain) => chain.chain_addr);
       setAddrs(addrs);
-      setFields({ ...accountChain, chain_addr: addrs[0] });
+      setFields({
+        ...accountChain,
+        chain: query.chain || ChainType.Eth,
+        chain_addr: query.chain_addr || addrs[0],
+      });
     }
   }, [accountChain, accountStore, setFields]);
 

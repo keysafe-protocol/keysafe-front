@@ -8,3 +8,10 @@ export enum ConditionType {
   Passphrase = "password",
   GAuth = "gauth",
 }
+
+export enum HomeMenus {
+  KeyList = "key-list",
+  AuthConditions = "auth-conditions",
+  GeneralSettings = "general-settings",
+  Logout = "logout",
+}

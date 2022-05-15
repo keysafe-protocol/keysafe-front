@@ -11,7 +11,10 @@ import Button from "components/button";
 import { checkEmail, formatCountDown } from "utils";
 import accountServices from "stores/account/services";
 import ls from "utils/ls";
-import { LOCAL_STORAGE_KEY_ACCOUNT } from "constants/index";
+import {
+  LOCAL_STORAGE_KEY_ACCOUNT,
+  LOCAL_STORAGE_TOKEN,
+} from "constants/index";
 import { observer } from "mobx-react-lite";
 import useStores from "hooks/use-stores";
 import { encrypt2 } from "utils/secure";
@@ -128,12 +131,13 @@ const LoginSteps: FC<Props> = observer(({ type }) => {
       await accountServices.auth({ account: email });
       setStep(2);
     } else {
-      await accountServices.authConfirm({
+      const res = await accountServices.authConfirm({
         account: email,
         mail: email,
         cipher_code: encrypt2(code),
       });
       ls.set(LOCAL_STORAGE_KEY_ACCOUNT, email);
+      ls.set(LOCAL_STORAGE_TOKEN, res.token);
       await accountStore.loadUserInfo();
       // accountStore.updateUserInfo({
       //   email: email,

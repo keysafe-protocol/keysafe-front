@@ -11,7 +11,7 @@ export default {
   },
 
   // Bind account with email code
-  authConfirm(data: AuthConfirmRequest) {
+  authConfirm(data: AuthConfirmRequest): Promise<{ token: string }> {
     return request.post(`/auth_confirm`, data);
   },
 

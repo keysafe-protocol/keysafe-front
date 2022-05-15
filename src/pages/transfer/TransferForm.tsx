@@ -7,6 +7,7 @@ import Input from "components/input";
 import { ReactComponent as IconCheck } from "assets/check.svg";
 import styles from "./index.module.less";
 import { ChainType } from "constants/enum";
+import useQueryParams from "hooks/use-query-params";
 
 const TransferForm = () => {
   const {
@@ -19,6 +20,7 @@ const TransferForm = () => {
     transfer,
   } = useStore();
   const [verified, setVerified] = useState(true);
+  const [query] = useQueryParams<{ account: string; from: string }>();
 
   const [fields, setFields] = useSetState<Transfer>(transfer);
   const [addrs, setAddrs] = useState<string[]>([]);
@@ -44,7 +46,12 @@ const TransferForm = () => {
     if (accountStore) {
       const first = accountStore.accountChains[0];
       const addrs = accountStore.accountChains.map((chain) => chain.chain_addr);
-      setFields({ ...fields, account: first.chain, from: first.chain_addr });
+      // Use url query default value
+      setFields({
+        ...fields,
+        account: query.account || first.chain,
+        from: query.from || first.chain_addr,
+      });
       setAddrs(addrs);
     }
   }, [accountStore]);

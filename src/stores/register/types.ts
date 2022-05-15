@@ -53,3 +53,9 @@ export type DelegateInfo = {
   delegate: boolean;
   to: string;
 };
+
+export type DeleteSealRequest = {
+  account: string;
+  chain: ChainType;
+  chain_addr: string;
+};

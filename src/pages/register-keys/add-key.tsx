@@ -44,9 +44,25 @@ const AddKey = observer(() => {
 
   return (
     <>
-      <Dialog visible={visible} onClose={() => setVisible(false)}>
+      <Dialog
+        visible={visible}
+        onClose={() => setVisible(false)}
+        title="Input a private key"
+        footer={
+          <footer className="flex justify-center ">
+            <Button
+              type="primary"
+              className="mr-2"
+              onClick={onConfirmClick}
+              disable={isEmpty(privateKey.key) || !valid}
+            >
+              CONFIRM
+            </Button>
+            <Button onClick={() => setVisible(false)}>CANCEL</Button>
+          </footer>
+        }
+      >
         <main>
-          <p className="font-bold mb-2">Input a private key</p>
           <div className="mb-2">
             <select
               className="block flex-1 w-full"
@@ -71,17 +87,6 @@ const AddKey = observer(() => {
               </p>
             )}
           </div>
-          <footer className="flex justify-center mt-4">
-            <Button
-              type="primary"
-              className="mr-2"
-              onClick={onConfirmClick}
-              disable={isEmpty(privateKey.key) || !valid}
-            >
-              CONFIRM
-            </Button>
-            <Button onClick={() => setVisible(false)}>CANCEL</Button>
-          </footer>
         </main>
       </Dialog>
       <div onClick={() => setVisible(true)} className="flex cursor-pointer">
