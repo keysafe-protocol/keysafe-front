@@ -6,10 +6,12 @@ type Props = {
   address: string;
 };
 const useBalance = ({ address }: Props) => {
-  const [balance, setBalance] = useState(null);
+  const [balance, setBalance] = useState<number>();
 
   useEffect(() => {
-    getBalance(address).then(setBalance);
+    getBalance(address).then((value) => {
+      setBalance(Number(balance));
+    });
   }, []);
 
   return balance;

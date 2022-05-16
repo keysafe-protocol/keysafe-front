@@ -1,5 +1,6 @@
 import { isEmpty } from "lodash-es";
 import { Transfer } from "pages/transfer/useStore";
+import BigNumber from "bignumber.js";
 
 const web3 = new window.Web3("https://godwoken-testnet-web3-v1-rpc.ckbapp.dev");
 
@@ -40,6 +41,8 @@ export const signTransaction = async (
   return txSign.rawTransaction;
 };
 
-export const getBalance = (account: string) => {
-  return web3.eth.getBalance(account);
+export const getBalance = async (account: string) => {
+  const balance = await web3.eth.getBalance(account);
+  const num = new BigNumber(web3.utils.fromWei(balance));
+  return num.toNumber().toFixed(6);
 };
