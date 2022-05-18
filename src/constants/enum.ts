@@ -1,5 +1,6 @@
 export enum ChainType {
   Eth = "ethereum",
+  Boba = "boba",
   // Btc = "btc",
 }
 

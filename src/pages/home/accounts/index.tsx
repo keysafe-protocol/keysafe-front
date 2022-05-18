@@ -16,8 +16,10 @@ import { StepType } from "pages/transfer/useStore";
 import { StepType as RecoverStepType } from "pages/recover-keys/useStore";
 import DeleteKey from "./delete-key";
 import { useMemo } from "react";
+import bobaIcon from "assets/imgs/boba.png";
 const iconMap: Record<ChainType, string> = {
   [ChainType.Eth]: ethIcon,
+  [ChainType.Boba]: bobaIcon,
 };
 const commonBtnClass =
   "w-36 h-10 inline-flex items-center justify-center font-bold ml-2  rounded-lg text-white cursor-pointer";
@@ -61,7 +63,7 @@ const ChainKey: FC<{ chain: AccountChain; delegate?: boolean }> = ({
     <div className="mb-3">
       <div className={chainItemClass} onClick={() => setSelected(!selected)}>
         <span className="inline-flex items-center w-32">
-          <img src={iconMap[chain.chain]} className="mr-2" />
+          <img src={iconMap[chain.chain]} className="mr-2 h-4" />
           {chain.chain}
         </span>
         <span className="px-2">{chain.chain_addr}</span>
