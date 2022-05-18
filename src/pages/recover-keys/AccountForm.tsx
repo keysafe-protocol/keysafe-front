@@ -6,6 +6,7 @@ import styles from "./index.module.less";
 import { ChainType } from "constants/enum";
 import { AccountChain } from "stores/account/types";
 import useQueryParams from "hooks/use-query-params";
+import { CHAIN_TYPE_MAP } from "constants/index";
 
 const AccountForm = () => {
   const {
@@ -55,8 +56,11 @@ const AccountForm = () => {
                 setFields({ chain: e.target.value as ChainType })
               }
             >
-              <option value={ChainType.Eth}>{ChainType.Eth}</option>
-              {/* <option value={ChainType.Btc}>{ChainType.Btc}</option> */}
+              {Object.values(ChainType).map((type) => (
+                <option key={type} value={type}>
+                  {CHAIN_TYPE_MAP[type]}
+                </option>
+              ))}
             </select>
           </div>
         </section>

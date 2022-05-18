@@ -12,6 +12,7 @@ import { ConditionType } from "constants/enum";
 import { keyShares } from "utils";
 import registerServices from "stores/register/services";
 import message from "utils/message";
+import { CHAIN_TYPE_MAP } from "constants/index";
 
 const RegisterKeys = observer(() => {
   const {
@@ -86,7 +87,7 @@ const RegisterKeys = observer(() => {
                     {privateKeyToAddress(privateKey.key)}
                   </span>
                   <span className="ml-2 w-32 p-1 border bg-gray-300">
-                    {privateKey.type}
+                    {CHAIN_TYPE_MAP[privateKey.type]}
                   </span>
                   <img
                     src={closeIcon}

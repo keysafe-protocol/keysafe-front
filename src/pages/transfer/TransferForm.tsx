@@ -8,6 +8,7 @@ import { ReactComponent as IconCheck } from "assets/check.svg";
 import styles from "./index.module.less";
 import { ChainType } from "constants/enum";
 import useQueryParams from "hooks/use-query-params";
+import { CHAIN_TYPE_MAP } from "constants/index";
 
 const TransferForm = () => {
   const {
@@ -15,7 +16,6 @@ const TransferForm = () => {
     setStep,
     setTransfer,
     setAccountChain,
-    accountChain,
     accountStore,
     transfer,
   } = useStore();
@@ -83,8 +83,11 @@ const TransferForm = () => {
                 setFields({ account: e.target.value as ChainType })
               }
             >
-              <option value={ChainType.Eth}>{ChainType.Eth}</option>
-              {/* <option value={ChainType.Btc}>{ChainType.Btc}</option> */}
+              {Object.values(ChainType).map((type) => (
+                <option key={type} value={type}>
+                  {CHAIN_TYPE_MAP[type]}
+                </option>
+              ))}
             </select>
             <span className="ml-4 w-4"></span>
           </div>
