@@ -1,4 +1,7 @@
-import { LOCAL_STORAGE_KEY_ACCOUNT } from "constants/index";
+import {
+  LOCAL_STORAGE_KEY_ACCOUNT,
+  LOCAL_STORAGE_TOKEN,
+} from "constants/index";
 import { makeAutoObservable } from "mobx";
 import ls from "utils/ls";
 import services from "./services";
@@ -23,5 +26,10 @@ export default class AccountStore {
 
   updateUserInfo(userInfo: UserInfo) {
     this.userInfo = userInfo;
+  }
+
+  logout() {
+    ls.set(LOCAL_STORAGE_KEY_ACCOUNT, null);
+    ls.set(LOCAL_STORAGE_TOKEN, null);
   }
 }

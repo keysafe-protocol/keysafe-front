@@ -3,7 +3,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        basecolor: "#41B06E",
+        basecolor: {
+          DEFAULT: "#41B06E",
+          100: "rgba(65,176,110,0.1)",
+          200: "rgba(65,176,110,0.2)",
+          300: "rgba(65,176,110,0.3)",
+        },
+        baseblue: {
+          DEFAULT: "#047FD9",
+          100: "rgba(4,127,217,0.1)",
+          200: "rgba(4,127,217,0.2)",
+          300: "rgba(4,127,217,0.3)",
+        },
         authpass: "#59bb80",
         authfail: "#eff9f3",
         shardready: "#bce1cc",

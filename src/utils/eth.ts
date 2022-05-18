@@ -1,8 +1,10 @@
 import { isEmpty } from "lodash-es";
 import { Transfer } from "pages/transfer/useStore";
+import BigNumber from "bignumber.js";
+
+const web3 = new window.Web3("https://godwoken-testnet-web3-v1-rpc.ckbapp.dev");
 
 export const privateKeyToAddress = (privateKey: string) => {
-  const web3 = new window.Web3();
   const account = web3.eth.accounts.privateKeyToAccount(
     // "919b425b860356fc5ba645807e4773c91f4f4b13857b8e6d42dcae54d2c6ed33"
     privateKey
@@ -28,9 +30,6 @@ export const signTransaction = async (
   tx: Transfer,
   privateKey: string
 ): Promise<string> => {
-  const web3 = new window.Web3(
-    "https://godwoken-testnet-web3-v1-rpc.ckbapp.dev"
-  );
   const txSign = await web3.eth.accounts.signTransaction(
     {
       to: tx.to,
@@ -40,4 +39,10 @@ export const signTransaction = async (
     privateKey
   );
   return txSign.rawTransaction;
+};
+
+export const getBalance = async (account: string) => {
+  const balance = await web3.eth.getBalance(account);
+  const num = new BigNumber(web3.utils.fromWei(balance));
+  return num.toNumber().toFixed(6);
 };

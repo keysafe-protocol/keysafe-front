@@ -7,17 +7,63 @@ import Button from "components/button";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "constants/routes";
 import { privateKeyToAddress } from "utils/eth";
+import useQueryParam from "hooks/use-query-param";
+import { ConditionType } from "constants/enum";
+import { keyShares } from "utils";
+import registerServices from "stores/register/services";
+import message from "utils/message";
 
 const RegisterKeys = observer(() => {
   const {
     registerStore,
     registerStore: { privateKeys },
+    accountStore,
+    accountStore: { userInfo },
   } = useStores();
   const navigate = useNavigate();
+  const [from] = useQueryParam("from");
 
   const onRemove = (index: number) => {
     const _privateKeys = privateKeys.filter((key, _index) => index !== _index);
     registerStore.updatePrivateKeys(_privateKeys);
+  };
+
+  const onContinueClick = async () => {
+    if (from === "add-key") {
+      // seal keys
+      const promises = privateKeys.reduce((pre, cur) => {
+        const { type, key } = cur;
+        const shares = keyShares(key);
+        let chainAddr = "";
+        try {
+          chainAddr = privateKeyToAddress(key);
+        } catch (err) {
+          message({ content: "invalid secret key" });
+          throw Error();
+        }
+
+        return [
+          ...pre,
+          ...Object.values(ConditionType).map((condition, index) => {
+            return registerServices.seal({
+              account: userInfo.email!,
+              chain: type,
+              chain_addr: chainAddr,
+              cond_type: condition,
+              cipher_secret: shares[index],
+            });
+          }),
+        ];
+      }, [] as Promise<unknown>[]);
+      // seal all shared secrets
+      await Promise.all(promises);
+      await accountStore.loadUserInfo();
+      registerStore.updatePrivateKeys([]);
+      navigate(ROUTES.REGISTER_SUCCESS);
+    } else {
+      // from register
+      navigate(ROUTES.DELEGATE_SETTINGS);
+    }
   };
 
   return (
@@ -57,7 +103,7 @@ const RegisterKeys = observer(() => {
       <footer className="mt-20">
         <Button
           type="primary"
-          onClick={() => navigate(ROUTES.DELEGATE_SETTINGS)}
+          onClick={onContinueClick}
           disable={privateKeys.length === 0}
         >
           CONTINUE

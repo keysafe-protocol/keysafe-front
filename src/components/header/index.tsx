@@ -18,8 +18,11 @@ const Header = observer(() => {
       className="flex justify-between items-center h-16 px-4"
       style={{ background: "#343434" }}
     >
-      <h1 className="text-3xl font-bold  text-white">
-        <Link to={ROUTES.HOME}>Keysafe Protocol Demo</Link>
+      <h1 className="text-3xl   text-white">
+        <Link to={ROUTES.HOME}>
+          <span className="text-basecolor font-bold">Keysafe Protocol</span>{" "}
+          <span className="ml-4">Demo</span>
+        </Link>
       </h1>
       <nav className="text-white border border-white rounded-full h-10 flex items-center justify-center px-6 font-bold">
         {/* If user not login, show login link, if no chains info, show register info, otherwise show recover/transfer */}
@@ -49,7 +52,11 @@ const Header = observer(() => {
           >
             {/* {pathname === ROUTES.TRANSFER ? transferLinks[1] : transferLinks[0]} */}
             <span className="flex items-center cursor-pointer">
-              {pathname === ROUTES.TRANSFER ? "Transfer" : "Recover"}
+              {pathname === ROUTES.HOME
+                ? "My Assets"
+                : pathname === ROUTES.TRANSFER
+                ? "Transfer"
+                : "Recover"}
               <img src={arrowIcon} className="ml-2 w-3" />
             </span>
           </Dropdown>

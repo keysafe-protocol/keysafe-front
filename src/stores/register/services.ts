@@ -1,6 +1,7 @@
 import request from "utils/request";
 import {
   DelegateRequest,
+  DeleteSealRequest,
   RegisterGAuthRequest,
   RegisterMailAuthRequest,
   RegisterMailRequest,
@@ -31,5 +32,9 @@ export default {
 
   seal(data: SealRequest) {
     return request.post(`/seal`, data);
+  },
+
+  deleteSeal(data: DeleteSealRequest) {
+    return request.post(`/delete_seal`, data);
   },
 };
