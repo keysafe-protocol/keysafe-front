@@ -17,6 +17,7 @@ import { StepType as RecoverStepType } from "pages/recover-keys/useStore";
 import DeleteKey from "./delete-key";
 import { useMemo } from "react";
 import bobaIcon from "assets/imgs/boba.png";
+import { CHAIN_TYPE_MAP } from "constants/index";
 const iconMap: Record<ChainType, string> = {
   [ChainType.Eth]: ethIcon,
   [ChainType.Boba]: bobaIcon,
@@ -64,7 +65,7 @@ const ChainKey: FC<{ chain: AccountChain; delegate?: boolean }> = ({
       <div className={chainItemClass} onClick={() => setSelected(!selected)}>
         <span className="inline-flex items-center w-32">
           <img src={iconMap[chain.chain]} className="mr-2 h-4" />
-          {chain.chain}
+          {CHAIN_TYPE_MAP[chain.chain]}
         </span>
         <span className="px-2">{chain.chain_addr}</span>
         <span className="w-40 text-right">{optimize(balance!)}</span>

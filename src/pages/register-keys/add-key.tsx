@@ -11,6 +11,7 @@ import { ChainType } from "constants/enum";
 import { isEmpty } from "lodash-es";
 import { checkEthKey } from "utils/eth";
 import { useMemo } from "react";
+import { CHAIN_TYPE_MAP } from "constants/index";
 
 const INIT_PRIVATEKEY: PrivateKey = {
   type: ChainType.Eth,
@@ -71,7 +72,7 @@ const AddKey = observer(() => {
             >
               {Object.values(ChainType).map((type) => (
                 <option value={type} key={type}>
-                  {type}
+                  {CHAIN_TYPE_MAP[type]}
                 </option>
               ))}
             </select>

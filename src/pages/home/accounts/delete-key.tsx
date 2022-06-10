@@ -7,6 +7,7 @@ import Button from "components/button";
 import { AccountChain } from "stores/account/types";
 import registerServices from "stores/register/services";
 import useStores from "hooks/use-stores";
+import { CHAIN_TYPE_MAP } from "constants/index";
 
 type Props = {
   chain: AccountChain;
@@ -48,7 +49,7 @@ const DeleteKey: FC<Props> = ({ chain, children }) => {
             Please confirm the information of the key to be deleted:
           </p>
           <p>
-            <strong>Network:</strong> {chain.chain}
+            <strong>Network:</strong> {CHAIN_TYPE_MAP[chain.chain]}
           </p>
           <p>
             <strong>Account:</strong> {chain.chain_addr}
