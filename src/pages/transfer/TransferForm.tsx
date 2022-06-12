@@ -4,7 +4,7 @@ import { useSetState } from "ahooks";
 import useStore, { StepType, Transfer } from "./useStore";
 import Button from "components/button";
 import Input from "components/input";
-import { ReactComponent as IconCheck } from "assets/check.svg";
+import { ReactComponent as IconCheck } from "assets/imgs/check.svg";
 import styles from "./index.module.less";
 import { ChainType } from "constants/enum";
 import useQueryParams from "hooks/use-query-params";

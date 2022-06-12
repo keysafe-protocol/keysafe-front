@@ -5,6 +5,7 @@ import AuthGoogle from "./AuthGoogle";
 import AuthPass from "./AuthPass";
 import useStore, { AuthType, StepType } from "./useStore";
 import styles from "./index.module.less";
+import AuthGithubOAuth from "./AuthGithubOAuth";
 
 const Auth = () => {
   const { shards, activeAuth, getAuth, setActiveAuth, setStep } = useStore();
@@ -12,6 +13,7 @@ const Auth = () => {
   const authEmail = getAuth(AuthType.EMAIL);
   const authPass = getAuth(AuthType.PASS);
   const authGoogle = getAuth(AuthType.GOOGLE);
+  const authGithubOAuth = getAuth(AuthType.GithubAuth);
 
   useEffect(() => {
     setReadyRecover(shards.length >= 2);
@@ -70,6 +72,23 @@ const Auth = () => {
             )}
           </div>
         </section>
+
+        <section className={className(authGithubOAuth.success)}>
+          <h3>Signature #4</h3>
+          <div className="mt-5 px-10">
+            {authGoogle.success ? (
+              <span>AUTH passed: Github OAuth</span>
+            ) : (
+              <Button
+                type="primary"
+                disable={readyRecover}
+                onClick={() => setActiveAuth(AuthType.GithubAuth)}
+              >
+                RETRIEVE
+              </Button>
+            )}
+          </div>
+        </section>
       </div>
 
       <footer className="mt-10 flex justify-center">
@@ -89,6 +108,7 @@ const Auth = () => {
       {activeAuth === AuthType.EMAIL && <AuthEmail />}
       {activeAuth === AuthType.PASS && <AuthPass />}
       {activeAuth === AuthType.GOOGLE && <AuthGoogle />}
+      {activeAuth === AuthType.GithubAuth && <AuthGithubOAuth />}
     </div>
   );
 };

@@ -7,7 +7,7 @@ import useStore, { AuthType } from "./useStore";
 import number from "utils/number";
 import Button from "components/button";
 import Input from "components/input";
-import { ReactComponent as IconCheck } from "assets/check.svg";
+import { ReactComponent as IconCheck } from "assets/imgs/check.svg";
 
 import styles from "./index.module.less";
 import RecoverServices from "stores/recover/services";
@@ -46,7 +46,11 @@ const AuthEmail = () => {
       cipher_mail: email,
     });
 
-    setTargetDate(dayjs().add(60, "s").toDate());
+    setTargetDate(
+      dayjs()
+        .add(60, "s")
+        .toDate()
+    );
     setSent(true);
     setShowVerify(true);
     setVerified(false);

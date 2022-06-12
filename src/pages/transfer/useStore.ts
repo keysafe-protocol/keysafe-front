@@ -7,6 +7,7 @@ export enum AuthType {
   EMAIL,
   PASS,
   GOOGLE,
+  GithubAuth,
 }
 
 export enum StepType {
@@ -51,6 +52,7 @@ const initialState: AuthState = {
     { type: AuthType.EMAIL },
     { type: AuthType.PASS },
     { type: AuthType.GOOGLE },
+    { type: AuthType.GithubAuth },
   ],
   step: StepType.INTRODUCTION,
   activeAuth: null,

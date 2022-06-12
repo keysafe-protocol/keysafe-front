@@ -5,7 +5,7 @@ import useStore, { AuthType } from "./useStore";
 import Button from "components/button";
 import styles from "./index.module.less";
 import Input from "components/input";
-import { ReactComponent as IconCheck } from "assets/check.svg";
+import { ReactComponent as IconCheck } from "assets/imgs/check.svg";
 import RecoverServices from "stores/recover/services";
 import { ConditionType } from "constants/enum";
 import { encrypt2 } from "utils/secure";

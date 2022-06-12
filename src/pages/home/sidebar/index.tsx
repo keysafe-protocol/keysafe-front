@@ -39,7 +39,13 @@ const Sidebar = observer(() => {
             className={menuClass(HomeMenus.KeyList)}
             onClick={() => onMenuClick(HomeMenus.KeyList)}
           >
-            My Key List
+            My Web3 Accounts
+          </li>
+          <li
+            className={menuClass(HomeMenus.Web2Accounts)}
+            onClick={() => onMenuClick(HomeMenus.Web2Accounts)}
+          >
+            My Web2 Accounts
           </li>
           <li
             className={menuClass(HomeMenus.AuthConditions)}
