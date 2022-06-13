@@ -11,7 +11,7 @@ const request = axios.create({
   baseURL:
     process.env.NODE_ENV === "development"
       ? // ? "https://47.93.85.187:30000/ks"
-        "https://demo.keysafe.network:30000/ks" // hk 域名
+        "https://demo.keysafe.network/ks" // hk 域名
       : "/ks",
   // baseURL: "https://bb2d4198-bc40-40c8-97c6-f18a802aee3a.mock.pstmn.io/",
 });

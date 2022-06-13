@@ -29,3 +29,9 @@ export enum OAuthType {
   Google = "oauth@google",
   Twitter = "oauth@twitter",
 }
+
+export enum OAuthOrg {
+  Github = "github",
+  Google = "google",
+  Twitter = "twitter",
+}

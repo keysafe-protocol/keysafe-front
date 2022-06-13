@@ -6,8 +6,10 @@ import { ROUTES } from "constants/routes";
 import { observer } from "mobx-react-lite";
 import useStores from "hooks/use-stores";
 import { useRequest } from "ahooks";
-import { OAuthType } from "constants/enum";
+import { OAuthOrg } from "constants/enum";
 import OAuthCard from "./oauth-card";
+import { find, findIndex } from "lodash-es";
+import Loading from "components/loading";
 
 const Web2Accounts = observer(() => {
   const {
@@ -19,12 +21,18 @@ const Web2Accounts = observer(() => {
     return await oauthStore.loadOAuthInfo();
   });
 
+  if (loading) return <Loading />;
+
   return (
     <div className="ml-4 pt-8">
       <h3 className="text-2xl text-basecolor font-bold">My Web2 Accounts</h3>
       <div className="flex mt-8">
-        {Object.values(OAuthType).map((type) => (
-          <OAuthCard type={type} connected={oauthConnencted.includes(type)} />
+        {Object.values(OAuthOrg).map((type) => (
+          <OAuthCard
+            key={type}
+            type={type}
+            oauthInfo={find(oauthConnencted, { org: type })}
+          />
         ))}
       </div>
     </div>

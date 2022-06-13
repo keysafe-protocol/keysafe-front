@@ -3,7 +3,7 @@ import queryString from "query-string";
 import { isString } from "lodash-es";
 import oauthServices from "stores/oauth/services";
 import { useCountDown, useRequest } from "ahooks";
-import { PostMesaageType } from "constants/enum";
+import { OAuthOrg, PostMesaageType } from "constants/enum";
 import dayjs from "dayjs";
 import { formatCountDown } from "utils";
 
@@ -45,6 +45,7 @@ const OAuthResult = (props: any) => {
       return;
       const res = await oauthServices.oauth({
         code: code as string,
+        org: OAuthOrg.Github,
       });
       console.log(res);
       if (window.opener) {
@@ -64,7 +65,7 @@ const OAuthResult = (props: any) => {
   return (
     <section>
       <div className="flex justify-center pt-20">
-        {error ? (
+        {error || !code ? (
           <div className="text-center text-red-500 text-lg">
             Authorization is failed, please try again later
           </div>

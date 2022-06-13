@@ -11,7 +11,7 @@ import { Condition } from "stores/register/types";
 import registerServices from "stores/register/services";
 import { useMemo } from "react";
 import { findIndex, isEmpty, uniq } from "lodash-es";
-import { ConditionType, PostMesaageType } from "constants/enum";
+import { ConditionType, OAuthOrg, PostMesaageType } from "constants/enum";
 import { QRCodeSVG } from "qrcode.react";
 import { encrypt2 } from "utils/secure";
 import { GITHUB_CLIENT_ID } from "constants/index";
@@ -104,6 +104,7 @@ const SetCondition: FC<Props> = observer(({ conditionIndex }) => {
       case ConditionType.OAuthGithub:
         await registerServices.registerOAuthGithub({
           code: condition.value,
+          org: OAuthOrg.Github,
         });
         break;
       default:

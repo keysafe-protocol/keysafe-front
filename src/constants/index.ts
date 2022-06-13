@@ -7,8 +7,3 @@ export const CHAIN_TYPE_MAP = {
   [ChainType.Boba]: "Boba Rinkeby",
 };
 export const GITHUB_CLIENT_ID = "fd2d170df56ebacde768";
-export const OAUTH_TYPE_MAP = {
-  [OAuthType.Github]: "Github",
-  [OAuthType.Google]: "Google",
-  [OAuthType.Twitter]: "Twitter",
-};

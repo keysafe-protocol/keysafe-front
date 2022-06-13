@@ -4,7 +4,6 @@ import queryString from "query-string";
 
 const useQueryParam = <T extends any>(key: string) => {
   const [params, setParams] = useSearchParams();
-  console.log(params);
 
   const query = useMemo(() => {
     return params.get(key);
