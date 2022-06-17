@@ -9,7 +9,16 @@ import AuthGithubOAuth from "./AuthGithubOAuth";
 import RecoverServices from "stores/recover/services";
 
 const Auth = () => {
-  const { shards, activeAuth, getAuth, setActiveAuth, setStep, userInfo } = useStore();
+  const {
+    shards,
+    activeAuth,
+    auths,
+    userInfo,
+    getAuth,
+    setActiveAuth,
+    setStep,
+    setAuths,
+  } = useStore();
   const [readyRecover, setReadyRecover] = useState(false);
   const authEmail = getAuth(AuthType.EMAIL);
   const authPass = getAuth(AuthType.PASS);
@@ -19,11 +28,14 @@ const Auth = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      const data: any = await RecoverServices.getAuthByAccount({
+      const { data } = await RecoverServices.getAuthByAccount({
         account: userInfo.email!,
       });
-      console.log(data.data);
-      setAuthByAccount(data.data);
+      console.log(data);
+      setAuthByAccount(data);
+      const enabledAuths = auths.filter((auth) => data.includes(auth.type));
+      console.log(enabledAuths);
+      setAuths(enabledAuths);
     };
     fetch();
   }, []);
@@ -136,5 +148,6 @@ const Auth = () => {
 export default Auth;
 
 const className = (success: boolean | undefined) =>
-  `p-6 rounded-lg border shadow-sm text-center ${success ? "bg-authpass" : "bg-authfail"
+  `p-6 rounded-lg border shadow-sm text-center ${
+    success ? "bg-authpass" : "bg-authfail"
   }`;
