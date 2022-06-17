@@ -22,6 +22,7 @@ type Auth = {
   type: AuthType;
   shard?: string;
   success?: boolean;
+  enable?: boolean;
 } & Record<string, any>;
 
 interface AuthState {

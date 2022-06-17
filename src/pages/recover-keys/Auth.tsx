@@ -31,10 +31,11 @@ const Auth = () => {
       const { data } = await RecoverServices.getAuthByAccount({
         account: userInfo.email!,
       });
-      console.log(data);
       setAuthByAccount(data);
-      const enabledAuths = auths.filter((auth) => data.includes(auth.type));
-      console.log(enabledAuths);
+      const enabledAuths = auths.map((auth) => ({
+        ...auth,
+        enable: data.includes(auth.type),
+      }));
       setAuths(enabledAuths);
     };
     fetch();

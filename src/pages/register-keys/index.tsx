@@ -13,6 +13,7 @@ import { keyShares } from "utils";
 import registerServices from "stores/register/services";
 import message from "utils/message";
 import { CHAIN_TYPE_MAP } from "constants/index";
+import RecoverServices from "stores/recover/services";
 
 const RegisterKeys = observer(() => {
   const {
@@ -31,6 +32,10 @@ const RegisterKeys = observer(() => {
 
   const onContinueClick = async () => {
     if (from === "add-key") {
+      const { data } = await RecoverServices.getAuthByAccount({
+        account: userInfo.email!,
+      });
+      const conditionsByAccount: ConditionType[] = data;
       // seal keys
       const promises = privateKeys.reduce((pre, cur) => {
         const { type, key } = cur;
@@ -45,7 +50,7 @@ const RegisterKeys = observer(() => {
 
         return [
           ...pre,
-          ...Object.values(ConditionType).map((condition, index) => {
+          ...conditionsByAccount.map((condition, index) => {
             return registerServices.seal({
               account: userInfo.email!,
               chain: type,
