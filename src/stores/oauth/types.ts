@@ -3,7 +3,7 @@ import { OAuthOrg } from "constants/enum";
 export type OAuthRequest = {
   // account: string;
   code: string;
-  org: OAuthOrg;
+  org?: OAuthOrg;
 };
 
 export type OAuthInfo = {
