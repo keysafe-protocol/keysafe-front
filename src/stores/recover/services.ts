@@ -10,6 +10,9 @@ type UnSealType = {
   cipher_cond_value: string;
 };
 const RecoverServices = {
+  getAuthByAccount(data: { account: string }) {
+    return request.post("/ks/web3/cond", data);
+  },
   unseal(data: UnSealType) {
     return request.post("/unseal", data);
   },

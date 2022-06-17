@@ -6,6 +6,7 @@ import AuthPass from "./AuthPass";
 import useStore, { AuthType, StepType } from "./useStore";
 import styles from "./index.module.less";
 import AuthGithubOAuth from "./AuthGithubOAuth";
+import RecoverServices from "stores/recover/services";
 
 const Auth = () => {
   const { shards, activeAuth, getAuth, setActiveAuth, setStep } = useStore();
@@ -14,6 +15,17 @@ const Auth = () => {
   const authPass = getAuth(AuthType.PASS);
   const authGoogle = getAuth(AuthType.GOOGLE);
   const authGithubOAuth = getAuth(AuthType.GithubAuth);
+  const [authByAccount, setAuthByAccount] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      const data: string[] = await RecoverServices.getAuthByAccount({
+        account: "",
+      });
+      setAuthByAccount(data);
+    };
+    fetch();
+  }, []);
 
   useEffect(() => {
     setReadyRecover(shards.length >= 2);
@@ -22,73 +34,80 @@ const Auth = () => {
   return (
     <div className={styles.authContainer}>
       <div className="grid gap-6">
-        <section className={className(authEmail.success)}>
-          <h3>Segment #1</h3>
-          <div className="mt-5 px-10">
-            {authEmail.success ? (
-              <span>AUTH passed: Email Verification, {authEmail.email}</span>
-            ) : (
-              <Button
-                type="primary"
-                disable={readyRecover}
-                onClick={() => setActiveAuth(AuthType.EMAIL)}
-              >
-                RETRIEVE
-              </Button>
-            )}
-          </div>
-        </section>
-
-        <section className={className(authPass.success)}>
-          <h3>Segment #2</h3>
-          <div className="mt-5 px-10">
-            {authPass.success ? (
-              <span>AUTH passed: Passphrase, **********</span>
-            ) : (
-              <Button
-                type="primary"
-                disable={readyRecover}
-                onClick={() => setActiveAuth(AuthType.PASS)}
-              >
-                RETRIEVE
-              </Button>
-            )}
-          </div>
-        </section>
-
-        <section className={className(authGoogle.success)}>
-          <h3>Segment #3</h3>
-          <div className="mt-5 px-10">
-            {authGoogle.success ? (
-              <span>AUTH passed: Google Authenticator, {authGoogle.code}</span>
-            ) : (
-              <Button
-                type="primary"
-                disable={readyRecover}
-                onClick={() => setActiveAuth(AuthType.GOOGLE)}
-              >
-                RETRIEVE
-              </Button>
-            )}
-          </div>
-        </section>
-
-        <section className={className(authGithubOAuth.success)}>
-          <h3>Signature #4</h3>
-          <div className="mt-5 px-10">
-            {authGoogle.success ? (
-              <span>AUTH passed: Github OAuth</span>
-            ) : (
-              <Button
-                type="primary"
-                disable={readyRecover}
-                onClick={() => setActiveAuth(AuthType.GithubAuth)}
-              >
-                RETRIEVE
-              </Button>
-            )}
-          </div>
-        </section>
+        {authByAccount.includes("email") && (
+          <section className={className(authEmail.success)}>
+            <h3>Segment #1</h3>
+            <div className="mt-5 px-10">
+              {authEmail.success ? (
+                <span>AUTH passed: Email Verification, {authEmail.email}</span>
+              ) : (
+                <Button
+                  type="primary"
+                  disable={readyRecover}
+                  onClick={() => setActiveAuth(AuthType.EMAIL)}
+                >
+                  RETRIEVE
+                </Button>
+              )}
+            </div>
+          </section>
+        )}
+        {authByAccount.includes("password") && (
+          <section className={className(authPass.success)}>
+            <h3>Segment #2</h3>
+            <div className="mt-5 px-10">
+              {authPass.success ? (
+                <span>AUTH passed: Passphrase, **********</span>
+              ) : (
+                <Button
+                  type="primary"
+                  disable={readyRecover}
+                  onClick={() => setActiveAuth(AuthType.PASS)}
+                >
+                  RETRIEVE
+                </Button>
+              )}
+            </div>
+          </section>
+        )}
+        {authByAccount.includes("gauth") && (
+          <section className={className(authGoogle.success)}>
+            <h3>Segment #3</h3>
+            <div className="mt-5 px-10">
+              {authGoogle.success ? (
+                <span>
+                  AUTH passed: Google Authenticator, {authGoogle.code}
+                </span>
+              ) : (
+                <Button
+                  type="primary"
+                  disable={readyRecover}
+                  onClick={() => setActiveAuth(AuthType.GOOGLE)}
+                >
+                  RETRIEVE
+                </Button>
+              )}
+            </div>
+          </section>
+        )}
+        {authByAccount.includes("oauth@github") && (
+          <section className={className(authGithubOAuth.success)}>
+            <h3>Signature #4</h3>
+            <div className="mt-5 px-10">
+              {authGoogle.success ? (
+                <span>AUTH passed: Github OAuth</span>
+              ) : (
+                <Button
+                  type="primary"
+                  disable={readyRecover}
+                  onClick={() => setActiveAuth(AuthType.GithubAuth)}
+                >
+                  RETRIEVE
+                </Button>
+              )}
+            </div>
+          </section>
+        )}
       </div>
 
       <footer className="mt-10 flex justify-center">
