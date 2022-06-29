@@ -50,7 +50,7 @@ const Auth = () => {
       <div className="grid gap-6">
         {authByAccount.includes("email") && (
           <section className={className(authEmail.success)}>
-            <h3>Segment #1</h3>
+            <h3>Key Segment 1/3</h3>
             <div className="mt-5 px-10">
               {authEmail.success ? (
                 <span>AUTH passed: Email Verification, {authEmail.email}</span>
@@ -68,7 +68,7 @@ const Auth = () => {
         )}
         {authByAccount.includes("password") && (
           <section className={className(authPass.success)}>
-            <h3>Segment #2</h3>
+            <h3>Key Segment 2/3</h3>
             <div className="mt-5 px-10">
               {authPass.success ? (
                 <span>AUTH passed: Passphrase, **********</span>
@@ -86,7 +86,7 @@ const Auth = () => {
         )}
         {authByAccount.includes("gauth") && (
           <section className={className(authGoogle.success)}>
-            <h3>Segment #3</h3>
+            <h3>Key Segment 3/3</h3>
             <div className="mt-5 px-10">
               {authGoogle.success ? (
                 <span>
@@ -149,6 +149,5 @@ const Auth = () => {
 export default Auth;
 
 const className = (success: boolean | undefined) =>
-  `p-6 rounded-lg border shadow-sm text-center ${
-    success ? "bg-authpass" : "bg-authfail"
+  `p-6 rounded-lg border shadow-sm text-center ${success ? "bg-authpass" : "bg-authfail"
   }`;

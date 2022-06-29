@@ -85,6 +85,17 @@ const AuthEmail = () => {
     setEmailValid(email.length > 0 && checkEmail(email));
   }, [email]);
 
+  useEffect(() => {
+    const fetch = async () => {
+      const { data } = await RecoverServices.getMailByAccount({
+        account: userInfo.email!,
+      });
+      console.log(data);
+      setEmail(data);
+    };
+    fetch();
+  }, []);
+
   return (
     <Dialog
       visible={activeAuth === AuthType.EMAIL}
@@ -110,6 +121,7 @@ const AuthEmail = () => {
               className="flex-1"
               placeholder="Input your Email"
               onChange={(e) => setEmail(e.target.value)}
+              value={email}
             />
             <span className="ml-4 w-4">
               {emailValid && <IconCheck className="w-4 h-4" />}

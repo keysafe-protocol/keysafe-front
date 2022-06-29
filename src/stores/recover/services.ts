@@ -13,6 +13,11 @@ const RecoverServices = {
   getAuthByAccount(data: { account: string }) {
     return request.post("/web3/cond", data);
   },
+
+  getMailByAccount(data: { account: String }) {
+    return request.post("/info_mail", data);
+  },
+
   unseal(data: UnSealType) {
     return request.post("/unseal", data);
   },
