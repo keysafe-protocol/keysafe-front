@@ -29,9 +29,9 @@ const Sidebar = observer(() => {
       <div className="flex flex-col items-center">
         <img src={avatarImg} className="w-full" />
         <span className="mt-2 text-xl">{userInfo.email}</span>
-        <span className="mt-2 text-base" style={{ color: "#999999" }}>
+        {/* <span className="mt-2 text-base" style={{ color: "#999999" }}>
           USER ID: TODO
-        </span>
+        </span> */}
       </div>
       <div className="mt-16">
         <ul className="text-2xl " style={{ lineHeight: "60px" }}>
