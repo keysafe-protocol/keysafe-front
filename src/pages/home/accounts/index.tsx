@@ -17,10 +17,12 @@ import { StepType as RecoverStepType } from "pages/recover-keys/useStore";
 import DeleteKey from "./delete-key";
 import { useMemo } from "react";
 import bobaIcon from "assets/imgs/boba.png";
+import astarIcon from "assets/imgs/astar.png";
 import { CHAIN_TYPE_MAP } from "constants/index";
 const iconMap: Record<ChainType, string> = {
   [ChainType.Eth]: ethIcon,
   [ChainType.Boba]: bobaIcon,
+  [ChainType.Astar]: astarIcon,
 };
 const commonBtnClass =
   "w-36 h-10 inline-flex items-center justify-center font-bold ml-2  rounded-lg text-white cursor-pointer";
