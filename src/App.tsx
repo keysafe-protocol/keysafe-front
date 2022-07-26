@@ -18,6 +18,8 @@ import { observer } from "mobx-react-lite";
 import useStores from "hooks/use-stores";
 import Home from "pages/home";
 import Loading from "components/loading";
+import Test from "pages/test";
+import OAuthResult from "pages/oauth-result";
 
 const App = observer(() => {
   const { accountStore } = useStores();
@@ -56,6 +58,8 @@ const App = observer(() => {
           ></Route>
           <Route path={ROUTES.RECOVER_KEYS} element={<RecoverKeys />}></Route>
           <Route path={ROUTES.TRANSFER} element={<Transfer />}></Route>
+          <Route path={ROUTES.OAUTH_RESULT} element={<OAuthResult />}></Route>
+          <Route path={ROUTES.TEST} element={<Test />}></Route>
         </Routes>
       </main>
     </div>

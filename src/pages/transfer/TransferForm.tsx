@@ -4,11 +4,12 @@ import { useSetState } from "ahooks";
 import useStore, { StepType, Transfer } from "./useStore";
 import Button from "components/button";
 import Input from "components/input";
-import { ReactComponent as IconCheck } from "assets/check.svg";
+import { ReactComponent as IconCheck } from "assets/imgs/check.svg";
 import styles from "./index.module.less";
 import { ChainType } from "constants/enum";
 import useQueryParams from "hooks/use-query-params";
 import { CHAIN_TYPE_MAP } from "constants/index";
+import VerifyEmail from "./VerifyEmail";
 
 const TransferForm = () => {
   const {
@@ -21,6 +22,7 @@ const TransferForm = () => {
   } = useStore();
   const [verified, setVerified] = useState(true);
   const [query] = useQueryParams<{ account: string; from: string }>();
+  const [visible, setVisible] = useState(false);
 
   const [fields, setFields] = useSetState<Transfer>(transfer);
   const [addrs, setAddrs] = useState<string[]>([]);
@@ -63,12 +65,21 @@ const TransferForm = () => {
     if (current) {
       setAccountChain({ ...current });
       setTransfer({ ...fields, amount: Number(fields.amount) });
-      setStep(StepType.AUTH);
+      // setStep(StepType.AUTH);
+
+      // 暂时只需要验证 email，成功则跳转到 success 页面
+      setVisible(true);
     }
   };
 
   return (
     <main className={styles.authContainer}>
+      {visible && (
+        <VerifyEmail
+          onOk={() => setStep(StepType.SUCCESS)}
+          onCancel={() => setVisible(false)}
+        />
+      )}
       <div className="max-w-xl mx-auto grid grid-cols-1 gap-6">
         <h2 className="mb-2 text-2xl font-bold text-titlecolor">
           Make a Transfer

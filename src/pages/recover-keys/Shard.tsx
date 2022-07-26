@@ -29,17 +29,19 @@ const Shard = () => {
     <main className={styles.authContainer}>
       <Xwrapper>
         <section className="flex  space-x-6 h-1/3">
-          {auths.map((auth, index) => {
-            const shardClass = classNames(
-              shardClassPrefix,
-              auth.success ? "bg-authpass" : "bg-authfail"
-            );
-            return (
-              <div id={`shard${++index}`} key={index} className={shardClass}>
-                <span className="text-4xl">{`Shard #${index}`}</span>
-              </div>
-            );
-          })}
+          {auths
+            .filter((auth) => auth.enable)
+            .map((auth, index) => {
+              const shardClass = classNames(
+                shardClassPrefix,
+                auth.success ? "bg-authpass" : "bg-authfail"
+              );
+              return (
+                <div id={`shard${++index}`} key={index} className={shardClass}>
+                  <span className="text-4xl">{`Shard #${index}`}</span>
+                </div>
+              );
+            })}
         </section>
         <section id="reconstruction" className={reconClass}>
           <div className="progress rounded-lg"></div>

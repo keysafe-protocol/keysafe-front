@@ -2,17 +2,17 @@ import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import queryString from "query-string";
 
-const useQueryParam = (key: string): [unknown, (value: unknown) => void] => {
+const useQueryParam = <T extends any>(key: string) => {
   const [params, setParams] = useSearchParams();
 
   const query = useMemo(() => {
     return params.get(key);
   }, [params, key]);
 
-  const setQuery = (value: unknown) => {
+  const setQuery = (value: T) => {
     setParams(queryString.stringify({ [key]: value }));
   };
 
-  return [query ? query : undefined, setQuery];
+  return [query ? query : undefined, setQuery] as [T, (value: T) => void];
 };
 export default useQueryParam;

@@ -1,3 +1,4 @@
+import { OAuthRequest } from "stores/oauth/types";
 import request from "utils/request";
 import {
   DelegateRequest,
@@ -9,7 +10,7 @@ import {
   SealRequest,
 } from "./types";
 
-export default {
+const registerServices = {
   registerMailAuth(data: RegisterMailAuthRequest) {
     return request.post(`/register_mail_auth`, data);
   },
@@ -37,4 +38,10 @@ export default {
   deleteSeal(data: DeleteSealRequest) {
     return request.post(`/delete_seal`, data);
   },
+
+  registerOAuthGithub(data: OAuthRequest) {
+    return request.post(`/register_oauth_github`, data);
+  },
 };
+
+export default registerServices;

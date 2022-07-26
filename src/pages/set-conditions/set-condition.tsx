@@ -4,16 +4,21 @@ import Input from "components/input";
 import dayjs from "dayjs";
 import { observer } from "mobx-react-lite";
 import Dialog from "rc-dialog";
-import React, { useState, ChangeEvent, FC } from "react";
+import React, { useState, ChangeEvent, FC, useEffect } from "react";
 import { checkEmail, formatCountDown, gauthKey } from "utils";
 import useStores from "hooks/use-stores";
 import { Condition } from "stores/register/types";
 import registerServices from "stores/register/services";
 import { useMemo } from "react";
 import { findIndex, isEmpty, uniq } from "lodash-es";
-import { ConditionType } from "constants/enum";
+import { ConditionType, OAuthOrg, PostMesaageType } from "constants/enum";
 import { QRCodeSVG } from "qrcode.react";
 import { encrypt2 } from "utils/secure";
+import { GITHUB_CLIENT_ID } from "constants/index";
+import { ROUTES } from "constants/routes";
+import oauth from "utils/oauth";
+import { PostMesaageData } from "stores/common/types";
+import queryString from "query-string";
 
 const INIT_CONDITION: Condition = {
   type: undefined,
@@ -39,6 +44,12 @@ const SetCondition: FC<Props> = observer(({ conditionIndex }) => {
   const [countDown] = useCountDown({
     targetDate: endDate,
   });
+
+  useEffect(() => {
+    return () => {
+      window.removeEventListener("message", onMessage);
+    };
+  }, []);
 
   const typeOptions = useMemo(() => {
     const types = uniq([
@@ -90,6 +101,12 @@ const SetCondition: FC<Props> = observer(({ conditionIndex }) => {
           cipher_code: encrypt2(condition.value),
         });
         break;
+      case ConditionType.OAuthGithub:
+        await registerServices.registerOAuthGithub({
+          code: condition.value,
+          org: OAuthOrg.Github,
+        });
+        break;
       default:
         break;
     }
@@ -111,6 +128,21 @@ const SetCondition: FC<Props> = observer(({ conditionIndex }) => {
         .add(60, "s")
         .toDate()
     );
+  };
+
+  const onMessage = (e: MessageEvent) => {
+    const data: PostMesaageData = e.data;
+    if (data.type === PostMesaageType.OAuthSuccess) {
+      setCondition({
+        ...condition,
+        value: data.data,
+      });
+    }
+  };
+
+  const onConnectWithGithub = () => {
+    oauth.open();
+    window.addEventListener("message", onMessage);
   };
 
   const renderCondition = () => {
@@ -201,6 +233,26 @@ const SetCondition: FC<Props> = observer(({ conditionIndex }) => {
             )}
           </div>
         );
+      case ConditionType.OAuthGithub:
+        return (
+          <div className="mt-4">
+            {condition.value ? (
+              <div className="text-green-500">
+                Authorization is successful, click submit
+              </div>
+            ) : (
+              <div>
+                Unauthorized, please log in with{" "}
+                <span
+                  className="text-blue-500 cursor-pointer"
+                  onClick={onConnectWithGithub}
+                >
+                  github authorization
+                </span>
+              </div>
+            )}
+          </div>
+        );
     }
   };
 
@@ -214,7 +266,9 @@ const SetCondition: FC<Props> = observer(({ conditionIndex }) => {
           isEmpty(condition.repeatPassPhrase) ||
           condition.value !== condition.repeatPassPhrase
         );
+      // GAuth 和 OAuth 实际上不需要值，但是需要处理 disable 逻辑，使用值来占位
       case ConditionType.GAuth:
+      case ConditionType.OAuthGithub:
         return isEmpty(condition.value);
     }
   }, [condition]);

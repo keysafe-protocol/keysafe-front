@@ -7,10 +7,12 @@ import styles from "./index.module.less";
 import Input from "components/input";
 import { ReactComponent as IconCheck } from "assets/imgs/check.svg";
 import RecoverServices from "stores/recover/services";
-import { ConditionType } from "constants/enum";
+import { ConditionType, PostMesaageType } from "constants/enum";
 import { encrypt2 } from "utils/secure";
+import oauth from "utils/oauth";
+import { PostMesaageData } from "stores/common/types";
 
-const AuthGoogle = () => {
+const AuthGithubOAuth = () => {
   const {
     activeAuth,
     userInfo,
@@ -20,7 +22,12 @@ const AuthGoogle = () => {
     setAuth,
   } = useStore();
   const [code, setCode] = useState("");
-  const [valid, setValid] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      window.removeEventListener("message", onMessage);
+    };
+  }, []);
 
   const handleConfirm = async () => {
     const data: any = await RecoverServices.unseal({
@@ -28,27 +35,35 @@ const AuthGoogle = () => {
       owner: accountChain.owner,
       chain: accountChain.chain,
       chain_addr: accountChain.chain_addr,
-      cond_type: ConditionType.GAuth,
-      cipher_cond_value: encrypt2(code),
+      cond_type: ConditionType.OAuthGithub,
+      cipher_cond_value: code,
     });
-    const auth = getAuth(AuthType.GOOGLE);
+    const auth = getAuth(AuthType.GithubAuth);
     setAuth({ ...auth, success: true, code, shard: data.cipher_secret });
     setActiveAuth(null);
   };
 
-  useEffect(() => {
-    setValid(code.length >= 6);
-  }, [code]);
+  const onMessage = (e: MessageEvent) => {
+    const data: PostMesaageData = e.data;
+    if (data.type === PostMesaageType.OAuthSuccess) {
+      setCode(data.data);
+    }
+  };
+
+  const onConnectWithGithub = () => {
+    oauth.open();
+    window.addEventListener("message", onMessage);
+  };
 
   return (
     <Dialog
-      visible={activeAuth === AuthType.GOOGLE}
+      visible={activeAuth === AuthType.GithubAuth}
       onClose={() => setActiveAuth(null)}
       rootClassName={styles.dialogRoot}
-      title="AUTH #3"
+      title="AUTH #4"
       footer={
         <footer className="text-center">
-          {valid && (
+          {code && (
             <Button type="primary" className="mr-2" onClick={handleConfirm}>
               CONFIRM
             </Button>
@@ -61,13 +76,21 @@ const AuthGoogle = () => {
         <section>
           <h5>Auth Type: Google Authenticator</h5>
           <div className="flex items-center">
-            <Input
-              className="flex-1"
-              onChange={(e) => setCode(e.target.value)}
-            />
-            <span className="ml-4 w-4">
-              {valid && <IconCheck className="w-4 h-4" />}
-            </span>
+            {code ? (
+              <div className="text-green-500">
+                Authorization is successful, click confirm
+              </div>
+            ) : (
+              <div>
+                Please log in with{" "}
+                <span
+                  className="text-blue-500 cursor-pointer"
+                  onClick={onConnectWithGithub}
+                >
+                  github authorization
+                </span>
+              </div>
+            )}
           </div>
         </section>
       </main>
@@ -75,4 +98,4 @@ const AuthGoogle = () => {
   );
 };
 
-export default AuthGoogle;
+export default AuthGithubOAuth;

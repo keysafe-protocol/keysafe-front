@@ -11,4 +11,6 @@ export const ROUTES = {
   REGISTER_SUCCESS: "/register-success",
   RECOVER_KEYS: "/recover-keys",
   TRANSFER: "/transfer",
+  OAUTH_RESULT: "/oauth-result",
+  TEST: "/test",
 };

@@ -20,7 +20,7 @@ const Header = observer(() => {
     >
       <h1 className="text-3xl   text-white">
         <Link to={ROUTES.HOME}>
-          <span className="text-basecolor font-bold">Keysafe Protocol</span>{" "}
+          <span className="text-basecolor font-bold">Shuttle Protocol</span>{" "}
           <span className="ml-4">Demo</span>
         </Link>
       </h1>
@@ -55,8 +55,8 @@ const Header = observer(() => {
               {pathname === ROUTES.HOME
                 ? "My Assets"
                 : pathname === ROUTES.TRANSFER
-                ? "Transfer"
-                : "Recover"}
+                  ? "Transfer"
+                  : "Recover"}
               <img src={arrowIcon} className="ml-2 w-3" />
             </span>
           </Dropdown>

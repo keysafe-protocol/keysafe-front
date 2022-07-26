@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import Dialog from "rc-dialog";
 import { useCountDown } from "ahooks";
 import dayjs from "dayjs";
@@ -15,23 +15,20 @@ import { ConditionType } from "constants/enum";
 import { encrypt2 } from "utils/secure";
 import { checkEmail } from "utils";
 import registerServices from "stores/register/services";
+import { isFunction } from "lodash-es";
 
-const AuthEmail = () => {
-  const {
-    activeAuth,
-    accountChain,
-    userInfo,
-    setActiveAuth,
-    getAuth,
-    setAuth,
-  } = useStore();
+type Props = {
+  onCancel: () => void;
+  onOk: () => void;
+};
+const VerifyEmail: FC<Props> = ({ onCancel, onOk }) => {
+  const { userInfo, accountChain, setActiveAuth } = useStore();
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [sent, setSent] = useState(false);
   const [emailValid, setEmailValid] = useState(false);
   const [verified, setVerified] = useState(false);
   const [showVerify, setShowVerify] = useState(false);
-
   const [targetDate, setTargetDate] = useState<Date>();
   const [countDown] = useCountDown({
     targetDate,
@@ -66,14 +63,7 @@ const AuthEmail = () => {
       cond_type: ConditionType.Email,
       cipher_cond_value: encrypt2(code),
     });
-    const auth = getAuth(AuthType.EMAIL);
-    setAuth({
-      ...auth,
-      success: true,
-      email: email,
-      shard: data.cipher_secret,
-    });
-    setActiveAuth(null);
+    onOk();
   };
 
   const handleChange = (code: string) => {
@@ -91,15 +81,15 @@ const AuthEmail = () => {
         account: userInfo.email!,
       });
       console.log(data);
-      setEmail(data);
+      setEmail(data || userInfo.email);
     };
     fetch();
   }, []);
 
   return (
     <Dialog
-      visible={activeAuth === AuthType.EMAIL}
-      onClose={() => setActiveAuth(null)}
+      visible={true}
+      onClose={onCancel}
       rootClassName={styles.dialogRoot}
       title="AUTH #1"
       footer={
@@ -109,7 +99,7 @@ const AuthEmail = () => {
               CONFIRM
             </Button>
           )}
-          <Button onClick={() => setActiveAuth(null)}>CANCEL</Button>
+          <Button onClick={onCancel}>CANCEL</Button>
         </footer>
       }
     >
@@ -163,4 +153,4 @@ const AuthEmail = () => {
   );
 };
 
-export default AuthEmail;
+export default VerifyEmail;
