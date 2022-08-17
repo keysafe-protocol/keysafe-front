@@ -38,7 +38,7 @@ const AuthPass = () => {
   };
 
   useEffect(() => {
-    setValid(pass.length > 0 && regexp.test(pass));
+    setValid(pass.length > 0);
   }, [pass]);
 
   return (
@@ -48,7 +48,7 @@ const AuthPass = () => {
       rootClassName={styles.dialogRoot}
       title="AUTH #2"
       footer={
-        <footer className="  text-center">
+        <footer className="text-center">
           {valid && (
             <Button type="primary" className="mr-2" onClick={handleConfirm}>
               CONFIRM
