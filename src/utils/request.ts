@@ -7,7 +7,7 @@ import { ROUTES } from "constants/routes";
 import ls from "./ls";
 import message from "./message";
 
-const request = axios.create({
+const   request = axios.create({
   baseURL:
     process.env.NODE_ENV === "development"
       ? "https://47.93.85.187:30000/ks"
@@ -39,7 +39,7 @@ request.interceptors.response.use(
         return data;
       case "fail":
         message({
-          content: `Fail: ${response.config.url}`,
+          content: `Fail: ${response.config.url === '/auth_confirm' ? 'Error code' : response.config.url}`,
         });
         throw Error(data);
       default:
