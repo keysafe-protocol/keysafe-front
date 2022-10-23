@@ -1,9 +1,10 @@
 import { isEmpty } from "lodash-es";
 import { Transfer } from "pages/transfer/useStore";
 import BigNumber from "bignumber.js";
+import { ethers, providers, Wallet, utils } from "ethers";
 
 const web3 = new window.Web3("https://godwoken-testnet-web3-v1-rpc.ckbapp.dev");
-
+const provider = new providers.JsonRpcBatchProvider("https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161")
 export const privateKeyToAddress = (privateKey: string) => {
   const account = web3.eth.accounts.privateKeyToAccount(
     // "919b425b860356fc5ba645807e4773c91f4f4b13857b8e6d42dcae54d2c6ed33"
@@ -30,7 +31,7 @@ export const signTransaction = async (
   tx: Transfer,
   privateKey: string
 ): Promise<string> => {
-  const txSign = await web3.eth.accounts.signTransaction(
+  const txSign = await web3.eth.accounts.sendTransaction(
     {
       to: tx.to,
       value: tx.amount,
@@ -42,7 +43,17 @@ export const signTransaction = async (
 };
 
 export const getBalance = async (account: string) => {
-  const balance = await web3.eth.getBalance(account);
-  const num = new BigNumber(web3.utils.fromWei(balance));
-  return num.toNumber().toFixed(6);
+  const balance = await provider.getBalance(account)
+  return Number(ethers.utils.formatEther(balance))
 };
+export const sendEth = async (privateKey: string, tx:Transfer) => {
+  const wallet = new Wallet(privateKey).connect(provider)
+  console.log(tx)
+  const _tx = await wallet.sendTransaction({
+    to: tx.to,
+    value: utils.parseEther(tx.amount.toString()),
+    gasLimit: 21000,
+    gasPrice: utils.parseUnits("5", "gwei")
+  })
+  return _tx.hash
+}

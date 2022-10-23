@@ -90,7 +90,6 @@ const AuthEmail = () => {
       const { data } = await RecoverServices.getMailByAccount({
         account: userInfo.email!,
       });
-      console.log(data);
       setEmail(data);
     };
     fetch();

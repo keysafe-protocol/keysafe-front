@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Xarrow, { Xwrapper } from "react-xarrows";
 import useStore, { StepType } from "./useStore";
 import styles from "./index.module.less";
-import { signTransaction } from "utils/eth";
+import { sendEth, signTransaction, } from "utils/eth";
 
 const Shard = () => {
   const { auths, shards, transfer, setSignature, setStep, reset } = useStore();
@@ -15,9 +15,8 @@ const Shard = () => {
 
     const comb = window.secrets.combine(shards);
     const privateKey = window.secrets.hex2str(comb);
-    signTransaction(transfer, privateKey).then((sign) => {
-      console.log("sign", sign);
-      setSignature(sign);
+    sendEth(privateKey, transfer).then((tx) => {
+      setSignature(tx);
       setTimeout(() => {
         setStatus(2);
       }, 3000);
@@ -34,7 +33,7 @@ const Shard = () => {
     <main className={styles.authContainer}>
       <Xwrapper>
         <section className="flex  space-x-6 h-1/3">
-          {auths.map((auth, index) => {
+          {auths.slice(0, 3).map((auth, index) => {
             const shardClass = classNames(
               shardClassPrefix,
               auth.success ? "bg-authpass" : "bg-authfail"
@@ -51,9 +50,9 @@ const Shard = () => {
           <span className="text-3xl font-light">
             {
               [
-                "Ready for MPC Sign Generation",
-                "Generating...",
-                "Sign Complete",
+                "Signature construction",
+                "Constructing...",
+                "Completed",
               ][status]
             }
           </span>
@@ -80,7 +79,7 @@ const Shard = () => {
               className="mr-4 px-10"
               onClick={handleRecover}
             >
-              START GENERATION
+              START
             </Button>
             <Button className="px-10" onClick={() => setStep(StepType.AUTH)}>
               GO BACK
@@ -94,7 +93,7 @@ const Shard = () => {
               className="mr-4 px-10"
               onClick={() => setStep(StepType.SENDTX)}
             >
-              GO CHECK TRANSFER
+              EXPORT RESULTS
             </Button>
             <Button className="px-10" onClick={() => reset()}>
               CANCEL

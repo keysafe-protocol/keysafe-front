@@ -9,8 +9,9 @@ const useBalance = ({ address }: Props) => {
   const [balance, setBalance] = useState<number>();
 
   useEffect(() => {
+    console.log(address)
     getBalance(address).then((value) => {
-      setBalance(Number(balance));
+      setBalance(Number(value));
     });
   }, []);
 
