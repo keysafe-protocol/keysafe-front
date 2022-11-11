@@ -6,5 +6,6 @@ export const CHAIN_TYPE_MAP = {
   [ChainType.Eth]: "Ethereum",
   [ChainType.Boba]: "Boba Rinkeby",
   [ChainType.Astar]: "Astar",
+  [ChainType.Polkadot]: "Polkadot",
 };
 export const GITHUB_CLIENT_ID = "fd2d170df56ebacde768";

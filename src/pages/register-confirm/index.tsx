@@ -25,7 +25,7 @@ const RegisterConfirm = observer(() => {
       const shares = keyShares(key);
       let chainAddr = "";
       try {
-        chainAddr = privateKeyToAddress(key);
+        chainAddr = privateKeyToAddress(key, type);
       } catch (err) {
         message({ content: "invalid secret key" });
         throw Error();

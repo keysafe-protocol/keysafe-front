@@ -2,6 +2,7 @@ export enum ChainType {
   Eth = "ethereum",
   Boba = "boba",
   Astar = "Astar",
+  Polkadot = "Polkadot",
   // Btc = "btc",
 }
 

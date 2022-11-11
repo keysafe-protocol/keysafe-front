@@ -4,12 +4,13 @@ import { getBalance } from "utils/eth";
 
 type Props = {
   address: string;
+  chain: string;
 };
-const useBalance = ({ address }: Props) => {
+const useBalance = ({ address, chain }: Props) => {
   const [balance, setBalance] = useState<number>();
 
   useEffect(() => {
-    getBalance(address).then((value) => {
+    getBalance(address, chain).then((value) => {
       setBalance(Number(balance));
     });
   }, []);
