@@ -25,6 +25,7 @@ export type Transfer = {
   from: string;
   to: string;
   amount: number;
+  chain?: ChainType;
 };
 
 type Auth = {
@@ -62,6 +63,7 @@ const initialState: AuthState = {
     from: "",
     to: "",
     amount: 0,
+    chain: undefined,
   },
   signature: "",
 };

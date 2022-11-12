@@ -18,12 +18,13 @@ import DeleteKey from "./delete-key";
 import { useMemo } from "react";
 import bobaIcon from "assets/imgs/boba.png";
 import astarIcon from "assets/imgs/astar.png";
+import polkaIcon from "assets/imgs/polka.png";
 import { CHAIN_TYPE_MAP } from "constants/index";
 const iconMap: Record<ChainType, string> = {
   [ChainType.Eth]: ethIcon,
   [ChainType.Boba]: bobaIcon,
   [ChainType.Astar]: astarIcon,
-  [ChainType.Polkadot]: astarIcon,
+  [ChainType.Polkadot]: polkaIcon,
 };
 const commonBtnClass =
   "w-36 h-10 inline-flex items-center justify-center font-bold ml-2  rounded-lg text-white cursor-pointer";
@@ -32,7 +33,8 @@ const ChainKey: FC<{ chain: AccountChain; delegate?: boolean }> = ({
   delegate = false,
 }) => {
   const [selected, setSelected] = useState(false);
-  const balance = useBalance({ address: chain.chain_addr, chain: chain.chain_addr });
+  console.log(chain)
+  const balance = useBalance({ address: chain.chain_addr, chain: chain.chain });
   console.log(balance)
   const navigate = useNavigate();
 
