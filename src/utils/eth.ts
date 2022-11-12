@@ -1,21 +1,34 @@
 import { isEmpty } from "lodash-es";
 import { Transfer } from "pages/transfer/useStore";
 import BigNumber from "bignumber.js";
+import { mnemonicValidate } from "@polkadot/util-crypto";
+import { ChainType } from "constants/enum";
+import { createAccount, getPolkaBalance } from "./polka";
 
 const web3 = new window.Web3("https://godwoken-testnet-web3-v1-rpc.ckbapp.dev");
 
-export const privateKeyToAddress = (privateKey: string) => {
-  const account = web3.eth.accounts.privateKeyToAccount(
-    // "919b425b860356fc5ba645807e4773c91f4f4b13857b8e6d42dcae54d2c6ed33"
-    privateKey
-  );
-  return account ? account.address : undefined;
+export const privateKeyToAddress = (privateKey: string, type?: string) => {
+  if (type === ChainType.Polkadot) {
+    const account = createAccount(privateKey).address;
+    return account;
+  } else {
+    const account = web3.eth.accounts.privateKeyToAccount(
+      // "919b425b860356fc5ba645807e4773c91f4f4b13857b8e6d42dcae54d2c6ed33"
+      privateKey
+    );
+    return account ? account.address : undefined;
+  }
 };
 
-export const checkEthKey = (key: string) => {
+export const checkKey = (key: string, type: string) => {
+  console.log(type !== ChainType.Polkadot);
   try {
-    const account = privateKeyToAddress(key);
-    return !isEmpty(account);
+    if (type !== ChainType.Polkadot) {
+      const account = privateKeyToAddress(key, type);
+      return !isEmpty(account);
+    } else {
+      return mnemonicValidate(key);
+    }
   } catch {
     return false;
   }
@@ -41,8 +54,11 @@ export const signTransaction = async (
   return txSign.rawTransaction;
 };
 
-export const getBalance = async (account: string) => {
-  const balance = await web3.eth.getBalance(account);
-  const num = new BigNumber(web3.utils.fromWei(balance));
-  return num.toNumber().toFixed(6);
+export const getBalance = async (account: string, chain: string) => {
+  if (chain !== ChainType.Polkadot) {
+    const balance = await web3.eth.getBalance(account);
+    const num = new BigNumber(web3.utils.fromWei(balance));
+    return num.toNumber().toFixed(6);
+  }
+  return await getPolkaBalance(account);
 };
