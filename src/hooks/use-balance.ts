@@ -11,7 +11,7 @@ const useBalance = ({ address, chain }: Props) => {
 
   useEffect(() => {
     getBalance(address, chain).then((value) => {
-      setBalance(Number(balance));
+      setBalance(Number(value));
     });
   }, []);
 

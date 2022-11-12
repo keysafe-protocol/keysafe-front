@@ -33,6 +33,7 @@ const ChainKey: FC<{ chain: AccountChain; delegate?: boolean }> = ({
 }) => {
   const [selected, setSelected] = useState(false);
   const balance = useBalance({ address: chain.chain_addr, chain: chain.chain_addr });
+  console.log(balance)
   const navigate = useNavigate();
 
   const chainItemClass = classNames(
