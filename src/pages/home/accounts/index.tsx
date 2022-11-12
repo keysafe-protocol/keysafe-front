@@ -23,6 +23,7 @@ const iconMap: Record<ChainType, string> = {
   [ChainType.Eth]: ethIcon,
   [ChainType.Boba]: bobaIcon,
   [ChainType.Astar]: astarIcon,
+  [ChainType.Polkadot]: astarIcon,
 };
 const commonBtnClass =
   "w-36 h-10 inline-flex items-center justify-center font-bold ml-2  rounded-lg text-white cursor-pointer";
@@ -31,7 +32,8 @@ const ChainKey: FC<{ chain: AccountChain; delegate?: boolean }> = ({
   delegate = false,
 }) => {
   const [selected, setSelected] = useState(false);
-  const balance = useBalance({ address: chain.chain_addr });
+  const balance = useBalance({ address: chain.chain_addr, chain: chain.chain_addr });
+  console.log(balance)
   const navigate = useNavigate();
 
   const chainItemClass = classNames(
@@ -132,8 +134,8 @@ const Accounts = observer(() => {
           {renderTitle()}
           {ownKeys.length > 0
             ? ownKeys.map((chain, index) => (
-                <ChainKey key={index} chain={chain} />
-              ))
+              <ChainKey key={index} chain={chain} />
+            ))
             : renderEmpty("No keys owned by me")}
         </div>
         <span
@@ -149,8 +151,8 @@ const Accounts = observer(() => {
           {renderTitle()}
           {delegateKeys.length > 0
             ? delegateKeys.map((chain, index) => (
-                <ChainKey key={index} chain={chain} delegate />
-              ))
+              <ChainKey key={index} chain={chain} delegate />
+            ))
             : renderEmpty("No keys delegate to me")}
         </div>
       </div>

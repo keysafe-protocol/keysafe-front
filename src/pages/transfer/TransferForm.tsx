@@ -26,7 +26,7 @@ const TransferForm = () => {
 
   const [fields, setFields] = useSetState<Transfer>(transfer);
   const [addrs, setAddrs] = useState<string[]>([]);
-  const [balance, setBalance] = useState<Number>(0)
+  const [balance, setBalance] = useState<Number | String>(0)
   const [valid, setValid] = useSetState<Record<string, boolean>>({
     account: false,
     from: false,

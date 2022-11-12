@@ -9,9 +9,10 @@ import useStores from "hooks/use-stores";
 import { observer } from "mobx-react-lite";
 import { ChainType } from "constants/enum";
 import { isEmpty } from "lodash-es";
-import { checkEthKey } from "utils/eth";
+import { checkKey } from "utils/eth";
 import { useMemo } from "react";
 import { CHAIN_TYPE_MAP } from "constants/index";
+
 
 const INIT_PRIVATEKEY: PrivateKey = {
   type: ChainType.Eth,
@@ -39,7 +40,7 @@ const AddKey = observer(() => {
   };
 
   const valid = useMemo(() => {
-    if (privateKey.key && !checkEthKey(privateKey.key)) return false;
+    if (privateKey.key && !checkKey(privateKey.key, privateKey.type)) return false;
     return true;
   }, [privateKey]);
 

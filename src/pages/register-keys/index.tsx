@@ -42,7 +42,7 @@ const RegisterKeys = observer(() => {
         const shares = keyShares(key);
         let chainAddr = "";
         try {
-          chainAddr = privateKeyToAddress(key);
+          chainAddr = privateKeyToAddress(key, type);
         } catch (err) {
           message({ content: "invalid secret key" });
           throw Error();
@@ -87,9 +87,9 @@ const RegisterKeys = observer(() => {
                   <span className="w-10">#{index + 1}</span>
                   <span
                     className="ml-2 p-1 border bg-gray-300 w-96 text-ellipsis overflow-hidden"
-                    title={privateKeyToAddress(privateKey.key)}
+                    title={privateKeyToAddress(privateKey.key, privateKey.type)}
                   >
-                    {privateKeyToAddress(privateKey.key)}
+                    {privateKeyToAddress(privateKey.key, privateKey.type)}
                   </span>
                   <span className="ml-2 w-32 p-1 border bg-gray-300">
                     {CHAIN_TYPE_MAP[privateKey.type]}
