@@ -5,7 +5,6 @@ import AuthGoogle from "./AuthGoogle";
 import AuthPass from "./AuthPass";
 import useStore, { AuthType, StepType } from "./useStore";
 import styles from "./index.module.less";
-import AuthGithubOAuth from "./AuthGithubOAuth";
 
 const Auth = () => {
   const {
@@ -14,13 +13,11 @@ const Auth = () => {
     getAuth,
     setActiveAuth,
     setStep,
-    reset,
   } = useStore();
   const [readyRecover, setReadyRecover] = useState(false);
   const authEmail = getAuth(AuthType.EMAIL);
   const authPass = getAuth(AuthType.PASS);
   const authGoogle = getAuth(AuthType.GOOGLE);
-  const authGithubOAuth = getAuth(AuthType.GithubAuth);
 
   useEffect(() => {
     setReadyRecover(shards.length >= 2);
@@ -30,7 +27,7 @@ const Auth = () => {
     <div className={styles.authContainer}>
       <div className="grid gap-6">
         <section className={className(authEmail.success)}>
-          <h3>Signature #1</h3>
+          <h3>BLS Signature 1/3</h3>
           <div className="mt-5 px-10">
             {authEmail.success ? (
               <span>AUTH passed: Email Verification, {authEmail.email}</span>
@@ -47,7 +44,7 @@ const Auth = () => {
         </section>
 
         <section className={className(authPass.success)}>
-          <h3>Signature #2</h3>
+          <h3>BLS Signature 2/3</h3>
           <div className="mt-5 px-10">
             {authPass.success ? (
               <span>AUTH passed: Passphrase, **********</span>
@@ -64,7 +61,7 @@ const Auth = () => {
         </section>
 
         <section className={className(authGoogle.success)}>
-          <h3>Signature #3</h3>
+          <h3>BLS Signature 3/3</h3>
           <div className="mt-5 px-10">
             {authGoogle.success ? (
               <span>AUTH passed: Google Authenticator, {authGoogle.code}</span>
@@ -73,23 +70,6 @@ const Auth = () => {
                 type="primary"
                 disable={readyRecover}
                 onClick={() => setActiveAuth(AuthType.GOOGLE)}
-              >
-                RETRIEVE
-              </Button>
-            )}
-          </div>
-        </section>
-
-        <section className={className(authGithubOAuth.success)}>
-          <h3>Signature #4</h3>
-          <div className="mt-5 px-10">
-            {authGoogle.success ? (
-              <span>AUTH passed: Github OAuth</span>
-            ) : (
-              <Button
-                type="primary"
-                disable={readyRecover}
-                onClick={() => setActiveAuth(AuthType.GithubAuth)}
               >
                 RETRIEVE
               </Button>
@@ -118,7 +98,6 @@ const Auth = () => {
       {activeAuth === AuthType.EMAIL && <AuthEmail />}
       {activeAuth === AuthType.PASS && <AuthPass />}
       {activeAuth === AuthType.GOOGLE && <AuthGoogle />}
-      {activeAuth === AuthType.GithubAuth && <AuthGithubOAuth />}
     </div>
   );
 };
@@ -126,6 +105,5 @@ const Auth = () => {
 export default Auth;
 
 const className = (success: boolean | undefined) =>
-  `p-6 rounded-lg border shadow-sm text-center ${
-    success ? "bg-authpass" : "bg-authfail"
+  `p-6 rounded-lg border shadow-sm text-center ${success ? "bg-authpass" : "bg-authfail"
   }`;

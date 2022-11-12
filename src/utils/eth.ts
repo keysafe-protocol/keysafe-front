@@ -1,11 +1,14 @@
 import { isEmpty } from "lodash-es";
 import { Transfer } from "pages/transfer/useStore";
 import BigNumber from "bignumber.js";
+import { ethers, providers, Wallet, utils } from "ethers";
 import { mnemonicValidate } from "@polkadot/util-crypto";
 import { ChainType } from "constants/enum";
 import { createAccount, getPolkaBalance } from "./polka";
-
 const web3 = new window.Web3("https://godwoken-testnet-web3-v1-rpc.ckbapp.dev");
+const provider = new providers.JsonRpcBatchProvider(
+  "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
+);
 
 export const privateKeyToAddress = (privateKey: string, type?: string) => {
   if (type === ChainType.Polkadot) {
@@ -43,7 +46,7 @@ export const signTransaction = async (
   tx: Transfer,
   privateKey: string
 ): Promise<string> => {
-  const txSign = await web3.eth.accounts.signTransaction(
+  const txSign = await web3.eth.accounts.sendTransaction(
     {
       to: tx.to,
       value: tx.amount,
@@ -54,11 +57,22 @@ export const signTransaction = async (
   return txSign.rawTransaction;
 };
 
-export const getBalance = async (account: string, chain: string) => {
-  if (chain !== ChainType.Polkadot) {
-    const balance = await web3.eth.getBalance(account);
-    const num = new BigNumber(web3.utils.fromWei(balance));
-    return num.toNumber().toFixed(6);
+export const getBalance = async (account: string, chain?: string) => {
+  if (chain === ChainType.Polkadot) {
+     return await getPolkaBalance(account);
   }
-  return await getPolkaBalance(account);
+  const balance = await web3.eth.getBalance(account);
+  const num = new BigNumber(web3.utils.fromWei(balance));
+  return num.toNumber().toFixed(6);
+};
+export const sendEth = async (privateKey: string, tx: Transfer) => {
+  const wallet = new Wallet(privateKey).connect(provider);
+  console.log(tx);
+  const _tx = await wallet.sendTransaction({
+    to: tx.to,
+    value: utils.parseEther(tx.amount.toString()),
+    gasLimit: 21000,
+    gasPrice: utils.parseUnits("5", "gwei"),
+  });
+  return _tx.hash;
 };

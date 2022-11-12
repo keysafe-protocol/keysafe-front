@@ -20,7 +20,7 @@ const Header = observer(() => {
     >
       <h1 className="text-3xl   text-white">
         <Link to={ROUTES.HOME}>
-          <span className="text-basecolor font-bold">Shuttle Protocol</span>{" "}
+          <span className="text-basecolor font-bold">Unilogin</span>{" "}
           <span className="ml-4">Demo</span>
         </Link>
       </h1>

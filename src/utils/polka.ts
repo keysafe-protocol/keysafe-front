@@ -21,8 +21,7 @@ export async function getPolkaBalance(address: string) {
   await polkaConnect();
   const res = await api.query.system.account(address);
   const balance = JSON.parse(JSON.stringify(res)).data.free;
-  const num = web3.utils.fromWei(balance);
-  return num;
+  return Number(balance);
 }
 export async function transferDot(
   seed: string,

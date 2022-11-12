@@ -9,7 +9,7 @@ import styles from "./index.module.less";
 import { ChainType } from "constants/enum";
 import useQueryParams from "hooks/use-query-params";
 import { CHAIN_TYPE_MAP } from "constants/index";
-import VerifyEmail from "./VerifyEmail";
+import { getBalance } from "utils/eth";
 
 const TransferForm = () => {
   const {
@@ -22,27 +22,35 @@ const TransferForm = () => {
   } = useStore();
   const [verified, setVerified] = useState(true);
   const [query] = useQueryParams<{ account: string; from: string }>();
-  const [visible, setVisible] = useState(false);
+  // const [visible, setVisible] = useState(false);
 
   const [fields, setFields] = useSetState<Transfer>(transfer);
   const [addrs, setAddrs] = useState<string[]>([]);
+  const [balance, setBalance] = useState<Number | String>(0)
   const [valid, setValid] = useSetState<Record<string, boolean>>({
     account: false,
     from: false,
     to: false,
     amount: false,
   });
-
+  useEffect(() => {
+    getBalance(addrs[0]).then(_balance => {
+      console.log(_balance)
+      setBalance(_balance)
+    }).catch(() => {
+      setBalance(0)
+    })
+  }, [addrs[0]])
   useEffect(() => {
     const [account, from, to, amount] = [
       Boolean(fields.account),
       Boolean(fields.from),
       Boolean(fields.to),
-      !isNaN(fields.amount) && Number(fields.amount) > 0,
+      !isNaN(fields.amount) && Number(fields.amount) > 0 && Number(fields.amount) < balance!,
     ];
     setValid({ account, from, to, amount });
     setVerified(account && from && to && amount);
-  }, [setValid, fields]);
+  }, [setValid, fields, balance]);
 
   useEffect(() => {
     if (accountStore) {
@@ -65,21 +73,21 @@ const TransferForm = () => {
     if (current) {
       setAccountChain({ ...current });
       setTransfer({ ...fields, amount: Number(fields.amount) });
-      // setStep(StepType.AUTH);
+      setStep(StepType.AUTH);
 
       // 暂时只需要验证 email，成功则跳转到 success 页面
-      setVisible(true);
+      // setVisible(true);
     }
   };
 
   return (
     <main className={styles.authContainer}>
-      {visible && (
+      {/* {visible && (
         <VerifyEmail
           onOk={() => setStep(StepType.SUCCESS)}
           onCancel={() => setVisible(false)}
         />
-      )}
+      )} */}
       <div className="max-w-xl mx-auto grid grid-cols-1 gap-6">
         <h2 className="mb-2 text-2xl font-bold text-titlecolor">
           Make a Transfer
@@ -134,7 +142,7 @@ const TransferForm = () => {
           </div>
         </section>
         <section>
-          <p className="text-gray-700 mb-1">Transfer Amount:</p>
+          <p className="text-gray-700 mb-1">Transfer Amount: <span>(Current: {balance.toString()})</span></p>
           <div className="flex items-center">
             <Input
               className="flex-1"

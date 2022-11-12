@@ -79,6 +79,9 @@ const AuthEmail = () => {
     setCode(code);
     setVerified(code.length > 0);
   };
+  useEffect(() => {
+    setEmail(userInfo.email!)
+  }, [])
 
   useEffect(() => {
     setEmailValid(email.length > 0 && checkEmail(email));
@@ -108,6 +111,7 @@ const AuthEmail = () => {
             <Input
               className="flex-1"
               placeholder="Input your Email"
+              defaultValue={userInfo.email!}
               onChange={(e) => setEmail(e.target.value)}
             />
             <span className="ml-4 w-4">

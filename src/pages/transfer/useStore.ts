@@ -15,6 +15,7 @@ export enum StepType {
   TRANSFERFORM,
   AUTH,
   SHARD,
+  ACCOUNT,
   SENDTX,
   SUCCESS,
 }

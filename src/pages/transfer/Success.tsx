@@ -6,7 +6,7 @@ import styles from "./index.module.less";
 import useStore from "./useStore";
 
 const Success = () => {
-  const { reset } = useStore();
+  const { reset, signature } = useStore();
   const navigate = useNavigate();
 
   return (
@@ -14,11 +14,11 @@ const Success = () => {
       <div className="flex flex-col h-full">
         <h1 className="text-4xl font-bold text-authpass">Congratulations!</h1>
         <p className="text-3xl mt-1">
-          You transaction is sent. Click{" "}
-          <a href="/transfer" className="underline">
+          You transaction has been sent. Click{" "}
+          <a target={"__blank"} href={`https://goerli.etherscan.io/tx/${signature}`} className="underline">
             here
           </a>{" "}
-          to check Tx Hash.
+          to check Tx status.
         </p>
         <footer className="flex justify-center mt-80">
           <Button
