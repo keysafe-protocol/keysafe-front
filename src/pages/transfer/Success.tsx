@@ -15,7 +15,7 @@ const Success = () => {
         <h1 className="text-4xl font-bold text-authpass">Congratulations!</h1>
         <p className="text-3xl mt-1">
           You transaction has been sent. Click{" "}
-          <a target={"__blank"} href={`https://goerli.etherscan.io/tx/${signature}`} className="underline">
+          <a target={"__blank"} href={signature} className="underline">
             here
           </a>{" "}
           to check Tx status.

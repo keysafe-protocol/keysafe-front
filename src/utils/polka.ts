@@ -1,12 +1,18 @@
 import { ApiPromise, WsProvider, Keyring } from "@polkadot/api";
+import { utils } from "ethers";
 import web3 from "web3";
 
 // Construct
 let api: any = null;
 async function polkaConnect() {
-  if (!api) {
-    const wsProvider = new WsProvider("wss://rpc.polkadot.io");
-    api = await ApiPromise.create({ provider: wsProvider });
+  try {
+    if (!api) {
+      const wsProvider = new WsProvider("wss://rpc.polkadot.io");
+      api = await ApiPromise.create({ provider: wsProvider });
+      console.log(api);
+    }
+  } catch (error) {
+    console.log(error);
   }
 }
 polkaConnect();
@@ -21,15 +27,16 @@ export async function getPolkaBalance(address: string) {
   await polkaConnect();
   const res = await api.query.system.account(address);
   const balance = JSON.parse(JSON.stringify(res)).data.free;
-  return Number(balance);
+  return utils.formatUnits(Number(balance), 10);
 }
 export async function transferDot(
   seed: string,
   recipient: string,
-  amount: number
+  amount: string
 ) {
   const pair = createAccount(seed);
-  const transfer = api.tx.balances.transfer(recipient, amount);
+  const _amount = utils.parseUnits(amount, 10);
+  const transfer = api.tx.balances.transfer(recipient, _amount.toNumber());
   const hash = await transfer.signAndSend(pair);
   return hash;
 }

@@ -5,9 +5,11 @@ import Xarrow, { Xwrapper } from "react-xarrows";
 import useStore, { StepType } from "./useStore";
 import styles from "./index.module.less";
 import { sendEth, signTransaction, } from "utils/eth";
+import { ChainType } from "constants/enum";
+import { transferDot } from "utils/polka";
 
 const Shard = () => {
-  const { auths, shards, transfer, setSignature, setStep, reset } = useStore();
+  const { auths, shards, accountChain, transfer, setSignature, setStep, reset } = useStore();
   const [status, setStatus] = useState(0);
 
   const handleRecover = () => {
@@ -15,12 +17,23 @@ const Shard = () => {
 
     const comb = window.secrets.combine(shards);
     const privateKey = window.secrets.hex2str(comb);
-    sendEth(privateKey, transfer).then((tx) => {
-      setSignature(tx);
-      setTimeout(() => {
-        setStatus(2);
-      }, 3000);
-    });
+    console.log(transfer)
+    if (transfer.chain === ChainType.Polkadot) {
+      transferDot(privateKey, transfer.to, transfer.amount.toString()).then(tx => {
+
+        setSignature(`https://explorer.polkascan.io/polkadot/account/${transfer.from}`);
+        setTimeout(() => {
+          setStatus(2);
+        }, 3000);
+      })
+    } else {
+      sendEth(privateKey, transfer).then((tx) => {
+        setSignature(`https://goerli.etherscan.io/tx/${tx}`);
+        setTimeout(() => {
+          setStatus(2);
+        }, 3000);
+      });
+    }
   };
 
   const reconClass = classNames(reconClassPrefix, {

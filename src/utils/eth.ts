@@ -58,8 +58,9 @@ export const signTransaction = async (
 };
 
 export const getBalance = async (account: string, chain?: string) => {
-  if (chain === ChainType.Polkadot) {
-     return await getPolkaBalance(account);
+  const isPolka = chain === ChainType.Polkadot || !account.startsWith("0x");
+  if (isPolka) {
+    return await getPolkaBalance(account);
   }
   const balance = await web3.eth.getBalance(account);
   const num = new BigNumber(web3.utils.fromWei(balance));

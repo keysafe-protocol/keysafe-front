@@ -49,7 +49,7 @@ const AddKey = observer(() => {
       <Dialog
         visible={visible}
         onClose={() => setVisible(false)}
-        title="Input a private key"
+        title={`Input ${privateKey.type === ChainType.Polkadot ? "mnemonics" : "a privateKey"}`}
         footer={
           <footer className="flex justify-center ">
             <Button

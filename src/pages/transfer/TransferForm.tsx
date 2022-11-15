@@ -72,7 +72,7 @@ const TransferForm = () => {
     );
     if (current) {
       setAccountChain({ ...current });
-      setTransfer({ ...fields, amount: Number(fields.amount) });
+      setTransfer({ ...fields, amount: Number(fields.amount), chain: fields.account as ChainType });
       setStep(StepType.AUTH);
 
       // 暂时只需要验证 email，成功则跳转到 success 页面
