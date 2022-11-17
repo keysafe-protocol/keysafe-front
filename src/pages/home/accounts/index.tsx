@@ -21,6 +21,7 @@ import astarIcon from "assets/imgs/astar.png";
 import polkaIcon from "assets/imgs/polka.png";
 import { CHAIN_TYPE_MAP } from "constants/index";
 import Spinner from "components/spinner";
+import useQrcode from "./useAccountQrcode";
 const iconMap: Record<ChainType, string> = {
   [ChainType.Eth]: ethIcon,
   [ChainType.Boba]: bobaIcon,
@@ -33,6 +34,7 @@ const ChainKey: FC<{ chain: AccountChain; delegate?: boolean }> = ({
   chain,
   delegate = false,
 }) => {
+  const { Qrcode, setAccount } = useQrcode()
   const [selected, setSelected] = useState(false);
   const balance = useBalance({ address: chain.chain_addr, chain: chain.chain });
   const navigate = useNavigate();
@@ -58,6 +60,13 @@ const ChainKey: FC<{ chain: AccountChain; delegate?: boolean }> = ({
       `${ROUTES.TRANSFER}?step=${StepType.TRANSFERFORM}&account=${chain.chain}&from=${chain.chain_addr}`
     );
   };
+  const onRecieveClick = () => {
+    setAccount({
+      value: chain.chain_addr,
+      img: iconMap[chain.chain]
+    })
+
+  }
 
   const onRecoverClick = () => {
     navigate(
@@ -67,6 +76,8 @@ const ChainKey: FC<{ chain: AccountChain; delegate?: boolean }> = ({
 
   return (
     <div className="mb-3">
+      <Qrcode />
+
       <div className={chainItemClass} onClick={() => setSelected(!selected)}>
         <span className="inline-flex items-center w-32">
           <img src={iconMap[chain.chain]} className="mr-2 h-4" />
@@ -81,6 +92,9 @@ const ChainKey: FC<{ chain: AccountChain; delegate?: boolean }> = ({
         <div className="flex justify-end mt-2">
           <span className={btnClass} onClick={onTransferClick}>
             Make Transfer
+          </span>
+          <span className={btnClass} onClick={onRecieveClick}>
+            Recieve
           </span>
           {!delegate && (
             <>
