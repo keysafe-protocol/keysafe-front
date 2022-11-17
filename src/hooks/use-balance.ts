@@ -1,17 +1,16 @@
+import { ChainType } from "constants/enum";
 import { useEffect } from "react";
 import { useState } from "react";
-import { getBalance } from "utils/eth";
+import { getBalance } from "utils/wallet-adapter";
 
 type Props = {
   address: string;
-  chain: string;
+  chain: ChainType;
 };
 const useBalance = ({ address, chain }: Props) => {
   const [balance, setBalance] = useState<number>();
 
   useEffect(() => {
-    console.log(address, chain);
-
     getBalance(address, chain)
       .then((value) => {
         setBalance(Number(value));

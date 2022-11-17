@@ -1,6 +1,7 @@
 import { ApiPromise, WsProvider, Keyring } from "@polkadot/api";
+import { encodeAddress, decodeAddress } from "@polkadot/keyring";
+import { isHex, hexToU8a } from "@polkadot/util";
 import { utils } from "ethers";
-import web3 from "web3";
 
 // Construct
 let api: any = null;
@@ -40,3 +41,13 @@ export async function transferDot(
   const hash = await transfer.signAndSend(pair);
   return hash;
 }
+
+export const isPolkaAddress = (address: string) => {
+  try {
+    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address));
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+};

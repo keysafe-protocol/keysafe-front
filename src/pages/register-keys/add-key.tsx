@@ -9,7 +9,7 @@ import useStores from "hooks/use-stores";
 import { observer } from "mobx-react-lite";
 import { ChainType } from "constants/enum";
 import { isEmpty } from "lodash-es";
-import { checkKey } from "utils/eth";
+import { checkKey } from "utils/wallet-adapter";
 import { useMemo } from "react";
 import { CHAIN_TYPE_MAP } from "constants/index";
 

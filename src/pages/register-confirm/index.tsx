@@ -7,8 +7,8 @@ import { keyShares } from "utils";
 import useStores from "hooks/use-stores";
 import { PrivateKey } from "stores/register/types";
 import registerServices from "stores/register/services";
-import { privateKeyToAddress } from "utils/eth";
 import message from "utils/message";
+import { privateKeyToAddress } from "utils/wallet-adapter";
 
 const RegisterConfirm = observer(() => {
   const navigate = useNavigate();
