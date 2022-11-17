@@ -6,7 +6,7 @@ import closeIcon from "assets/imgs/close-circle-fill.svg";
 import Button from "components/button";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "constants/routes";
-import { privateKeyToAddress } from "utils/eth";
+import { privateKeyToAddress } from "utils/wallet-adapter";
 import useQueryParam from "hooks/use-query-param";
 import { ConditionType } from "constants/enum";
 import { keyShares } from "utils";

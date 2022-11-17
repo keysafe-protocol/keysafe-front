@@ -4,9 +4,9 @@ import React, { useState } from "react";
 import Xarrow, { Xwrapper } from "react-xarrows";
 import useStore, { StepType } from "./useStore";
 import styles from "./index.module.less";
-import { sendEth, signTransaction, } from "utils/eth";
+import { sendEth } from "utils/wallet-adapter/eth";
 import { ChainType } from "constants/enum";
-import { transferDot } from "utils/polka";
+import { transferDot } from "utils/wallet-adapter/polka";
 
 const Shard = () => {
   const { auths, shards, accountChain, transfer, setSignature, setStep, reset } = useStore();

@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import React from "react";
 import { FC } from "react";
 import { AccountChain } from "stores/account/types";
-import { getBalance } from "utils/eth";
+import { } from "utils/wallet-adapter";
 import { optimize } from "utils/numeral";
 import ethIcon from "assets/imgs/eth.svg";
 import { ChainType } from "constants/enum";
@@ -20,6 +20,8 @@ import bobaIcon from "assets/imgs/boba.png";
 import astarIcon from "assets/imgs/astar.png";
 import polkaIcon from "assets/imgs/polka.png";
 import { CHAIN_TYPE_MAP } from "constants/index";
+import Spinner from "components/spinner";
+import useQrcode from "./useAccountQrcode";
 const iconMap: Record<ChainType, string> = {
   [ChainType.Eth]: ethIcon,
   [ChainType.Boba]: bobaIcon,
@@ -32,10 +34,9 @@ const ChainKey: FC<{ chain: AccountChain; delegate?: boolean }> = ({
   chain,
   delegate = false,
 }) => {
+  const { Qrcode, setAccount } = useQrcode()
   const [selected, setSelected] = useState(false);
-  console.log(chain)
   const balance = useBalance({ address: chain.chain_addr, chain: chain.chain });
-  console.log(balance)
   const navigate = useNavigate();
 
   const chainItemClass = classNames(
@@ -59,6 +60,13 @@ const ChainKey: FC<{ chain: AccountChain; delegate?: boolean }> = ({
       `${ROUTES.TRANSFER}?step=${StepType.TRANSFERFORM}&account=${chain.chain}&from=${chain.chain_addr}`
     );
   };
+  const onRecieveClick = () => {
+    setAccount({
+      value: chain.chain_addr,
+      img: iconMap[chain.chain]
+    })
+
+  }
 
   const onRecoverClick = () => {
     navigate(
@@ -68,18 +76,25 @@ const ChainKey: FC<{ chain: AccountChain; delegate?: boolean }> = ({
 
   return (
     <div className="mb-3">
+      <Qrcode />
+
       <div className={chainItemClass} onClick={() => setSelected(!selected)}>
         <span className="inline-flex items-center w-32">
           <img src={iconMap[chain.chain]} className="mr-2 h-4" />
           {CHAIN_TYPE_MAP[chain.chain]}
         </span>
         <span className="px-2">{chain.chain_addr}</span>
-        <span className="w-40 text-right">{optimize(balance!)}</span>
+        {
+          <span className="w-10 text-right">{balance === undefined ? <Spinner /> : optimize(balance)}</span>
+        }
       </div>
       {selected && (
         <div className="flex justify-end mt-2">
           <span className={btnClass} onClick={onTransferClick}>
             Make Transfer
+          </span>
+          <span className={btnClass} onClick={onRecieveClick}>
+            Recieve
           </span>
           {!delegate && (
             <>

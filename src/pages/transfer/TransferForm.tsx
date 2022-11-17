@@ -9,7 +9,7 @@ import styles from "./index.module.less";
 import { ChainType } from "constants/enum";
 import useQueryParams from "hooks/use-query-params";
 import { CHAIN_TYPE_MAP } from "constants/index";
-import { getBalance } from "utils/eth";
+import { getBalance } from "utils/wallet-adapter";
 
 const TransferForm = () => {
   const {
@@ -34,13 +34,13 @@ const TransferForm = () => {
     amount: false,
   });
   useEffect(() => {
-    getBalance(addrs[0]).then(_balance => {
-      console.log(_balance)
+    getBalance(fields.from, fields.account as ChainType).then(_balance => {
       setBalance(_balance)
-    }).catch(() => {
+    }).catch((e) => {
+      console.log(e)
       setBalance(0)
     })
-  }, [addrs[0]])
+  }, [fields.from, fields.account])
   useEffect(() => {
     const [account, from, to, amount] = [
       Boolean(fields.account),
