@@ -13,8 +13,8 @@ import styles from "./index.module.less";
 import RecoverServices from "stores/recover/services";
 import { ConditionType } from "constants/enum";
 import { encrypt2 } from "utils/secure";
-import { checkEmail } from "utils";
 import registerServices from "stores/register/services";
+import { checkEmail } from "utils";
 import { isFunction } from "lodash-es";
 
 type Props = {

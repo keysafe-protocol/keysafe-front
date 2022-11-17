@@ -5,6 +5,7 @@ import { ethers, providers, Wallet, utils } from "ethers";
 import { mnemonicValidate } from "@polkadot/util-crypto";
 import { ChainType } from "constants/enum";
 import { createAccount, getPolkaBalance } from "./polka";
+import { privateKeyToTronAddress } from "./tron.js";
 const web3 = new window.Web3("https://godwoken-testnet-web3-v1-rpc.ckbapp.dev");
 const provider = new providers.JsonRpcBatchProvider(
   "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
@@ -14,6 +15,8 @@ export const privateKeyToAddress = (privateKey: string, type?: string) => {
   if (type === ChainType.Polkadot) {
     const account = createAccount(privateKey).address;
     return account;
+  } else if (type === ChainType.Tron) {
+    return privateKeyToTronAddress(privateKey);
   } else {
     const account = web3.eth.accounts.privateKeyToAccount(
       // "919b425b860356fc5ba645807e4773c91f4f4b13857b8e6d42dcae54d2c6ed33"
@@ -26,11 +29,14 @@ export const privateKeyToAddress = (privateKey: string, type?: string) => {
 export const checkKey = (key: string, type: string) => {
   console.log(type !== ChainType.Polkadot);
   try {
-    if (type !== ChainType.Polkadot) {
-      const account = privateKeyToAddress(key, type);
+    if (type === ChainType.Polkadot) {
+      return mnemonicValidate(key);
+    } else if (type !== ChainType.Tron) {
+      const account = privateKeyToTronAddress(key);
       return !isEmpty(account);
     } else {
-      return mnemonicValidate(key);
+      const account = privateKeyToAddress(key, type);
+      return !isEmpty(account);
     }
   } catch {
     return false;
