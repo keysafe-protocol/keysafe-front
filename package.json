@@ -5,6 +5,8 @@
   "dependencies": {
     "@craco/craco": "^6.4.3",
     "@polkadot/api": "^9.7.1",
+    "@polkadot/keyring": "^10.1.12",
+    "@polkadot/util": "^10.1.12",
     "@polkadot/util-crypto": "^10.1.11",
     "@tailwindcss/forms": "^0.5.0",
     "@testing-library/jest-dom": "^5.14.1",
@@ -44,6 +46,8 @@
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
+    "react-spinner": "^0.2.7",
+    "react-spinners": "^0.13.6",
     "react-xarrows": "^2.0.2",
     "secrets.js": "^0.1.8",
     "secrets.js-grempe": "^2.0.0",
