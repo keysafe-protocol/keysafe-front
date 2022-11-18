@@ -19,6 +19,7 @@ import { useMemo } from "react";
 import bobaIcon from "assets/imgs/boba.png";
 import astarIcon from "assets/imgs/astar.png";
 import polkaIcon from "assets/imgs/polka.png";
+import tronIcon from "assets/imgs/tron.png";
 import { CHAIN_TYPE_MAP } from "constants/index";
 import Spinner from "components/spinner";
 import useQrcode from "./useAccountQrcode";
@@ -27,6 +28,7 @@ const iconMap: Record<ChainType, string> = {
   [ChainType.Boba]: bobaIcon,
   [ChainType.Astar]: astarIcon,
   [ChainType.Polkadot]: polkaIcon,
+  [ChainType.Tron]: tronIcon,
 };
 const commonBtnClass =
   "w-36 h-10 inline-flex items-center justify-center font-bold ml-2  rounded-lg text-white cursor-pointer";
@@ -85,7 +87,7 @@ const ChainKey: FC<{ chain: AccountChain; delegate?: boolean }> = ({
         </span>
         <span className="px-2">{chain.chain_addr}</span>
         {
-          <span className="w-10 text-right">{balance === undefined ? <Spinner /> : optimize(balance)}</span>
+          <span className="w-15 text-right">{balance === undefined ? <Spinner /> : optimize(balance)}</span>
         }
       </div>
       {selected && (

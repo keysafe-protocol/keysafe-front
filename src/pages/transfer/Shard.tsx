@@ -7,6 +7,7 @@ import styles from "./index.module.less";
 import { sendEth } from "utils/wallet-adapter/eth";
 import { ChainType } from "constants/enum";
 import { transferDot } from "utils/wallet-adapter/polka";
+import { sendTron } from "utils/wallet-adapter/tron";
 
 const Shard = () => {
   const { auths, shards, accountChain, transfer, setSignature, setStep, reset } = useStore();
@@ -22,6 +23,13 @@ const Shard = () => {
       transferDot(privateKey, transfer.to, transfer.amount.toString()).then(tx => {
 
         setSignature(`https://explorer.polkascan.io/polkadot/account/${transfer.from}`);
+        setTimeout(() => {
+          setStatus(2);
+        }, 3000);
+      })
+    } else if (transfer.chain === ChainType.Tron) {
+      sendTron(privateKey, transfer.to, transfer.amount).then((tx) => {
+        setSignature(`https://tronscan.org/#/transaction/${tx}`);
         setTimeout(() => {
           setStatus(2);
         }, 3000);

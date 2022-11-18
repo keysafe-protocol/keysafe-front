@@ -10,7 +10,6 @@ async function polkaConnect() {
     if (!api) {
       const wsProvider = new WsProvider("wss://rpc.polkadot.io");
       api = await ApiPromise.create({ provider: wsProvider });
-      console.log(api);
     }
   } catch (error) {
     console.log(error);
