@@ -87,7 +87,7 @@ const ChainKey: FC<{ chain: AccountChain; delegate?: boolean }> = ({
         </span>
         <span className="px-2">{chain.chain_addr}</span>
         {
-          <span className="w-10 text-right">{balance === undefined ? <Spinner /> : optimize(balance)}</span>
+          <span className="w-15 text-right">{balance === undefined ? <Spinner /> : optimize(balance)}</span>
         }
       </div>
       {selected && (
