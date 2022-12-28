@@ -9,9 +9,8 @@ import message from "./message";
 
 const request = axios.create({
   baseURL:
-    process.env.NODE_ENV === "development"
-      ? "https://demo.keysafe.network/ks"
-      : "https://demo.keysafe.network/ks",
+    process.env.REACT_APP_BASE_URL ||
+    "https://demo.keysafe.network/ks",
   // baseURL: "https://bb2d4198-bc40-40c8-97c6-f18a802aee3a.mock.pstmn.io/",
 });
 
@@ -39,11 +38,10 @@ request.interceptors.response.use(
         return data;
       case "fail":
         message({
-          content: `Fail: ${
-            response.config.url === "/auth_confirm"
-              ? "Error code"
-              : response.config.url
-          }`,
+          content: `Fail: ${response.config.url === "/auth_confirm"
+            ? "Error code"
+            : response.config.url
+            }`,
         });
         throw Error(data);
       default:

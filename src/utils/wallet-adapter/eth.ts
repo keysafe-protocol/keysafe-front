@@ -7,12 +7,16 @@ import { ChainType } from "constants/enum";
 const ETHER_RPC = process.env.REACT_APP_ETHER_RPC;
 const provider = new providers.JsonRpcProvider(ETHER_RPC);
 export const privateKeyToAddress = (privateKey: string) => {
-  const account = new Wallet(privateKey);
-  return account ? account.address : "";
+  try {
+    const account = new Wallet(privateKey);
+    return account ? account.address : "";
+  } catch (error) {
+    return ""
+  }
+
 };
 
 export const checkKey = (key: string, type: string) => {
-  console.log(type !== ChainType.Polkadot);
   try {
     if (type !== ChainType.Polkadot) {
       const account = privateKeyToAddress(key);
