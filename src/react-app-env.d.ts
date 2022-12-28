@@ -7,7 +7,7 @@ declare module "*.module.less" {
   declare module "*.less";
 }
 
-declare module "secrets.js" {}
+declare module "secrets.js" { }
 
 declare interface Window {
   secrets: {
@@ -17,6 +17,7 @@ declare interface Window {
     hex2str(str: string, bytesPerChar?: number): string;
   };
   Web3: any;
+  REACT_APP_BASE_URL?: string;
 
   privateKeyToAddress(str: string): string;
 }

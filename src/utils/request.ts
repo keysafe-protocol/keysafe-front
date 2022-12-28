@@ -9,7 +9,7 @@ import message from "./message";
 
 const request = axios.create({
   baseURL:
-    process.env.REACT_APP_BASE_URL ||
+    window.REACT_APP_BASE_URL ||
     "https://demo.keysafe.network/ks",
   // baseURL: "https://bb2d4198-bc40-40c8-97c6-f18a802aee3a.mock.pstmn.io/",
 });
