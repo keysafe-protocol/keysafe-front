@@ -13,7 +13,7 @@ const useQueryParams = <T>(): [T, (query: T) => void] => {
     return value;
   }, [params]);
 
-  const setQuery = (query: T) => {
+  const setQuery = (query: any) => {
     setParams(queryString.stringify(query));
   };
 
