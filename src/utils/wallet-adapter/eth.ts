@@ -4,7 +4,8 @@ import BigNumber from "bignumber.js";
 import { Wallet, utils, providers, ethers } from "ethers";
 import { mnemonicValidate } from "@polkadot/util-crypto";
 import { ChainType } from "constants/enum";
-const ETHER_RPC = process.env.REACT_APP_ETHER_RPC;
+const ETHER_RPC = process.env.REACT_APP_ETHER_RPC || "https://eth-goerli.g.alchemy.com/v2/gHq11QKKO__YMlautDx6nYodmQiV1DYR"
+
 const provider = new providers.JsonRpcProvider(ETHER_RPC);
 export const privateKeyToAddress = (privateKey: string) => {
   try {
