@@ -31,6 +31,12 @@ const AccountForm = () => {
       });
     }
   }, [accountChain, accountStore, setFields]);
+  useEffect(() => {
+    if (accountStore) {
+      const addrs = accountStore.accountChains.filter((_c) => _c.chain === fields.chain).map((chain) => chain.chain_addr)
+      setAddrs(addrs)
+    }
+  }, [accountStore, fields.chain])
 
   const handleConfirm = () => {
     const current = accountStore!.accountChains.find(

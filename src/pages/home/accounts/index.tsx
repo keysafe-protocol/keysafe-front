@@ -24,8 +24,6 @@ import Spinner from "components/spinner";
 import useQrcode from "./useAccountQrcode";
 const iconMap: Record<ChainType, string> = {
   [ChainType.Eth]: ethIcon,
-  [ChainType.Boba]: bobaIcon,
-  [ChainType.Astar]: astarIcon,
   [ChainType.Polkadot]: polkaIcon,
 };
 const commonBtnClass =

@@ -10,7 +10,13 @@ import { ChainType } from "constants/enum";
 import useQueryParams from "hooks/use-query-params";
 import { CHAIN_TYPE_MAP } from "constants/index";
 import { getBalance } from "utils/wallet-adapter";
+import polkaIcon from "assets/imgs/polka.png";
+import ethIcon from "assets/imgs/eth.svg";
 
+const iconMap: Record<ChainType, string> = {
+  [ChainType.Eth]: ethIcon,
+  [ChainType.Polkadot]: polkaIcon,
+};
 const TransferForm = () => {
   const {
     reset,
@@ -65,6 +71,13 @@ const TransferForm = () => {
       setAddrs(addrs);
     }
   }, [accountStore]);
+  useEffect(() => {
+    if (accountStore) {
+      const addrs = accountStore.accountChains.filter((_c) => _c.chain === fields.account).map((chain) => chain.chain_addr)
+      console.log(addrs)
+      setAddrs(addrs)
+    }
+  }, [accountStore, fields.account])
 
   const handleTransfer = () => {
     const current = accountStore!.accountChains.find(
@@ -142,7 +155,10 @@ const TransferForm = () => {
           </div>
         </section>
         <section>
-          <p className="text-gray-700 mb-1">Transfer Amount: <span>(Current: {balance.toString()})</span></p>
+          <p className="text-gray-700 mb-1">Transfer Amount: <span>(Current: {balance.toString()}</span>
+            <img className=" inline-block" width={18} src={iconMap[fields.account as ChainType]} alt="" />
+            )
+          </p>
           <div className="flex items-center">
             <Input
               className="flex-1"
