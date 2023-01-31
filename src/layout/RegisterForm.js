@@ -64,13 +64,13 @@ export default function RegisterForm(props) {
   function exchangeKey() {
     if (localPubKey !== "") {
       const axios = require('axios').default;
-      axios.post('/exchange_key', { 'pubkey': localPubKey })
+      axios.post('/ks/exchange_key', { 'key': localPubKey })
         .then((remoteKey) => {
-          console.log("remote pub hex ", remoteKey.data);
+          console.log("remote pub hex ", remoteKey.data['key']);
           var ec = new window.elliptic.ec('p256');
-          var remoteKeyObj = ec.keyFromPublic(remoteKey.data, 'hex');
+          var remoteKeyObj = ec.keyFromPublic(remoteKey.data['key'], 'hex');
           var bn = localKeyPair.derive(remoteKeyObj.getPublic());
-          console.log(bn);
+          console.log(bn.toString(16));
           setShareKey(bn.toString(16));
         });
     }

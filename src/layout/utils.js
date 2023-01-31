@@ -1,5 +1,37 @@
-
 export function encrypt(rawText, key) {
+    console.log("encrypt content", rawText, " with ", key);
+    if (key === "") {
+        alert("Secure Channel to Keysafe Node is not setup correctly. Please refresh page and try again.");
+        return;
+    }
+    try {
+        console.log("prepare key");
+        var aesKey = window.forge.util.hexToBytes(key);
+        var cipher = window.forge.cipher.createCipher('AES-GCM', aesKey);
+        const iv =  new Uint8Array(12);
+        console.log("prepare iv");
+        cipher.start({
+            iv: iv,
+            tagLength: 128
+        });
+        console.log(cipher);
+        cipher.update(window.forge.util.createBuffer(rawText, 'raw'));
+        console.log("finish.");
+        cipher.finish();
+        const a = cipher.output.toHex();
+        var tag = cipher.mode.tag;
+        console.log("encrypted ", a);
+        cipher.output.getBytes();
+        return tag.toHex() + a;
+    } catch (err) {
+        console.log("failing");
+        console.log("error happening ", err);
+        return "";
+    }
+}
+
+
+export function encrypt2(rawText, key) {
     console.log("encrypt content", rawText, " with ", key);
     if (key === "") {
         alert("Secure Channel to Keysafe Node is not setup correctly. Please refresh page and try again.");
