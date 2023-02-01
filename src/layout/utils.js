@@ -62,8 +62,41 @@ export function encrypt2(rawText, key) {
     }
 }
 
-
 export function decrypt(secretText, key) {
+    //TODO: check if secretText is hex or binary
+    console.log("decrypt content ", secretText, " with ", key);
+    if (key === "") {
+        alert("Secure Channel to Keysafe Node is not setup correctly. Please refresh page and try again.");
+        return;
+    }
+    try {
+        var aesKey = window.forge.util.hexToBytes(key);
+        // the first 16 bytes are for tag
+        var tag = window.forge.util.hexToBytes(secretText.slice(0,32));
+        // the remaining bytes are cipher_text 
+        var rawText = window.forge.util.hexToBytes(secretText.slice(32));
+        var decipher = window.forge.cipher.createDecipher('AES-GCM', aesKey);
+        var iv =  new Uint8Array(12);
+        decipher.start({
+            iv: iv,
+            tagLength: 128,
+            tag: tag
+        });
+        decipher.update(window.forge.util.createBuffer(rawText, 'raw'));
+        decipher.finish();
+        const a = decipher.output.toHex();
+        console.log("decrypted hex ", a);
+        const o = decipher.output.data;
+        console.log("decrypted output ", o);
+        return o;
+    } catch (err) {
+        console.log(err);
+        return "";
+    }
+}
+
+
+export function decrypt2(secretText, key) {
     //TODO: check if secretText is hex or binary
     console.log("decrypt content ", secretText, " with ", key);
     if (key === "") {
